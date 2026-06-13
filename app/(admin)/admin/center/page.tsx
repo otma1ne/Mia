@@ -22,7 +22,7 @@ export default async function CenterPage() {
               phone: center.phone,
               email: center.email,
               description: center.description,
-              vehicleAlertDays: center.vehicleAlertDays,
+              enrollmentAlertDays: center.enrollmentAlertDays,
             }
           : null
         }
