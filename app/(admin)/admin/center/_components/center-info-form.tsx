@@ -17,7 +17,7 @@ interface CenterInfoFormProps {
     phone: string
     email: string
     description: string
-    vehicleAlertDays: number
+    enrollmentAlertDays: number
   } | null
 }
 
@@ -52,11 +52,11 @@ export default function CenterInfoForm({ center }: CenterInfoFormProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="name">Nom du centre</Label>
-            <Input id="name" name="name" defaultValue={center?.name ?? ''} placeholder="EduDrive Academy" required />
+            <Input id="name" name="name" defaultValue={center?.name ?? ''} placeholder="Centre de Formation" required />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="email">E-mail</Label>
-            <Input id="email" name="email" type="email" defaultValue={center?.email ?? ''} placeholder="contact@edudrive.ma" required />
+            <Input id="email" name="email" type="email" defaultValue={center?.email ?? ''} placeholder="contact@centre.ma" required />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="phone">Téléphone</Label>
@@ -83,18 +83,18 @@ export default function CenterInfoForm({ center }: CenterInfoFormProps) {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="vehicleAlertDays">Délai d&apos;alerte véhicule</Label>
+          <Label htmlFor="enrollmentAlertDays">Délai d&apos;alerte inscription</Label>
           <p className="text-xs text-muted-foreground -mt-1">
-            Nombre de jours avant l&apos;échéance (visite technique, assurance) pour déclencher une alerte.
+            Nombre de jours avant le début d&apos;une formation pour déclencher une alerte d&apos;inscription.
           </p>
           <div className="relative w-40">
             <Input
-              id="vehicleAlertDays"
-              name="vehicleAlertDays"
+              id="enrollmentAlertDays"
+              name="enrollmentAlertDays"
               type="number"
               min={1}
               max={365}
-              defaultValue={center?.vehicleAlertDays ?? 30}
+              defaultValue={center?.enrollmentAlertDays ?? 7}
               className="pr-14"
             />
             <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
