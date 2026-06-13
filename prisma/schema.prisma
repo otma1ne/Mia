@@ -1,0 +1,715 @@
+// Prisma Schema for Education Center Manager
+// Database: MongoDB
+// ORM: Prisma
+//
+// ERD Overview:
+// Center ──< Room
+// Center ──< OperatingHours
+// User ──── Trainer (1:1)
+// User ──< FormationEnrollment
+// User ──< ModuleEnrollment
+// User ──< MaterialProgress
+// Trainer ──< TrainerAvailability
+// Trainer ──< Module (optional, PRACTICAL type)
+// Category ──< Formation
+// Formation ──< Module
+// Formation ──< FormationEnrollment
+// Module ──< ModuleMaterial
+// Module ──< Session
+// Module ──< ModuleEnrollment
+// ModuleMaterial ──< MaterialProgress
+// Session ──> Room (optional)
+// Session ──> Vehicle (optional)
+// Session ──< Attendance
+// FormationEnrollment ──< ModuleEnrollment
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  TRAINER
+  STUDENT
+  COMMERCIAL
+}
+
+enum FormationType {
+  PRESENTIAL    // In-person, physical room required
+  REMOTE_LIVE   // Live online sessions (Zoom, Meet, Teams...)
+  REMOTE_ASYNC  // Self-paced: students watch videos / read PDFs at their own pace, no live sessions
+}
+
+enum FormationStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  COMPLETED
+}
+
+enum ModuleType {
+  THEORY      // Self-paced: video + materials (code de la route, etc.)
+  PRACTICAL   // In-person driving sessions with trainer
+  ASSESSMENT  // Final exam / evaluation
+}
+
+enum ModuleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  COMPLETED
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+  SUSPENDED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum VehicleStatus {
+  AVAILABLE   // Disponible
+  IN_USE      // En service
+  MAINTENANCE // En maintenance
+  SOLD        // Vendu
+}
+
+enum VehicleEventType {
+  SOLD
+  ARCHIVED
+  REACTIVATED
+  TRANSFERRED   // reserved for future inter-center transfer
+}
+
+enum ContactStatus {
+  NOUVEAU
+  CONTACTE
+  RELANCE
+  CONVERTI
+}
+
+enum QuestionType {
+  QCM         // Multiple choices, one correct
+  TRUE_FALSE  // Boolean
+  OPEN        // Free text, manually graded by trainer
+}
+
+// ─────────────────────────────────────────
+// User
+// ─────────────────────────────────────────
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(STUDENT)
+  phone     String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trainer              Trainer?
+  commercial           Commercial?
+  formationEnrollments FormationEnrollment[]
+  moduleEnrollments    ModuleEnrollment[]    // module-level progress & attendance
+  materialProgress     MaterialProgress[]    // tracks completed materials
+  examAttempts         ExamAttempt[]         // assessment exam attempts
+  vehicleEvents        VehicleEvent[]        // audit log actor
+}
+
+// ─────────────────────────────────────────
+// Trainer
+// ─────────────────────────────────────────
+
+model Trainer {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @unique @db.ObjectId
+  bio             String
+  specializations String[]
+  credentials     String[]
+  rating          Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  modules      Module[]              // assigned PRACTICAL modules
+  availability TrainerAvailability[]
+}
+
+model TrainerAvailability {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  trainerId String @db.ObjectId
+
+  // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  dayOfWeek Int
+  startTime String // "09:00"
+  endTime   String // "17:00"
+
+  trainer Trainer @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────
+// Center & Rooms
+// ─────────────────────────────────────────
+
+model Center {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  address     String
+  phone       String
+  email       String
+  description String
+  logo             String?
+  reglement        String?  // règlement intérieur (admin-authored, used in YouSign docs)
+  cgv              String?  // conditions générales de vente (admin-authored, used in YouSign docs)
+  vehicleAlertDays Int      @default(30) // days before expiry to trigger alert
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  rooms          Room[]
+  operatingHours OperatingHours[]
+}
+
+model OperatingHours {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  centerId  String @db.ObjectId
+  dayOfWeek Int    // 0 = Sunday ... 6 = Saturday
+  open      String // "09:00"
+  close     String // "18:00"
+
+  center Center @relation(fields: [centerId], references: [id], onDelete: Cascade)
+}
+
+model Room {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  centerId String @db.ObjectId
+  name     String
+  capacity Int
+
+  center   Center    @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  sessions Session[]
+}
+
+// ─────────────────────────────────────────
+// Category
+// ─────────────────────────────────────────
+
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  formations Formation[]
+}
+
+// ─────────────────────────────────────────
+// Formation (training program)
+// A Formation contains multiple Modules.
+// Students enroll in Formations, not individual Modules.
+// ─────────────────────────────────────────
+
+model Formation {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  categoryId  String          @db.ObjectId
+  type        FormationType   @default(PRESENTIAL) // PRESENTIAL or REMOTE
+  status      FormationStatus @default(DRAFT)
+  maxStudents Int
+  startDate   DateTime
+  endDate     DateTime
+  thumbnail   String?
+  price       Float?          // tarif en MAD (used in contrat PDF)
+  duration    Int?            // durée totale en heures (used in contrat + programme PDF)
+  programme   String?         // contenu du programme (admin-authored, used in programme PDF)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  category     Category              @relation(fields: [categoryId], references: [id])
+  modules      Module[]
+  enrollments  FormationEnrollment[]
+  inscriptions Inscription[]
+}
+
+// ─────────────────────────────────────────
+// FormationEnrollment
+// Primary enrollment: student ↔ formation
+// ─────────────────────────────────────────
+
+model FormationEnrollment {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String           @db.ObjectId
+  formationId String           @db.ObjectId
+  status      EnrollmentStatus @default(ACTIVE)
+  progress    Int              @default(0) // 0–100 overall formation progress
+  grade       Float?
+  certificate String?
+  enrolledAt  DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Bilan tracking
+  completedAt          DateTime?  // when progress hit 100%
+  bilanChaudSentAt     DateTime?  // when Bilan Chaud email was sent
+  bilanChaudRemindedAt DateTime?  // when reminder was sent
+  bilanFroidSentAt     DateTime?  // when Bilan Froid email was sent
+  bilanFroidRemindedAt DateTime?  // when reminder was sent
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  formation         Formation          @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  moduleEnrollments ModuleEnrollment[] // auto-created per module for progress tracking
+  bilans            FormationBilan[]
+
+  @@unique([userId, formationId])
+  @@index([userId])
+  @@index([formationId])
+  @@index([status])
+  @@index([enrolledAt])
+}
+
+// ─────────────────────────────────────────
+// Module (learning unit within a Formation)
+// Ordered sequentially — student must complete
+// module N before accessing module N+1.
+// ─────────────────────────────────────────
+
+model Module {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  formationId String       @db.ObjectId
+  title       String
+  description String
+  orderIndex  Int          @default(0)      // sequential order (0-based)
+  type        ModuleType   @default(THEORY)
+  status      ModuleStatus @default(DRAFT)
+  videoUrl    String?                        // embedded video (THEORY/ASSESSMENT)
+  duration    Int          @default(0)       // in minutes
+  trainerId   String?      @db.ObjectId      // required for PRACTICAL modules
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  formation   Formation          @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  trainer     Trainer?           @relation(fields: [trainerId], references: [id])
+  enrollments ModuleEnrollment[]
+  sessions    Session[]          // PRACTICAL: scheduled driving sessions
+  materials   ModuleMaterial[]   // supplementary resources
+  exam        Exam?              // ASSESSMENT: exam definition (1:1)
+}
+
+// ─────────────────────────────────────────
+// ModuleMaterial
+// Supplementary resources attached to a module.
+// ─────────────────────────────────────────
+
+model ModuleMaterial {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  moduleId String @db.ObjectId
+  title    String
+  url      String
+  type     String // "pdf" | "video" | "image" | "link"
+
+  module   Module             @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress MaterialProgress[]
+}
+
+// ─────────────────────────────────────────
+// MaterialProgress
+// Tracks which materials a student has completed.
+// ─────────────────────────────────────────
+
+model MaterialProgress {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  materialId  String   @db.ObjectId
+  completedAt DateTime @default(now())
+
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  material ModuleMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, materialId])
+}
+
+// ─────────────────────────────────────────
+// ModuleEnrollment (module-level progress & attendance)
+// Auto-created per module when student enrolls in a Formation.
+// completedAt non-null = module is completed → next module unlocked.
+// ─────────────────────────────────────────
+
+model ModuleEnrollment {
+  id                    String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId                String           @db.ObjectId
+  moduleId              String           @db.ObjectId
+  formationEnrollmentId String           @db.ObjectId
+  status                EnrollmentStatus @default(ACTIVE)
+  progress              Int              @default(0) // 0–100 module progress
+  completedAt           DateTime?        // set when module is marked complete
+  grade                 Float?
+  enrolledAt            DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module              Module              @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  formationEnrollment FormationEnrollment @relation(fields: [formationEnrollmentId], references: [id], onDelete: Cascade)
+  attendances         Attendance[]
+  examAttempt         ExamAttempt?        // ASSESSMENT modules: exam attempt
+
+  @@unique([userId, moduleId])
+  @@index([userId])
+  @@index([moduleId])
+  @@index([formationEnrollmentId])
+  @@index([status])
+  @@index([enrolledAt])
+}
+
+// ─────────────────────────────────────────
+// Session (individual class meeting for PRACTICAL modules)
+// ─────────────────────────────────────────
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  moduleId  String   @db.ObjectId
+  roomId    String?  @db.ObjectId
+  vehicleId String?  @db.ObjectId
+  date      DateTime
+  startTime String   // "09:00"
+  endTime   String   // "11:00"
+  notes     String?
+  createdAt DateTime @default(now())
+
+  module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  room        Room?        @relation(fields: [roomId], references: [id])
+  vehicle     Vehicle?     @relation(fields: [vehicleId], references: [id])
+  attendances Attendance[]
+}
+
+// ─────────────────────────────────────────
+// Attendance (per student per session)
+// ─────────────────────────────────────────
+
+model Attendance {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  moduleEnrollmentId String           @db.ObjectId
+  sessionId          String           @db.ObjectId
+  status             AttendanceStatus @default(ABSENT)
+  note               String?
+  markedAt           DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  moduleEnrollment ModuleEnrollment @relation(fields: [moduleEnrollmentId], references: [id], onDelete: Cascade)
+  session          Session          @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([moduleEnrollmentId, sessionId])
+}
+
+// ─────────────────────────────────────────
+// Inscription (student application)
+// ─────────────────────────────────────────
+
+enum InscriptionStatus {
+  PENDING           // form submitted, evaluation email sent
+  EVALUATED         // student completed the evaluation form, PDF generated
+  PENDING_SIGNATURE // admin accepted, YouSign request created, awaiting student e-signature
+  ACCEPTED          // student signed all documents, account created
+  DECLINED          // admin declined
+}
+
+model Inscription {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  firstName        String
+  lastName         String
+  email            String
+  phone            String
+  formationId      String            @db.ObjectId
+  cvUrl            String
+  status           InscriptionStatus @default(PENDING)
+  adminNote        String?
+  evaluationData   Json?             // raw answers stored as JSON
+  evaluationPdfUrl      String?           // Cloudinary URL of generated PDF
+  yousignRequestId      String?           // YouSign signature_request ID (set when PENDING_SIGNATURE)
+  // YouSign document IDs — saved at PENDING_SIGNATURE, used to download signed versions
+  yousignContratDocId   String?
+  yousignReglementDocId String?
+  yousignCgvDocId       String?
+  yousignProgrammeDocId String?
+  // Signed PDFs — saved in Cloudinary after student signs (set when ACCEPTED)
+  signedContratUrl      String?
+  signedReglementUrl    String?
+  signedCgvUrl          String?
+  signedProgrammeUrl    String?
+  signedAt              DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  formation Formation        @relation(fields: [formationId], references: [id])
+  evalToken EvaluationToken?
+}
+
+model EvaluationToken {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  inscriptionId String      @unique @db.ObjectId
+  token         String      @unique
+  expiresAt     DateTime
+  usedAt        DateTime?
+  createdAt     DateTime    @default(now())
+
+  inscription Inscription @relation(fields: [inscriptionId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────
+// FormationBilan (Bilan Chaud & Bilan Froid)
+// Self-assessment forms students fill after/during formation
+// ─────────────────────────────────────────
+
+model FormationBilan {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  enrollmentId String   @db.ObjectId
+  type         String   // "CHAUD" | "FROID"
+
+  // Token for secure email link
+  token        String   @unique
+  expiresAt    DateTime
+  usedAt       DateTime?
+
+  // Student answers (stored as JSON)
+  // Bilan Chaud: { overallRating, contentRating, trainerRating, confidenceRating, wouldRecommend, bestLearning, difficulties, suggestions }
+  // Bilan Froid: { examTaken, examPassed, applyingRating, progressRating, wouldRecommend, appliedAreas, persistentDifficulties, needsSupport }
+  answers      Json?
+
+  // Generated PDF stored in Cloudinary
+  pdfUrl       String?
+
+  createdAt    DateTime @default(now())
+
+  enrollment   FormationEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, type])
+  @@index([enrollmentId])
+}
+
+// ─────────────────────────────────────────
+// Vehicle
+// ─────────────────────────────────────────
+
+type SaleInfo {
+  buyerFirstName String
+  buyerLastName  String
+  buyerPhone     String
+  buyerEmail     String?
+  saleDate       DateTime
+  salePrice      Float
+}
+
+type ContactStatusChange {
+  status    ContactStatus
+  changedAt DateTime
+  note      String?
+}
+
+model Vehicle {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  plate           String        @unique
+  category        String
+  status          VehicleStatus @default(AVAILABLE)
+  photo           String?
+  mileage         Int           @default(0)
+  inspectionDate  DateTime?
+  insuranceExpiry DateTime?
+
+  archived        Boolean       @default(false)
+  archivedAt      DateTime?
+  sale            SaleInfo?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  sessions        Session[]
+  events          VehicleEvent[]
+
+  @@index([archived])
+  @@index([status])
+}
+
+// ─────────────────────────────────────────
+// Exam (1:1 with ASSESSMENT-type Module)
+// One-shot exam: student gets a single attempt.
+// ─────────────────────────────────────────
+
+model Exam {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  moduleId         String   @unique @db.ObjectId
+  title            String
+  description      String?
+  passingScore     Int      @default(70) // percentage 0-100
+  timeLimit        Int?                  // minutes (null = no limit)
+  shuffleQuestions Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  module    Module        @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts  ExamAttempt[]
+}
+
+// ─────────────────────────────────────────
+// Question (belongs to an Exam)
+// ─────────────────────────────────────────
+
+model Question {
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  examId     String       @db.ObjectId
+  text       String
+  type       QuestionType
+  points     Int          @default(1)
+  orderIndex Int          @default(0)
+  // For TRUE_FALSE: { correct: true|false }
+  // For QCM: derived from Choice.isCorrect (kept null)
+  // For OPEN: null (graded manually)
+  correctAnswer Json?
+
+  exam    Exam               @relation(fields: [examId], references: [id], onDelete: Cascade)
+  choices Choice[]
+  answers AnswerSubmission[]
+
+  @@index([examId])
+}
+
+// ─────────────────────────────────────────
+// Choice (belongs to a QCM Question)
+// ─────────────────────────────────────────
+
+model Choice {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  questionId String  @db.ObjectId
+  text       String
+  isCorrect  Boolean @default(false)
+  orderIndex Int     @default(0)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+}
+
+// ─────────────────────────────────────────
+// ExamAttempt (one per student per exam — one-shot)
+// ─────────────────────────────────────────
+
+model ExamAttempt {
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String    @db.ObjectId
+  examId             String    @db.ObjectId
+  moduleEnrollmentId String    @unique @db.ObjectId
+  startedAt          DateTime  @default(now())
+  submittedAt        DateTime?
+  score              Int?      // percentage 0-100 (final after grading)
+  passed             Boolean?
+  needsGrading       Boolean   @default(false) // true if has ungraded OPEN answers
+  gradedAt           DateTime?
+  gradedBy           String?   @db.ObjectId    // trainer/admin user ID
+
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam             Exam               @relation(fields: [examId], references: [id], onDelete: Cascade)
+  moduleEnrollment ModuleEnrollment   @relation(fields: [moduleEnrollmentId], references: [id], onDelete: Cascade)
+  answers          AnswerSubmission[]
+
+  @@unique([userId, examId])
+  @@index([userId])
+  @@index([examId])
+  @@index([needsGrading])
+}
+
+// ─────────────────────────────────────────
+// AnswerSubmission (one per question per attempt)
+// ─────────────────────────────────────────
+
+model AnswerSubmission {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  attemptId  String  @db.ObjectId
+  questionId String  @db.ObjectId
+  // Shape depends on question type:
+  //   QCM        -> { choiceId: string }
+  //   TRUE_FALSE -> { value: boolean }
+  //   OPEN       -> { text: string }
+  answer        Json
+  pointsAwarded Float?  // null until graded (for OPEN) / set immediately (QCM, TF)
+  isCorrect     Boolean? // QCM/TF auto-set; OPEN set by trainer
+  graderNote    String?
+
+  attempt  ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+}
+
+// ─────────────────────────────────────────
+// Vehicle event log (lean — major lifecycle events only)
+// ─────────────────────────────────────────
+
+model VehicleEvent {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  vehicleId  String           @db.ObjectId
+  type       VehicleEventType
+  occurredAt DateTime         @default(now())
+  actorId    String?          @db.ObjectId
+  note       String?
+  metadata   Json?
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  actor   User?   @relation(fields: [actorId],   references: [id], onDelete: SetNull)
+
+  @@index([vehicleId, occurredAt(sort: Desc)])
+}
+
+// ─────────────────────────────────────────
+// Commercial
+// ─────────────────────────────────────────
+
+model Commercial {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @unique @db.ObjectId
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contacts  Contact[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ─────────────────────────────────────────
+// Contact (prospect managed by a commercial rep)
+// ─────────────────────────────────────────
+
+model Contact {
+  id            String                @id @default(auto()) @map("_id") @db.ObjectId
+  commercialId  String                @db.ObjectId
+  commercial    Commercial            @relation(fields: [commercialId], references: [id], onDelete: Cascade)
+  firstName     String
+  lastName      String
+  phone         String
+  email         String?
+  city          String?
+  need          String
+  status        ContactStatus         @default(NOUVEAU)
+  notes         String?
+  statusHistory ContactStatusChange[]
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  @@index([commercialId])
+  @@index([status])
+}
