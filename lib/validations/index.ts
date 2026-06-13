@@ -1,7 +1,7 @@
 export * from './auth'
 export * from './commercial'
 export * from './formations'
-export * from './vehicles'
+export * from './center'
 
 import { ZodError } from 'zod'
 
