@@ -29,7 +29,7 @@ export async function saveCenterInfo(_prevState: unknown, formData: FormData) {
   const email            = (formData.get('email')            as string)?.trim()
   const description      = (formData.get('description')      as string)?.trim()
   const centerId         = (formData.get('centerId')         as string)?.trim() || null
-  const vehicleAlertDays = Math.max(1, parseInt(formData.get('vehicleAlertDays') as string) || 30)
+  const enrollmentAlertDays = Math.max(1, parseInt(formData.get('enrollmentAlertDays') as string) || 7)
 
   if (!name || !address || !phone || !email) {
     return { error: 'Name, address, phone and email are required.' }
@@ -41,11 +41,11 @@ export async function saveCenterInfo(_prevState: unknown, formData: FormData) {
   if (centerId) {
     await db.center.update({
       where: { id: centerId },
-      data: { name, address, phone, email, description: description ?? '', vehicleAlertDays },
+      data: { name, address, phone, email, description: description ?? '', enrollmentAlertDays },
     })
   } else {
     await db.center.create({
-      data: { name, address, phone, email, description: description ?? '', vehicleAlertDays },
+      data: { name, address, phone, email, description: description ?? '', enrollmentAlertDays },
     })
   }
 
