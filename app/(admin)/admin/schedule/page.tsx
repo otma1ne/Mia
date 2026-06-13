@@ -31,7 +31,6 @@ export default async function SchedulePage({ searchParams }: PageProps) {
         view={view}
         modules={formData.modules}
         rooms={formData.rooms}
-        vehicles={formData.vehicles}
       />
     </div>
   )

@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   ChevronLeft, ChevronRight, CalendarDays,
-  List, Clock, MapPin, User, Car, MoreVertical, Trash2,
+  List, Clock, MapPin, User, MoreVertical, Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import CreateSessionDialog from './create-session-dialog'
@@ -59,7 +59,6 @@ function minutesToPx(minutes: number, pxPerHour = 64) {
 
 interface Module  { id: string; title: string }
 interface Room    { id: string; name: string; capacity: number }
-interface Vehicle { id: string; name: string; plate: string; status: string }
 
 interface ScheduleClientProps {
   initialSessions: SessionEvent[]
@@ -67,7 +66,6 @@ interface ScheduleClientProps {
   view: 'week' | 'list'
   modules: Module[]
   rooms: Room[]
-  vehicles: Vehicle[]
 }
 
 export default function ScheduleClient({
@@ -76,7 +74,6 @@ export default function ScheduleClient({
   view: initialView,
   modules,
   rooms,
-  vehicles,
 }: ScheduleClientProps) {
   const router   = useRouter()
   const pathname = usePathname()
@@ -181,7 +178,7 @@ export default function ScheduleClient({
             </button>
           </div>
 
-          <CreateSessionDialog modules={modules} rooms={rooms} vehicles={vehicles} onCreated={handleCreated} />
+          <CreateSessionDialog modules={modules} rooms={rooms} onCreated={handleCreated} />
         </div>
       </div>
 
@@ -261,9 +258,6 @@ export default function ScheduleClient({
                             {session.roomName && (
                               <p className="opacity-60 truncate">{session.roomName}</p>
                             )}
-                            {session.vehicleName && (
-                              <p className="opacity-60 truncate">{session.vehicleName}</p>
-                            )}
                           </div>
                         )
                       })}
@@ -323,12 +317,6 @@ export default function ScheduleClient({
                                 <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                                   <MapPin className="h-3 w-3" />
                                   {session.roomName}
-                                </span>
-                              )}
-                              {session.vehicleName && (
-                                <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                                  <Car className="h-3 w-3" />
-                                  {session.vehicleName}
                                 </span>
                               )}
                             </div>
