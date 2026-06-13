@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import AppSidebar from './app-sidebar'
 import DashboardHeader from './dashboard-header'
-import VehicleAlertsBell from './vehicle-alerts-bell'
 import type { UserRole } from '@prisma/client'
 
 interface DashboardShellProps {
@@ -23,10 +22,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
       {/* Main area */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Header — mobile hamburger + user menu */}
-        <DashboardHeader
-          user={user}
-          notifications={user.role === 'ADMIN' ? <VehicleAlertsBell /> : undefined}
-        />
+        <DashboardHeader user={user} />
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">
