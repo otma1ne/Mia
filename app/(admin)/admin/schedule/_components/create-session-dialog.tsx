@@ -17,17 +17,14 @@ import { CirclePlus } from 'lucide-react'
 
 interface Module  { id: string; title: string }
 interface Room    { id: string; name: string; capacity: number }
-interface Vehicle { id: string; name: string; plate: string; status: string }
-
 interface CreateSessionDialogProps {
   modules: Module[]
   rooms: Room[]
-  vehicles: Vehicle[]
   defaultDate?: Date
   onCreated?: () => void
 }
 
-export default function CreateSessionDialog({ modules, rooms, vehicles, defaultDate, onCreated }: CreateSessionDialogProps) {
+export default function CreateSessionDialog({ modules, rooms, defaultDate, onCreated }: CreateSessionDialogProps) {
   const [open, setOpen] = useState(false)
   const [state, action, pending] = useActionState(createSession, null)
   const formRef = useRef<HTMLFormElement>(null)
@@ -103,30 +100,6 @@ export default function CreateSessionDialog({ modules, rooms, vehicles, defaultD
                     {r.name} <span className="text-muted-foreground">· {r.capacity} places</span>
                   </SelectItem>
                 ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Vehicle (optional) */}
-          <div className="flex flex-col gap-1.5">
-            <Label>
-              Véhicule <span className="text-muted-foreground">(facultatif)</span>
-            </Label>
-            <Select name="vehicleId" labelItems={Object.fromEntries(vehicles.map(v => [v.id, `${v.name} · ${v.plate}`]))}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Sans véhicule" />
-              </SelectTrigger>
-              <SelectContent className="min-w-80">
-                {vehicles.length === 0
-                  ? <SelectItem value="" disabled>Aucun véhicule disponible</SelectItem>
-                  : vehicles.map(v => (
-                    <SelectItem key={v.id} value={v.id} label={`${v.name} · ${v.plate}`}>
-                      {v.name}
-                      <span className="text-muted-foreground"> · {v.plate}</span>
-                      {v.status === 'IN_USE' && <span className="text-amber-500"> · En service</span>}
-                    </SelectItem>
-                  ))
-                }
               </SelectContent>
             </Select>
           </div>
