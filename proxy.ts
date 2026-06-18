@@ -29,7 +29,7 @@ const securityHeaders = {
   // Content Security Policy (strict)
   'Content-Security-Policy': [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
     "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
@@ -139,6 +139,6 @@ function applySecurityHeaders(response: NextResponse) {
 
 export const config = {
   matcher: [
-    '/((?!api/auth|api/cron|api/debug|api/upload-cv|api/webhooks|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api/auth|api/cron|api/debug|api/upload-cv|api/webhooks|_next/static|_next/image|favicon.ico|mockup.html).*)',
   ],
 }

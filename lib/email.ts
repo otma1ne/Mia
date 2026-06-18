@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+﻿import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
   host:   process.env.SMTP_HOST,
@@ -10,19 +10,19 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-const FROM    = process.env.SMTP_FROM ?? 'EduDrive <noreply@edudrive.ma>'
+const FROM    = process.env.SMTP_FROM ?? 'MIA Formation <noreply@miaformation.ma>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 // Shared header/footer snippets
 const emailHeader = `
   <div style="background:#1e2128;padding:24px 32px;border-radius:8px 8px 0 0;">
-    <h1 style="color:#fff;font-size:20px;margin:0;">🎓 EduDrive</h1>
+    <h1 style="color:#fff;font-size:20px;margin:0;">🎓 MIA Formation</h1>
   </div>
 `
 const emailFooter = `
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />
   <p style="font-size:12px;color:#9ca3af;margin:0;">
-    EduDrive — Académie de formation professionnelle<br />
+    MIA Formation — Académie de formation professionnelle<br />
     ${APP_URL}
   </p>
 `
@@ -37,7 +37,7 @@ export async function sendEvaluationEmail(
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: 'Complétez votre évaluation de besoins — EduDrive',
+    subject: 'Complétez votre évaluation de besoins — MIA Formation',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
         ${emailHeader}
@@ -79,7 +79,7 @@ export async function sendAcceptanceEmail(
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: '🎉 Votre candidature a été acceptée — EduDrive',
+    subject: '🎉 Votre candidature a été acceptée — MIA Formation',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
         ${emailHeader}
@@ -131,7 +131,7 @@ export async function sendEnrollmentConfirmationEmail(
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: `Votre inscription à ${formationTitle} est confirmée — EduDrive`,
+    subject: `Votre inscription à ${formationTitle} est confirmée — MIA Formation`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
         ${emailHeader}
@@ -168,14 +168,14 @@ export async function sendTrainerWelcomeEmail(
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: 'Bienvenue sur EduDrive — vos identifiants de connexion',
+    subject: 'Bienvenue sur MIA Formation — vos identifiants de connexion',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
         ${emailHeader}
         <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
           <p style="font-size:16px;margin-top:0;">Bonjour <strong>${name}</strong>,</p>
           <p style="color:#374151;">
-            Votre compte formateur a été créé sur <strong>EduDrive</strong>.
+            Votre compte formateur a été créé sur <strong>MIA Formation</strong>.
             Voici vos identifiants de connexion :
           </p>
 
@@ -216,7 +216,7 @@ export async function sendDeclineEmail(
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: 'Suite à votre candidature — EduDrive',
+    subject: 'Suite à votre candidature — MIA Formation',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
         ${emailHeader}
@@ -269,7 +269,7 @@ export async function sendBilanChaudEmail(
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: '📋 Votre avis sur la formation — EduDrive',
+    subject: '📋 Votre avis sur la formation — MIA Formation',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
         ${emailHeader}
@@ -310,7 +310,7 @@ export async function sendBilanFroidEmail(
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: '📋 Suivi de votre formation — EduDrive',
+    subject: '📋 Suivi de votre formation — MIA Formation',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
         ${emailHeader}
@@ -396,14 +396,14 @@ export async function sendCommercialWelcomeEmail(
   await transporter.sendMail({
     from: FROM,
     to,
-    subject: 'Bienvenue sur EduDrive — votre espace commercial',
+    subject: 'Bienvenue sur MIA Formation — votre espace commercial',
     html: `
       <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
         ${emailHeader}
         <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
           <p style="font-size:16px;margin-top:0;">Bonjour <strong>${name}</strong>,</p>
           <p style="color:#374151;">
-            Votre compte commercial a été créé sur <strong>EduDrive</strong>.
+            Votre compte commercial a été créé sur <strong>MIA Formation</strong>.
             Voici vos identifiants de connexion :
           </p>
 

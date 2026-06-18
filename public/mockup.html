@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>EduDrive — Centre de formation professionnelle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DESIGN TOKENS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+:root {
+  /* Brand */
+  --mv:      #8B5CF6;
+  --mv-h:    #7C3AED;
+  --mv-l:    #A78BFA;
+  --mv-bg:   #F5F3FF;
+  --mv-bdr:  #DDD6FE;
+
+  /* Neutrals */
+  --ink:     #111827;
+  --ink-2:   #374151;
+  --muted:   #6B7280;
+  --faint:   #9CA3AF;
+
+  /* Surfaces */
+  --canvas:  #FFFFFF;
+  --surface: #F9FAFB;
+  --surface2:#F3F4F6;
+
+  /* Lines */
+  --line:    #E5E7EB;
+  --line-2:  #D1D5DB;
+
+  /* Dark */
+  --night:   #111827;
+  --night-2: #1F2937;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* Page wipe — mauve curtain out on load */
+#wipe {
+  position: fixed; inset: 0;
+  background: var(--mv);
+  z-index: 9999;
+  transform-origin: right center;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   LAYOUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GLOBAL COMPONENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Eyebrow label */
+.tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11.5px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--mv);
+  margin-bottom: 14px;
+}
+.tag::before {
+  content: '';
+  display: block; width: 22px; height: 2.5px;
+  background: var(--mv); border-radius: 2px;
+}
+
+/* Section headings */
+.h2 {
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 900; letter-spacing: -.04em; line-height: 1.1;
+  color: var(--ink);
+}
+.lead {
+  font-size: 16px; color: var(--muted);
+  line-height: 1.75; max-width: 500px;
+  margin-top: 14px;
+}
+
+/* Divider */
+.rule { border: none; height: 1px; background: var(--line); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 26px; border-radius: 9px;
+  font-size: 14px; font-weight: 700;
+  transition: transform .18s, background .18s, box-shadow .18s;
+  cursor: pointer; border: none;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-mv {
+  background: var(--mv); color: #fff;
+  box-shadow: 0 4px 14px rgba(139,92,246,.28);
+}
+.btn-mv:hover { background: var(--mv-h); box-shadow: 0 6px 20px rgba(139,92,246,.38); }
+.btn-line {
+  background: transparent; color: var(--ink-2);
+  border: 1.5px solid var(--line-2);
+}
+.btn-line:hover { border-color: var(--mv); color: var(--mv); }
+
+/* Text arrow link */
+.arrow-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 700; color: var(--mv);
+  transition: gap .18s;
+}
+.arrow-link::after { content: '→'; font-size: 15px; }
+.arrow-link:hover { gap: 10px; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   NAV
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#nav {
+  position: sticky; top: 0; z-index: 500;
+  background: rgba(255,255,255,.9);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-row {
+  height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 11px;
+  font-size: 16px; font-weight: 900; letter-spacing: -.03em; color: var(--ink);
+}
+.logo-mark {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--mv);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+
+.nav-links {
+  display: flex; align-items: center; gap: 2px;
+}
+.nav-a {
+  padding: 7px 16px; border-radius: 8px;
+  font-size: 14px; font-weight: 500; color: var(--muted);
+  transition: color .15s, background .15s;
+}
+.nav-a:hover { color: var(--ink); background: var(--surface); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HERO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#hero {
+  padding: 96px 40px 100px;
+  border-bottom: 1px solid var(--line);
+  position: relative; overflow: hidden;
+}
+
+/* Subtle corner glow */
+#hero::after {
+  content: '';
+  position: absolute; top: -80px; right: -80px;
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, rgba(139,92,246,.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-inner { max-width: 760px; position: relative; z-index: 1; }
+
+/* Overline */
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 6px 16px; margin-bottom: 36px;
+  background: var(--mv-bg); border: 1px solid var(--mv-bdr);
+  border-radius: 100px;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--mv);
+}
+.hero-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mv); }
+
+/* Headline — word-by-word reveal */
+.hero-h1 {
+  font-size: clamp(46px, 6.5vw, 80px);
+  font-weight: 900; letter-spacing: -.05em; line-height: 1.04;
+  color: var(--ink); margin-bottom: 28px;
+}
+.hero-h1 .line { display: block; overflow: hidden; }
+.hero-h1 .word { display: inline-block; }
+.hero-h1 .accent { color: var(--mv); }
+
+.hero-sub {
+  font-size: 17px; color: var(--muted); line-height: 1.75;
+  max-width: 560px; margin-bottom: 44px;
+}
+.hero-ctas { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TRUST BAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#trust {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 40px 0;
+}
+.trust-label {
+  font-size: 11.5px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--faint);
+  text-align: center; margin-bottom: 28px;
+}
+.trust-logos {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap;
+}
+.trust-item {
+  padding: 10px 28px;
+  border-right: 1px solid var(--line);
+  font-size: 14px; font-weight: 800; letter-spacing: -.01em;
+  color: var(--line-2);
+  transition: color .2s;
+}
+.trust-item:last-child { border-right: none; }
+.trust-item:hover { color: var(--mv); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STATS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#stats { padding: 80px 0; }
+.stats-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  border: 1.5px solid var(--line); border-radius: 18px; overflow: hidden;
+}
+.stat {
+  padding: 52px 40px;
+  border-right: 1.5px solid var(--line);
+  text-align: center;
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-size: 56px; font-weight: 900; letter-spacing: -.06em;
+  line-height: 1; color: var(--ink); margin-bottom: 10px;
+}
+.stat-num em { color: var(--mv); font-style: normal; }
+.stat-desc { font-size: 13px; font-weight: 500; color: var(--muted); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FORMATIONS — 4 domain cards
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#formations {
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 96px 0;
+}
+.formations-head {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: end; margin-bottom: 56px;
+}
+.formations-head-right {
+  display: flex; flex-direction: column;
+  align-items: flex-start; gap: 24px;
+}
+
+.cards-grid {
+  display: grid; grid-template-columns: repeat(2,1fr);
+  gap: 1px; background: var(--line);
+  border: 1.5px solid var(--line); border-radius: 18px;
+  overflow: hidden;
+}
+.card {
+  background: var(--canvas); padding: 38px 34px;
+  display: flex; flex-direction: column; gap: 18px;
+  position: relative;
+  transition: background .2s;
+}
+.card:hover { background: var(--mv-bg); }
+
+/* Arrow */
+.card::after {
+  content: '→';
+  position: absolute; top: 34px; right: 34px;
+  font-size: 22px; color: var(--line-2);
+  transition: color .2s, right .2s;
+}
+.card:hover::after { color: var(--mv); right: 28px; }
+
+.card-num { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.card-icon {
+  width: 50px; height: 50px; border-radius: 13px;
+  background: var(--mv-bg); border: 1.5px solid var(--mv-bdr);
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.card-title { font-size: 17px; font-weight: 800; letter-spacing: -.025em; color: var(--ink); }
+.card-desc { font-size: 14px; color: var(--muted); line-height: 1.65; flex: 1; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PILLARS — 01 / 02 / 03
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#pillars { padding: 96px 0; }
+
+.pillar {
+  display: grid; grid-template-columns: 140px 1fr 360px;
+  gap: 0; align-items: start;
+  padding: 60px 0;
+  border-bottom: 1px solid var(--line);
+}
+.pillar:first-child { border-top: 1px solid var(--line); }
+
+/* Big ghost number */
+.pillar-n {
+  font-size: 90px; font-weight: 900; letter-spacing: -.08em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--mv-bdr);
+}
+
+.pillar-body { padding-right: 56px; }
+.pillar-title { font-size: 22px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); margin-bottom: 14px; }
+.pillar-desc { font-size: 14px; color: var(--muted); line-height: 1.8; }
+
+.pillar-kpis {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  padding-left: 48px; border-left: 1px solid var(--line);
+}
+.kpi-n { font-size: 38px; font-weight: 900; letter-spacing: -.05em; color: var(--ink); line-height: 1; margin-bottom: 7px; }
+.kpi-n em { color: var(--mv); font-style: normal; }
+.kpi-l { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PORTALS — 3 role cards
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#portals {
+  background: var(--surface);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 96px 0;
+}
+.portals-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: var(--line);
+  border: 1.5px solid var(--line); border-radius: 18px;
+  overflow: hidden; margin-top: 56px;
+}
+.portal {
+  background: var(--canvas); padding: 38px 32px;
+  display: flex; flex-direction: column; gap: 22px;
+  transition: background .2s;
+}
+.portal:hover { background: var(--mv-bg); }
+
+.portal-av {
+  width: 46px; height: 46px; border-radius: 13px;
+  background: var(--mv-bg); border: 1.5px solid var(--mv-bdr);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 900; color: var(--mv);
+}
+.portal-role { font-size: 18px; font-weight: 800; letter-spacing: -.025em; color: var(--ink); }
+.portal-list { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.portal-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; color: var(--muted); line-height: 1.5;
+}
+.chk {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid var(--mv-bdr); flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+}
+.chk::after { content: '✓'; font-size: 9px; color: var(--mv); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PROCESS — 4 steps
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#process { padding: 96px 0; }
+.process-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: var(--line);
+  border: 1.5px solid var(--line); border-radius: 18px;
+  overflow: hidden; margin-top: 56px;
+}
+.step {
+  background: var(--canvas); padding: 38px 28px;
+  display: flex; flex-direction: column; gap: 18px;
+  transition: background .2s;
+}
+.step:hover { background: var(--mv-bg); }
+.step-n { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mv); }
+.step-ico { font-size: 30px; }
+.step-title { font-size: 15px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); line-height: 1.3; }
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   INFO & HOURS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#info {
+  background: var(--surface);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 96px 0;
+}
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.info-body { font-size: 15px; color: var(--muted); line-height: 1.8; margin: 16px 0 32px; }
+.contacts { display: flex; flex-direction: column; gap: 14px; }
+.c-item { display: flex; align-items: flex-start; gap: 14px; font-size: 14px; color: var(--ink-2); }
+.c-ic {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--mv-bg); border: 1px solid var(--mv-bdr);
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+
+.hours-box {
+  border: 1.5px solid var(--line); border-radius: 16px;
+  overflow: hidden; background: var(--canvas);
+  margin-top: 16px;
+}
+.h-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 17px 24px; border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.h-row:last-child { border-bottom: none; }
+.h-day { font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 10px; }
+.h-time { color: var(--muted); }
+.h-closed { color: #EF4444; font-weight: 700; }
+.hours-note { margin-top: 12px; font-size: 12px; color: var(--faint); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CTA — dark section
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#cta {
+  background: var(--night);
+  padding: 120px 40px;
+  position: relative; overflow: hidden;
+}
+#cta::before {
+  content: '';
+  position: absolute; top: -100px; right: -60px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(139,92,246,.2) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cta-body { position: relative; z-index: 1; text-align: center; max-width: 620px; margin: 0 auto; }
+.cta-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--mv-l); margin-bottom: 22px;
+}
+.cta-tag::before { content: ''; width: 22px; height: 2.5px; background: var(--mv-l); border-radius: 2px; }
+.cta-h2 {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 900; letter-spacing: -.045em; line-height: 1.07;
+  color: #fff; margin-bottom: 18px;
+}
+.cta-sub { font-size: 16px; color: rgba(255,255,255,.5); line-height: 1.75; margin-bottom: 44px; }
+.cta-btns { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.btn-white { background: #fff; color: var(--ink); }
+.btn-white:hover { background: var(--mv-bg); color: var(--mv); }
+.btn-ghost-w { border: 1.5px solid rgba(255,255,255,.2); color: rgba(255,255,255,.7); background: transparent; }
+.btn-ghost-w:hover { border-color: rgba(255,255,255,.5); color: #fff; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FOOTER — dark, multi-column
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#footer {
+  background: var(--night-2);
+  border-top: 1px solid rgba(255,255,255,.05);
+  padding: 64px 0 32px;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 220px repeat(3,1fr);
+  gap: 48px; margin-bottom: 52px;
+}
+.f-brand { display: flex; flex-direction: column; gap: 16px; }
+.f-logo { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 900; color: #fff; letter-spacing: -.03em; }
+.f-logo-mark { width: 34px; height: 34px; border-radius: 9px; background: var(--mv); display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.f-tagline { font-size: 13px; color: rgba(255,255,255,.35); line-height: 1.65; }
+.f-col-h { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: 20px; }
+.f-links { display: flex; flex-direction: column; gap: 12px; }
+.f-link { font-size: 14px; color: rgba(255,255,255,.5); transition: color .15s; }
+.f-link:hover { color: var(--mv-l); }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 28px; border-top: 1px solid rgba(255,255,255,.05);
+  font-size: 12.5px; color: rgba(255,255,255,.25);
+}
+.footer-cta {
+  padding: 10px 22px; border-radius: 8px;
+  font-size: 13px; font-weight: 700;
+  background: var(--mv); color: #fff;
+  transition: background .18s;
+}
+.footer-cta:hover { background: var(--mv-h); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 1000px) {
+  .formations-head { grid-template-columns: 1fr; }
+  .pillar { grid-template-columns: 100px 1fr; }
+  .pillar-kpis { grid-column: 2; border-left: none; padding-left: 0; padding-top: 24px; border-top: 1px solid var(--line); }
+  .portals-grid, .process-grid { grid-template-columns: 1fr; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .info-grid { grid-template-columns: 1fr; gap: 48px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat { border-right: none; border-bottom: 1.5px solid var(--line); }
+  .stat:last-child { border-bottom: none; }
+}
+@media (max-width: 600px) {
+  .wrap { padding: 0 20px; }
+  #hero { padding: 72px 20px 80px; }
+  .hero-ctas { flex-direction: column; align-items: flex-start; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .process-grid { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+}
+
+/* Maquette badge */
+#badge {
+  position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+  padding: 7px 14px; border-radius: 100px;
+  background: var(--night); border: 1.5px solid rgba(139,92,246,.4);
+  font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mv-l);
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ PAGE WIPE ══════════ -->
+<div id="wipe"></div>
+<div id="badge">Maquette</div>
+
+<!-- ══════════════════════════════════════════════════
+     NAV
+══════════════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="wrap nav-row">
+    <a href="#" class="logo">
+      <div class="logo-mark">🎓</div>
+      EduDrive
+    </a>
+    <nav class="nav-links">
+      <a href="#formations" class="nav-a">Nos formations</a>
+      <a href="#portals" class="nav-a">Espaces</a>
+      <a href="#info" class="nav-a">Le centre</a>
+    </nav>
+    <a href="#" class="btn btn-mv">Accéder à mon espace</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     HERO  (left-aligned, like mister-ia)
+══════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-tag" id="hero-tag">
+        <span class="hero-dot"></span>
+        Centre de formation certifié · Casablanca, Maroc
+      </div>
+      <h1 class="hero-h1" id="hero-h1">
+        <span class="line"><span class="word">Académie de formation</span></span>
+        <span class="line"><span class="word accent">professionnelle</span></span>
+        <span class="line"><span class="word">à Casablanca</span></span>
+      </h1>
+      <p class="hero-sub" id="hero-sub">
+        L'Académie EduDrive vous accompagne dans votre montée en compétences
+        grâce à des programmes certifiés, des formateurs experts et une plateforme
+        conçue pour votre réussite.
+      </p>
+      <div class="hero-ctas" id="hero-ctas">
+        <a href="#" class="btn btn-mv">Accéder à mon espace →</a>
+        <a href="#formations" class="btn btn-line">Découvrir les formations</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     TRUST
+══════════════════════════════════════════════════ -->
+<div id="trust">
+  <div class="wrap">
+    <div class="trust-label">Ils nous font confiance</div>
+    <div class="trust-logos">
+      <div class="trust-item">TechCorp</div>
+      <div class="trust-item">InnoGroup</div>
+      <div class="trust-item">DataCo</div>
+      <div class="trust-item">DigitAlgeria</div>
+      <div class="trust-item">StartupMA</div>
+      <div class="trust-item">NexaHub</div>
+      <div class="trust-item">CodeFactory</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     STATS
+══════════════════════════════════════════════════ -->
+<div id="stats">
+  <div class="wrap">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-num"><span id="n1">0</span><em>+</em></div>
+        <div class="stat-desc">Formations actives</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span id="n2">0</span><em>+</em></div>
+        <div class="stat-desc">Étudiants formés</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span id="n3">0</span><em>%</em></div>
+        <div class="stat-desc">Taux de réussite</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule"/>
+
+<!-- ══════════════════════════════════════════════════
+     FORMATIONS
+══════════════════════════════════════════════════ -->
+<section id="formations">
+  <div class="wrap">
+    <div class="formations-head">
+      <div>
+        <div class="tag">Catalogue</div>
+        <h2 class="h2">Nos domaines<br>de formation</h2>
+      </div>
+      <div class="formations-head-right">
+        <p class="lead">Des programmes conçus pour répondre aux exigences du marché de l'emploi actuel et aux besoins concrets des entreprises partenaires.</p>
+        <a href="#" class="arrow-link">Voir toutes les formations</a>
+      </div>
+    </div>
+
+    <div class="cards-grid" id="cards">
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="card-icon">💻</div>
+        <div class="card-title">Développement Web & Mobile</div>
+        <div class="card-desc">Maîtrisez HTML, CSS, JavaScript, React et Node.js. Devenez développeur fullstack opérationnel en moins de 6 mois.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="card-icon">📊</div>
+        <div class="card-title">Data Science & Intelligence Artificielle</div>
+        <div class="card-desc">Python, Machine Learning, Deep Learning. Exploitez la puissance des données pour créer des solutions à fort impact.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="card-icon">📈</div>
+        <div class="card-title">Business & Management</div>
+        <div class="card-desc">Gestion de projet, marketing digital, stratégie d'entreprise. Développez vos compétences managériales.</div>
+      </div>
+      <div class="card">
+        <div class="card-num">04</div>
+        <div class="card-icon">🎨</div>
+        <div class="card-title">Design UX/UI</div>
+        <div class="card-desc">Figma, design systems, prototypage interactif. Concevez des expériences utilisateur mémorables et accessibles.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<!-- ══════════════════════════════════════════════════
+     PILLARS  01 / 02 / 03
+══════════════════════════════════════════════════ -->
+<section id="pillars">
+  <div class="wrap">
+    <div class="tag">Pourquoi nous choisir</div>
+    <h2 class="h2">La seule académie avec double<br>expertise Conseil & Formation</h2>
+
+    <div id="pillar-list">
+
+      <div class="pillar">
+        <div class="pillar-n">01</div>
+        <div class="pillar-body">
+          <div class="pillar-title">Formateurs experts du secteur</div>
+          <div class="pillar-desc">Nos formateurs sont des professionnels actifs, certifiés et reconnus. Ils apportent une expertise terrain unique et des cas concrets directement applicables en entreprise.</div>
+        </div>
+        <div class="pillar-kpis">
+          <div>
+            <div class="kpi-n"><span class="kn">0</span><em>+</em></div>
+            <div class="kpi-l">formateurs certifiés</div>
+          </div>
+          <div>
+            <div class="kpi-n"><span class="kn">0</span><em>/10</em></div>
+            <div class="kpi-l">note moyenne</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pillar">
+        <div class="pillar-n">02</div>
+        <div class="pillar-body">
+          <div class="pillar-title">Programmes certifiés & reconnus</div>
+          <div class="pillar-desc">Tous nos programmes sont certifiés et reconnus par les organismes officiels. Nos certifications ouvrent des portes sur le marché de l'emploi national et international.</div>
+        </div>
+        <div class="pillar-kpis">
+          <div>
+            <div class="kpi-n"><span class="kn">0</span><em>+</em></div>
+            <div class="kpi-l">certifications délivrées</div>
+          </div>
+          <div>
+            <div class="kpi-n"><span class="kn">0</span><em>+</em></div>
+            <div class="kpi-l">partenaires entreprises</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pillar">
+        <div class="pillar-n">03</div>
+        <div class="pillar-body">
+          <div class="pillar-title">Résultats concrets & mesurables</div>
+          <div class="pillar-desc">Nous suivons chaque apprenant tout au long de son parcours. 94 % de nos étudiants trouvent un emploi dans les 6 mois suivant leur certification.</div>
+        </div>
+        <div class="pillar-kpis">
+          <div>
+            <div class="kpi-n"><span class="kn">0</span><em>%</em></div>
+            <div class="kpi-l">taux de réussite</div>
+          </div>
+          <div>
+            <div class="kpi-n"><span class="kn">0</span><em> mois</em></div>
+            <div class="kpi-l">délai moyen d'insertion</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<!-- ══════════════════════════════════════════════════
+     PORTALS
+══════════════════════════════════════════════════ -->
+<section id="portals">
+  <div class="wrap">
+    <div class="tag">Accès personnalisé</div>
+    <h2 class="h2">Votre espace personnel</h2>
+    <p class="lead">Chaque rôle dispose d'un tableau de bord adapté à ses besoins et responsabilités.</p>
+
+    <div class="portals-grid" id="portals-grid">
+      <div class="portal">
+        <div class="portal-av">É</div>
+        <div class="portal-role">Étudiant</div>
+        <ul class="portal-list">
+          <li class="portal-item"><div class="chk"></div>S'inscrire aux formations</li>
+          <li class="portal-item"><div class="chk"></div>Suivre sa progression</li>
+          <li class="portal-item"><div class="chk"></div>Consulter son planning</li>
+          <li class="portal-item"><div class="chk"></div>Accéder aux ressources</li>
+        </ul>
+        <a href="#" class="arrow-link">Accéder à mon espace</a>
+      </div>
+      <div class="portal">
+        <div class="portal-av">F</div>
+        <div class="portal-role">Formateur</div>
+        <ul class="portal-list">
+          <li class="portal-item"><div class="chk"></div>Gérer ses formations</li>
+          <li class="portal-item"><div class="chk"></div>Marquer les présences</li>
+          <li class="portal-item"><div class="chk"></div>Suivre les étudiants</li>
+          <li class="portal-item"><div class="chk"></div>Partager des ressources</li>
+        </ul>
+        <a href="#" class="arrow-link">Accéder à mon espace</a>
+      </div>
+      <div class="portal">
+        <div class="portal-av">A</div>
+        <div class="portal-role">Administrateur</div>
+        <ul class="portal-list">
+          <li class="portal-item"><div class="chk"></div>Gérer formations & salles</li>
+          <li class="portal-item"><div class="chk"></div>Gérer les formateurs</li>
+          <li class="portal-item"><div class="chk"></div>Superviser les inscriptions</li>
+          <li class="portal-item"><div class="chk"></div>Rapports & statistiques</li>
+        </ul>
+        <a href="#" class="arrow-link">Accéder à mon espace</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<!-- ══════════════════════════════════════════════════
+     PROCESS
+══════════════════════════════════════════════════ -->
+<section id="process">
+  <div class="wrap">
+    <div style="max-width:520px">
+      <div class="tag">Notre méthode</div>
+      <h2 class="h2">Comment rejoindre<br>l'académie ?</h2>
+      <p class="lead">Un parcours simple et accompagné, de l'inscription à l'obtention de votre certification.</p>
+    </div>
+    <div class="process-grid" id="steps">
+      <div class="step">
+        <div class="step-n">Étape 01</div>
+        <div class="step-ico">🔍</div>
+        <div class="step-title">Diagnostic de vos besoins</div>
+        <div class="step-desc">Échangez avec notre équipe pour identifier la formation la mieux adaptée à votre profil et vos objectifs.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">Étape 02</div>
+        <div class="step-ico">📋</div>
+        <div class="step-title">Inscription & validation</div>
+        <div class="step-desc">Complétez votre dossier en ligne. Notre équipe valide votre candidature sous 48h et vous guide dans les démarches.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">Étape 03</div>
+        <div class="step-ico">🎓</div>
+        <div class="step-title">Formation & suivi</div>
+        <div class="step-desc">Démarrez votre parcours avec nos formateurs experts. Suivez votre progression en temps réel sur votre espace personnel.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">Étape 04</div>
+        <div class="step-ico">🏆</div>
+        <div class="step-title">Certification & insertion</div>
+        <div class="step-desc">Obtenez votre certification reconnue. Notre réseau de partenaires vous ouvre les portes du marché de l'emploi.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<!-- ══════════════════════════════════════════════════
+     INFO & HOURS
+══════════════════════════════════════════════════ -->
+<section id="info">
+  <div class="wrap">
+    <div class="info-grid" id="info-grid">
+      <div>
+        <div class="tag">Le centre</div>
+        <h2 class="h2" style="font-size:clamp(22px,2.5vw,30px)">À propos de l'Académie EduDrive</h2>
+        <p class="info-body">L'Académie EduDrive est un centre de formation professionnelle certifié basé à Casablanca. Nous accompagnons les apprenants dans leur montée en compétences grâce à des programmes structurés et des formateurs expérimentés.</p>
+        <div class="contacts">
+          <div class="c-item"><div class="c-ic">📍</div><span>45 Avenue de la Formation, Casablanca 20250, Maroc</span></div>
+          <div class="c-item"><div class="c-ic">📞</div><span>+212 522 456 789</span></div>
+          <div class="c-item"><div class="c-ic">✉️</div><span>contact@edudrive.ma</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="tag">Horaires</div>
+        <h2 class="h2" style="font-size:clamp(22px,2.5vw,30px)">Horaires d'ouverture</h2>
+        <div class="hours-box">
+          <div class="h-row"><div class="h-day">🕘 Lun – Ven</div><div class="h-time">08h30 – 19h00</div></div>
+          <div class="h-row"><div class="h-day">🕘 Samedi</div><div class="h-time">09h00 – 13h00</div></div>
+          <div class="h-row"><div class="h-day">🔴 Dimanche</div><div class="h-closed">Fermé</div></div>
+        </div>
+        <p class="hours-note">* Horaires susceptibles de varier pendant les vacances scolaires.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     CTA
+══════════════════════════════════════════════════ -->
+<section id="cta">
+  <div class="cta-body" id="cta-body">
+    <div class="cta-tag">Prêt à commencer ?</div>
+    <h2 class="cta-h2">Accédez à votre espace<br>dès maintenant</h2>
+    <p class="cta-sub">Connectez-vous pour consulter vos formations, suivre votre progression et accéder à toutes vos ressources pédagogiques.</p>
+    <div class="cta-btns">
+      <a href="#" class="btn btn-white">Se connecter →</a>
+      <a href="#" class="btn btn-ghost-w">Créer un compte étudiant</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer id="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <div class="f-logo"><div class="f-logo-mark">🎓</div>EduDrive</div>
+        <p class="f-tagline">Centre de formation professionnelle certifié. Casablanca, Maroc.</p>
+      </div>
+      <div>
+        <div class="f-col-h">Formations</div>
+        <div class="f-links">
+          <a href="#" class="f-link">Développement Web</a>
+          <a href="#" class="f-link">Data Science & IA</a>
+          <a href="#" class="f-link">Business & Management</a>
+          <a href="#" class="f-link">Design UX/UI</a>
+        </div>
+      </div>
+      <div>
+        <div class="f-col-h">Espaces</div>
+        <div class="f-links">
+          <a href="#" class="f-link">Espace Étudiant</a>
+          <a href="#" class="f-link">Espace Formateur</a>
+          <a href="#" class="f-link">Espace Admin</a>
+          <a href="#" class="f-link">Catalogue complet</a>
+        </div>
+      </div>
+      <div>
+        <div class="f-col-h">Le centre</div>
+        <div class="f-links">
+          <a href="#" class="f-link">À propos</a>
+          <a href="#" class="f-link">Nos formateurs</a>
+          <a href="#" class="f-link">Certifications</a>
+          <a href="#" class="f-link">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Académie EduDrive. Tous droits réservés.</span>
+      <a href="#" class="footer-cta">Accéder à mon espace</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════
+     GSAP — proper timeline + ScrollTrigger patterns
+══════════════════════════════════════════════════ -->
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ─── 1. PAGE ENTRY — gsap.timeline() with defaults ──────────
+   Curtain wipe out, then hero elements sequence in.
+   Position parameter "<" keeps each tween overlapping with
+   the previous for a smooth cinematic feel.
+─────────────────────────────────────────────────────────── */
+const entry = gsap.timeline({
+  defaults: { ease: 'power3.out', duration: 0.65 }
+});
+
+entry
+  // Mauve curtain slides right to reveal page
+  .to('#wipe', { scaleX: 0, duration: 1, ease: 'expo.inOut', transformOrigin: 'right' })
+  .set('#wipe', { display: 'none' })
+
+  // Nav drops in
+  .from('#nav', { y: -60, opacity: 0 }, '-=0.15')
+
+  // Hero eyebrow badge
+  .from('#hero-tag', { y: 20, opacity: 0, duration: 0.5 }, '-=0.2')
+
+  // Headline — word by word (position "<0.1" = 0.1s after each prev starts)
+  .from('.hero-h1 .word', {
+    y: 80, opacity: 0,
+    stagger: 0.12,
+    duration: 0.7
+  }, '-=0.3')
+
+  // Subtitle slides up
+  .from('#hero-sub', { y: 22, opacity: 0, duration: 0.55 }, '<0.3')
+
+  // CTAs fade in
+  .from('#hero-ctas > *', {
+    y: 14, opacity: 0,
+    stagger: 0.1,
+    duration: 0.45
+  }, '<0.2');
+
+
+/* ─── 2. TRUST ITEMS ─────────────────────────────────────────
+   Use ScrollTrigger.batch() for staggered group reveal.
+   ScrollTrigger is on the top-level batch (not child tweens).
+─────────────────────────────────────────────────────────── */
+ScrollTrigger.batch('.trust-item', {
+  start: 'top 88%',
+  once: true,
+  onEnter(els) {
+    gsap.from(els, {
+      opacity: 0, y: 16, stagger: 0.07,
+      duration: 0.5, ease: 'power2.out'
+    });
+  }
+});
+
+
+/* ─── 3. STATS — ScrollTrigger on top-level timeline ─────────
+   Counter animation + fade-in on one timeline.
+─────────────────────────────────────────────────────────── */
+const statsTl = gsap.timeline({
+  scrollTrigger: {
+    trigger: '#stats',
+    start: 'top 82%',
+    once: true
+  },
+  defaults: { ease: 'power2.out', duration: 0.6 }
+});
+
+statsTl.from('.stat', { opacity: 0, y: 30, stagger: 0.15 });
+
+// Counters (driven by their own tweens, not nested in timeline)
+[['n1', 24], ['n2', 850], ['n3', 94]].forEach(([id, end]) => {
+  gsap.to({ v: 0 }, {
+    v: end, duration: 1.8, ease: 'power2.out',
+    scrollTrigger: { trigger: '#stats', start: 'top 82%', once: true },
+    onUpdate() {
+      document.getElementById(id).textContent = Math.floor(this.targets()[0].v);
+    }
+  });
+});
+
+
+/* ─── 4. FORMATION CARDS — ScrollTrigger.batch() ────────────
+   Batches cards that enter viewport together, staggers them.
+─────────────────────────────────────────────────────────── */
+ScrollTrigger.batch('.card', {
+  start: 'top 84%',
+  once: true,
+  interval: 0.08,
+  onEnter(els) {
+    gsap.from(els, {
+      opacity: 0, y: 32, stagger: 0.1,
+      duration: 0.65, ease: 'power3.out'
+    });
+  }
+});
+
+
+/* ─── 5. PILLARS — ScrollTrigger on top-level tween ─────────
+   Each pillar row slides up when it enters the viewport.
+   refreshPriority set in page order (top=0, bottom=2).
+─────────────────────────────────────────────────────────── */
+document.querySelectorAll('.pillar').forEach((el, i) => {
+  gsap.from(el, {
+    opacity: 0, y: 36,
+    duration: 0.7, ease: 'power3.out',
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 82%',
+      once: true,
+      refreshPriority: -i   // page order: first pillar refreshed first
+    }
+  });
+});
+
+/* Pillar KPI counters */
+const kpiValues = [28, 9.5, 3200, 80, 94, 6];
+document.querySelectorAll('.kn').forEach((el, i) => {
+  const end = kpiValues[i];
+  gsap.to({ v: 0 }, {
+    v: end, duration: 1.8, ease: 'power2.out',
+    scrollTrigger: { trigger: '#pillar-list', start: 'top 75%', once: true },
+    onUpdate() {
+      el.textContent = end % 1 !== 0
+        ? this.targets()[0].v.toFixed(1)
+        : Math.floor(this.targets()[0].v);
+    }
+  });
+});
+
+
+/* ─── 6. PORTALS — ScrollTrigger.batch() ────────────────────*/
+ScrollTrigger.batch('.portal', {
+  start: 'top 84%',
+  once: true,
+  interval: 0.12,
+  onEnter(els) {
+    gsap.from(els, {
+      opacity: 0, y: 40, stagger: 0.14,
+      duration: 0.7, ease: 'power3.out'
+    });
+  }
+});
+
+
+/* ─── 7. PROCESS STEPS — ScrollTrigger.batch() ──────────────*/
+ScrollTrigger.batch('.step', {
+  start: 'top 84%',
+  once: true,
+  interval: 0.08,
+  onEnter(els) {
+    gsap.from(els, {
+      opacity: 0, y: 28, stagger: 0.1,
+      duration: 0.6, ease: 'power3.out'
+    });
+  }
+});
+
+
+/* ─── 8. INFO GRID — slide in from sides ────────────────────
+   ScrollTrigger on a top-level timeline.
+─────────────────────────────────────────────────────────── */
+const infoTl = gsap.timeline({
+  scrollTrigger: { trigger: '#info-grid', start: 'top 80%', once: true },
+  defaults: { duration: 0.7, ease: 'power3.out' }
+});
+infoTl
+  .from('#info-grid > div:first-child', { opacity: 0, x: -40 })
+  .from('#info-grid > div:last-child',  { opacity: 0, x:  40 }, '<0.1');
+
+
+/* ─── 9. CTA BLOCK ───────────────────────────────────────────
+   Single top-level tween with ScrollTrigger.
+─────────────────────────────────────────────────────────── */
+gsap.from('#cta-body', {
+  opacity: 0, y: 50, scale: 0.97,
+  duration: 0.8, ease: 'power3.out',
+  scrollTrigger: { trigger: '#cta-body', start: 'top 80%', once: true }
+});
+
+
+/* ─── 10. SECTION HEADINGS — lightweight batch ───────────────*/
+ScrollTrigger.batch('.h2', {
+  start: 'top 88%',
+  once: true,
+  onEnter(els) {
+    gsap.from(els, { opacity: 0, y: 24, stagger: 0.05, duration: 0.55, ease: 'power2.out' });
+  }
+});
+
+
+/* ─── 11. FOOTER LINKS ───────────────────────────────────────*/
+gsap.from('#footer .f-links .f-link', {
+  opacity: 0, y: 16, stagger: 0.04,
+  duration: 0.5, ease: 'power2.out',
+  scrollTrigger: { trigger: '#footer', start: 'top 88%', once: true }
+});
+
+
+/* ─── MICRO-INTERACTIONS — primary buttons ───────────────────
+   Scale on hover/leave via GSAP for GPU-composited smoothness.
+─────────────────────────────────────────────────────────── */
+document.querySelectorAll('.btn-mv, .footer-cta').forEach(el => {
+  el.addEventListener('mouseenter', () => gsap.to(el, { scale: 1.04, duration: 0.18, ease: 'power1.out' }));
+  el.addEventListener('mouseleave', () => gsap.to(el, { scale: 1.00, duration: 0.18, ease: 'power1.out' }));
+});
+</script>
+</body>
+</html>

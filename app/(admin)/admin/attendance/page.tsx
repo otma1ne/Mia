@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { db } from '@/lib/db'
 import AdminAttendanceClient from './_components/admin-attendance-client'
 import { addDays } from 'date-fns'
 
 export const metadata: Metadata = {
-  title: 'Présences — EduDrive',
+  title: 'Présences — MIA Formation',
 }
 
 export default async function AdminAttendancePage({

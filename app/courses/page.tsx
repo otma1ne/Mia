@@ -1,13 +1,14 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
-import { GraduationCap } from 'lucide-react'
+import Image from 'next/image'
+import logoSrc from '@/public/logo.png'
 import { db } from '@/lib/db'
 import type { FormationType } from '@prisma/client'
 import CoursesCatalog from './_components/courses-catalog'
 
 export const metadata: Metadata = {
-  title: 'Formations — EduDrive',
-  description: 'Découvrez toutes les formations disponibles à l\'Académie EduDrive.',
+  title: 'Formations — MIA Formation',
+  description: 'Découvrez toutes les formations disponibles à l\'Académie MIA Formation.',
 }
 
 const VALID_TYPES: FormationType[] = ['PRESENTIAL', 'REMOTE_LIVE', 'REMOTE_ASYNC']
@@ -79,10 +80,10 @@ export default async function CoursesPage({
       <header className="sticky top-0 z-40 border-b bg-white/90 backdrop-blur-sm px-6">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-semibold text-sm">
-            <div className="w-7 h-7 bg-[#1e2128] rounded-md flex items-center justify-center shrink-0">
-              <GraduationCap className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md bg-white border flex items-center justify-center shrink-0">
+              <Image src={logoSrc} alt="MIA Formation" width={20} height={20} className="object-contain" />
             </div>
-            EduDrive
+            MIA Formation
           </Link>
           <div className="flex items-center gap-2">
             <Link
@@ -93,7 +94,7 @@ export default async function CoursesPage({
             </Link>
             <Link
               href="/login"
-              className="rounded-lg bg-[#1e2128] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:opacity-90"
             >
               Accéder à mon espace
             </Link>
@@ -128,17 +129,17 @@ export default async function CoursesPage({
       <footer className="border-t bg-white px-6 py-8">
         <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 font-semibold text-sm text-zinc-900">
-            <div className="w-6 h-6 bg-[#1e2128] rounded flex items-center justify-center shrink-0">
-              <GraduationCap className="w-3.5 h-3.5 text-white" />
+            <div className="w-6 h-6 rounded bg-white border flex items-center justify-center shrink-0">
+              <Image src={logoSrc} alt="MIA Formation" width={16} height={16} className="object-contain" />
             </div>
-            EduDrive
+            MIA Formation
           </Link>
           <div className="flex items-center gap-4 text-xs text-zinc-400">
-            <span>contact@edudrive.ma</span>
+            <span>contact@miaformation.ma</span>
             <span>·</span>
             <span>+212 522 456 789</span>
             <span>·</span>
-            <span>© {new Date().getFullYear()} Académie EduDrive</span>
+            <span>© {new Date().getFullYear()} Académie MIA Formation</span>
           </div>
         </div>
       </footer>

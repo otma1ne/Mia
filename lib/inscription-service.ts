@@ -1,4 +1,4 @@
-// Plain service module — no 'use server', safe to import from both
+﻿// Plain service module — no 'use server', safe to import from both
 // route handlers and server actions.
 
 import bcrypt from 'bcryptjs'
@@ -17,7 +17,7 @@ export async function uploadToCloudinary(buffer: Buffer, publicId: string): Prom
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:        'edudrive/signed-docs',
+        folder:        'MIA Formation/signed-docs',
         resource_type: 'raw',
         format:        'pdf',
         public_id:     publicId,

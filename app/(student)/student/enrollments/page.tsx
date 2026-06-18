@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { getStudentEnrollments } from '@/app/actions/student-dashboard'
 import StudentEnrollmentsClient from './_components/student-enrollments-client'
 import type { EnrollmentStatus } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Mes inscriptions — EduDrive' }
+export const metadata: Metadata = { title: 'Mes inscriptions — MIA Formation' }
 
 const VALID_STATUSES: EnrollmentStatus[] = ['ACTIVE', 'COMPLETED', 'DROPPED', 'SUSPENDED']
 

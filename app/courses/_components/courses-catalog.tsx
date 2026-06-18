@@ -222,7 +222,7 @@ export default function CoursesCatalog({ data, search: initialSearch, activeType
                       'inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition-colors',
                       isFull
                         ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed pointer-events-none'
-                        : 'bg-[#1e2128] text-white hover:bg-zinc-700'
+                        : 'bg-primary text-primary-foreground hover:opacity-90'
                     )}
                   >
                     {isFull ? 'Formation complète' : "S'inscrire"}

@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { requireAuth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import InscriptionForm from './_components/inscription-form'
 
-export const metadata: Metadata = { title: "Demande d'inscription — EduDrive" }
+export const metadata: Metadata = { title: "Demande d'inscription — MIA Formation" }
 
 export default async function StudentInscriptionPage({
   searchParams,

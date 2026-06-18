@@ -1,4 +1,4 @@
-'use server'
+﻿'use server'
 
 import { db } from '@/lib/db'
 import { auth } from '@/auth'
@@ -65,7 +65,7 @@ export async function submitBilan(
     try {
       pdfUrl = await uploadToCloudinary(
         pdfBuffer,
-        `edudrive/bilans/${bilan.type.toLowerCase()}-${bilan.id}`
+        `MIA Formation/bilans/${bilan.type.toLowerCase()}-${bilan.id}`
       )
     } catch (err) {
       console.error('[submitBilan] Cloudinary upload error:', err)

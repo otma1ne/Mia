@@ -1,4 +1,4 @@
-import {
+﻿import {
   PrismaClient,
   UserRole,
   FormationStatus,
@@ -38,10 +38,10 @@ await prisma.trainerAvailability.deleteMany()
   // ─────────────────────────────────────────
   const center = await prisma.center.create({
     data: {
-      name: 'Auto-École EduDrive',
+      name: 'Auto-École MIA Formation',
       address: '45 Avenue de la Liberté, Casablanca 20250, Maroc',
       phone: '+212 522 456 789',
-      email: 'contact@edudrive.ma',
+      email: 'contact@miaformation.ma',
       description: 'Auto-école agréée proposant des formations au permis de conduire.',
       operatingHours: {
         create: [

@@ -1,11 +1,11 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { getCenter } from '@/app/actions/center'
 import CenterInfoForm from './_components/center-info-form'
 import OperatingHoursForm from './_components/operating-hours-form'
 import RoomsManager from './_components/rooms-manager'
 import CenterLegalForm from './_components/center-legal-form'
 
-export const metadata: Metadata = { title: 'Centre — EduDrive' }
+export const metadata: Metadata = { title: 'Centre — MIA Formation' }
 
 export default async function CenterPage() {
   const center = await getCenter()

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -80,7 +80,7 @@ export default function HelpContent() {
       <div>
         <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Aide et support</h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          Trouvez des réponses aux questions fréquentes et apprenez à utiliser EduDrive.
+          Trouvez des réponses aux questions fréquentes et apprenez à utiliser MIA Formation.
         </p>
       </div>
 
@@ -131,8 +131,8 @@ export default function HelpContent() {
         <div className="grid gap-4 sm:grid-cols-2">
           <Card>
             <CardContent className="flex items-start gap-4 p-5">
-              <div className="w-9 h-9 rounded-xl bg-[#1e2128] flex items-center justify-center shrink-0">
-                <Mail className="h-4 w-4 text-white" />
+              <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0">
+                <Mail className="h-4 w-4 text-primary-foreground" />
               </div>
               <div>
                 <p className="text-sm font-semibold text-zinc-900">Support par e-mail</p>
@@ -140,10 +140,10 @@ export default function HelpContent() {
                   Envoyez-nous un message et nous vous répondrons dans les 24 heures.
                 </p>
                 <a
-                  href="mailto:support@edudrive.ma"
+                  href="mailto:support@miaformation.ma"
                   className="mt-2 inline-block text-xs font-medium text-zinc-900 underline underline-offset-2 hover:text-zinc-600"
                 >
-                  support@edudrive.ma
+                  support@miaformation.ma
                 </a>
               </div>
             </CardContent>
@@ -156,7 +156,7 @@ export default function HelpContent() {
               <div>
                 <p className="text-sm font-semibold text-zinc-900">Documentation</p>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                  Guides détaillés et références pour chaque fonctionnalité d&apos;EduDrive.
+                  Guides détaillés et références pour chaque fonctionnalité d&apos;MIA Formation.
                 </p>
                 <span className="mt-2 inline-block text-xs text-muted-foreground">
                   Bientôt disponible

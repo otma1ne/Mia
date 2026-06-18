@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { cloudinary } from '@/lib/cloudinary'
 import { checkRateLimit, getClientIp, RATE_LIMIT_CONFIG } from '@/lib/rate-limit'
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const url = await new Promise<string>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: 'edudrive/cvs',
+          folder: 'MIA Formation/cvs',
           resource_type: 'raw',
           format: 'pdf',
         },

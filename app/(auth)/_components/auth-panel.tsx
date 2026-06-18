@@ -1,4 +1,6 @@
-import { Check } from 'lucide-react'
+﻿import { Check } from 'lucide-react'
+import Image from 'next/image'
+import logoSrc from '@/public/logo.png'
 
 const features = [
   'Accédez aux formations permis (B, A, C, BE)',
@@ -22,11 +24,8 @@ export default function AuthPanel() {
       <div className="relative z-10 flex flex-col justify-center h-full px-12 py-16 gap-10">
 
         {/* Icon */}
-        <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422A12.083 12.083 0 0121 13c0 6.075-3.582 9-9 9s-9-2.925-9-9c0-.906.16-1.783.84-2.578L12 14z" />
-          </svg>
+        <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
+          <Image src={logoSrc} alt="MIA Formation" width={32} height={32} className="object-contain" />
         </div>
 
         {/* Headline */}
@@ -35,7 +34,7 @@ export default function AuthPanel() {
             Votre permis de conduire<br />en toute confiance
           </h2>
           <p className="text-white/70 text-base leading-relaxed max-w-xs">
-            Rejoignez EduDrive, l&apos;auto-école moderne qui vous accompagne à chaque étape de votre formation permis.
+            Rejoignez MIA Formation, l&apos;auto-école moderne qui vous accompagne à chaque étape de votre formation permis.
           </p>
         </div>
 
@@ -54,7 +53,7 @@ export default function AuthPanel() {
         {/* Testimonial */}
         <div className="bg-white/10 border border-white/15 rounded-2xl p-5">
           <p className="text-white/90 text-sm leading-relaxed">
-            &ldquo;Grâce à EduDrive, j&apos;ai réussi mon permis au premier coup ! Les cours en ligne, le suivi avec mon moniteur et la gestion du planning tout en un seul endroit, c&apos;est vraiment efficace.&rdquo;
+            &ldquo;Grâce à MIA Formation, j&apos;ai réussi mon permis au premier coup ! Les cours en ligne, le suivi avec mon moniteur et la gestion du planning tout en un seul endroit, c&apos;est vraiment efficace.&rdquo;
           </p>
           <div className="flex items-center gap-3 mt-4">
             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-semibold text-xs shrink-0">
