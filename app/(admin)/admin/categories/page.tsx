@@ -1,8 +1,8 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { getCategories } from '@/app/actions/categories'
 import CategoriesClient from './_components/categories-client'
 
-export const metadata: Metadata = { title: 'Catégories — EduDrive' }
+export const metadata: Metadata = { title: 'Catégories — MIA Formation' }
 
 export default async function CategoriesPage() {
   const categories = await getCategories()

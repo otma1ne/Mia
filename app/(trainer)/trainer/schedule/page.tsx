@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { startOfWeek, endOfWeek } from 'date-fns'
 import { getTrainerSessions } from '@/app/actions/trainer-dashboard'
 import TrainerScheduleClient from './_components/trainer-schedule-client'
 
-export const metadata: Metadata = { title: 'Planning — EduDrive' }
+export const metadata: Metadata = { title: 'Planning — MIA Formation' }
 
 export default async function TrainerSchedulePage({
   searchParams,

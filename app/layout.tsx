@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Outfit } from 'next/font/google'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Analytics } from "@vercel/analytics/next"
@@ -11,8 +11,8 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
-  title: 'EduDrive',
-  description: 'Auto-école EduDrive — Formation permis de conduire et gestion de centre.',
+  title: 'MIA Formation',
+  description: 'Auto-école MIA Formation — Formation permis de conduire et gestion de centre.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

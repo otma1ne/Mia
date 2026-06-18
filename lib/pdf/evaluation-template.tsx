@@ -1,4 +1,4 @@
-import {
+﻿import {
   Document,
   Page,
   Text,
@@ -174,7 +174,7 @@ export default function EvaluationPDF({
         <View style={styles.header}>
           <View style={styles.headerLogo} />
           <View>
-            <Text style={styles.headerTitle}>EduDrive</Text>
+            <Text style={styles.headerTitle}>MIA Formation</Text>
             <Text style={styles.headerSubtitle}>Évaluation de Besoins</Text>
           </View>
         </View>
@@ -226,7 +226,7 @@ export default function EvaluationPDF({
 
         {/* Footer */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>EduDrive — Document confidentiel</Text>
+          <Text style={styles.footerText}>MIA Formation — Document confidentiel</Text>
           <Text style={styles.footerText}>Soumis le {dateStr}</Text>
         </View>
 

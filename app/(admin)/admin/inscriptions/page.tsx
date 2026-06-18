@@ -1,8 +1,8 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { getInscriptions } from '@/app/actions/inscriptions'
 import InscriptionsClient from './_components/inscriptions-client'
 
-export const metadata: Metadata = { title: 'Inscriptions — EduDrive' }
+export const metadata: Metadata = { title: 'Inscriptions — MIA Formation' }
 
 export default async function InscriptionsPage() {
   const inscriptions = await getInscriptions()

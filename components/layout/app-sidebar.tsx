@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { logout } from '@/app/actions/auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -22,6 +22,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Settings, HelpCircle, LogOut, User, MoreVertical } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
+import logoSrc from '@/public/logo.png'
 import SidebarNav from './sidebar-nav'
 import type { UserRole } from '@prisma/client'
 import { usePathname, useRouter } from 'next/navigation'
@@ -68,13 +70,10 @@ export default function AppSidebar({ user }: AppSidebarProps) {
         {/* Logo */}
         <div className="flex h-14 items-center gap-2.5 px-4 border-b">
           <Link href="/" className="flex items-center gap-2.5 font-semibold text-sm">
-            <div className="w-7 h-7 bg-[#1e2128] rounded-md flex items-center justify-center shrink-0">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422A12.083 12.083 0 0121 13c0 6.075-3.582 9-9 9s-9-2.925-9-9c0-.906.16-1.783.84-2.578L12 14z" />
-              </svg>
+            <div className="w-7 h-7 rounded-md bg-white border flex items-center justify-center shrink-0">
+              <Image src={logoSrc} alt="MIA Formation" width={20} height={20} className="object-contain" />
             </div>
-            EduDrive
+            MIA Formation
           </Link>
         </div>
 

@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { getProfile } from '@/app/actions/profile'
 import { redirect } from 'next/navigation'
 import ProfileForm from './_components/profile-form'
 import PasswordForm from './_components/password-form'
 
-export const metadata: Metadata = { title: 'Paramètres — EduDrive' }
+export const metadata: Metadata = { title: 'Paramètres — MIA Formation' }
 
 export default async function SettingsPage() {
   const user = await getProfile()

@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
 import { cloudinary } from '@/lib/cloudinary'
 import ContratPDF    from './contrat-template'
@@ -17,7 +17,7 @@ async function uploadPdf(buffer: Buffer, publicId: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:        'edudrive/signing-docs',
+        folder:        'MIA Formation/signing-docs',
         resource_type: 'raw',
         format:        'pdf',
         public_id:     publicId,

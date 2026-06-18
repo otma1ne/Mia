@@ -1,11 +1,11 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { requireAuth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { ExternalLink, FileText } from 'lucide-react'
 
-export const metadata: Metadata = { title: 'Mes documents — EduDrive' }
+export const metadata: Metadata = { title: 'Mes documents — MIA Formation' }
 
 export default async function DocumentsPage() {
   const session = await requireAuth()

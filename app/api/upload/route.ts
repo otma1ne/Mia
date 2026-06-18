@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { cloudinary } from '@/lib/cloudinary'
 import { checkRateLimit, getClientIp, RATE_LIMIT_CONFIG } from '@/lib/rate-limit'
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
           .upload_stream(
             {
               resource_type: resourceType,
-              folder: 'edudrive/materials',
+              folder: 'MIA Formation/materials',
               use_filename: true,
               unique_filename: true,
             },

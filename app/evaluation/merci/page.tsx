@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { CheckCircle2 } from 'lucide-react'
 
 export default function MerciPage() {
@@ -7,7 +7,7 @@ export default function MerciPage() {
       <CheckCircle2 className="h-16 w-16 text-green-500 mb-6" />
       <h1 className="text-2xl font-bold mb-2">Merci pour votre évaluation !</h1>
       <p className="text-muted-foreground max-w-sm">
-        L&apos;équipe <strong>EduDrive</strong> va examiner votre dossier et vous contactera
+        L&apos;équipe <strong>MIA Formation</strong> va examiner votre dossier et vous contactera
         prochainement pour vous informer de la suite de votre candidature.
       </p>
       <Link

@@ -1,8 +1,10 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
+import logoSrc from '@/public/logo.png'
 import { useRouter } from 'next/navigation'
-import { GraduationCap, ArrowLeft, Home, Lock } from 'lucide-react'
+import { ArrowLeft, Home, Lock, GraduationCap } from 'lucide-react'
 
 export default function Unauthorized() {
   const router = useRouter()
@@ -13,14 +15,14 @@ export default function Unauthorized() {
       <header className="border-b px-6">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-semibold text-sm">
-            <div className="w-7 h-7 bg-[#1e2128] rounded-md flex items-center justify-center shrink-0">
-              <GraduationCap className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md bg-white border flex items-center justify-center shrink-0">
+              <Image src={logoSrc} alt="MIA Formation" width={20} height={20} className="object-contain" />
             </div>
-            EduDrive
+            MIA Formation
           </Link>
           <Link
             href="/login"
-            className="rounded-lg bg-[#1e2128] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700"
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:opacity-90"
           >
             Accéder à mon espace
           </Link>
@@ -55,7 +57,7 @@ export default function Unauthorized() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/admin/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#1e2128] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
             >
               <Home className="h-4 w-4" />
               Tableau de bord
@@ -86,7 +88,7 @@ export default function Unauthorized() {
       <footer className="border-t px-6 py-6">
         <div className="mx-auto max-w-6xl flex items-center justify-center">
           <p className="text-xs text-zinc-400">
-            © {new Date().getFullYear()} Académie EduDrive · contact@edudrive.ma
+            © {new Date().getFullYear()} Académie MIA Formation · contact@miaformation.ma
           </p>
         </div>
       </footer>

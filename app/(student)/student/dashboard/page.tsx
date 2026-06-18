@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { BookOpen, CheckCircle, CalendarDays } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import type { EnrollmentStatus } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Dashboard — EduDrive' }
+export const metadata: Metadata = { title: 'Dashboard — MIA Formation' }
 
 const enrollmentStatusConfig: Record<EnrollmentStatus, { label: string; className: string }> = {
   ACTIVE:    { label: 'Actif',     className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },

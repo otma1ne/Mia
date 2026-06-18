@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { getStudentBrowsableFormations } from '@/app/actions/student-dashboard'
 import StudentCoursesClient from './_components/student-courses-client'
 import type { FormationType } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Formations — EduDrive' }
+export const metadata: Metadata = { title: 'Formations — MIA Formation' }
 
 const VALID_TYPES: FormationType[] = ['PRESENTIAL', 'REMOTE_LIVE', 'REMOTE_ASYNC']
 

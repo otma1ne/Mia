@@ -29,7 +29,7 @@ export default function BilansThankYouPage() {
         {/* CTA */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-xl bg-[#1e2128] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
         >
           Retour à l&apos;accueil
         </Link>

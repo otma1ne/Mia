@@ -1,10 +1,12 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
+import logoSrc from '@/public/logo.png'
 import AuthPanel from '../_components/auth-panel'
 import LoginForm from './_components/login-form'
 
 export const metadata: Metadata = {
-  title: 'Connexion — EduDrive',
+  title: 'Connexion — MIA Formation',
 }
 
 export default function LoginPage() {
@@ -16,13 +18,10 @@ export default function LoginPage() {
           {/* Logo + title grouped */}
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2 w-fit">
-              <div className="w-8 h-8 bg-[#1e2128] rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422A12.083 12.083 0 0121 13c0 6.075-3.582 9-9 9s-9-2.925-9-9c0-.906.16-1.783.84-2.578L12 14z" />
-                </svg>
+              <div className="w-8 h-8 rounded-lg bg-white border flex items-center justify-center">
+                <Image src={logoSrc} alt="MIA Formation" width={22} height={22} className="object-contain" />
               </div>
-              <span className="font-bold text-lg tracking-tight">EduDrive</span>
+              <span className="font-bold text-lg tracking-tight">MIA Formation</span>
             </Link>
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Bon retour</h1>
@@ -33,7 +32,7 @@ export default function LoginPage() {
           <LoginForm />
 
           <p className="text-xs text-muted-foreground text-center">
-            &copy; {new Date().getFullYear()} EduDrive. Tous droits réservés.
+            &copy; {new Date().getFullYear()} MIA Formation. Tous droits réservés.
           </p>
         </div>
       </div>

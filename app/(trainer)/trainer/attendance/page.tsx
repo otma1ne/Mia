@@ -1,11 +1,11 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import {
   getTrainerSessionOptions,
   getTrainerSessionsForAttendance,
 } from '@/app/actions/trainer-dashboard'
 import AttendanceClient from './_components/attendance-client'
 
-export const metadata: Metadata = { title: 'Présences — EduDrive' }
+export const metadata: Metadata = { title: 'Présences — MIA Formation' }
 
 export default async function AttendancePage({
   searchParams,

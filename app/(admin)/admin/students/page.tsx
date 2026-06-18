@@ -1,8 +1,8 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { getStudents } from '@/app/actions/students'
 import StudentsClient from './_components/students-client'
 
-export const metadata: Metadata = { title: 'Étudiants — EduDrive' }
+export const metadata: Metadata = { title: 'Étudiants — MIA Formation' }
 
 interface PageProps {
   searchParams: Promise<{ page?: string; search?: string }>
