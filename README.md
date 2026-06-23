@@ -17,7 +17,7 @@ A full-stack management platform for driving schools, built with Next.js 16 App 
 
 ### Modules
 
-- **Inscriptions** — Application workflow with admin evaluation, PDF generation, and multi-document e-signature via YouSign
+- **Inscriptions** — Application workflow with admin evaluation, PDF generation, and an in-house canvas-based e-signature flow
 - **Formations** — Training programs with theory, practical, and assessment modules; sequential module unlocking
 - **Exams** — QCM, true/false, and open-ended questions; auto-grading + manual grading for open questions
 - **Attendance** — Per-session tracking (present / absent / late / excused) with percentage calculation
@@ -41,7 +41,7 @@ A full-stack management platform for driving schools, built with Next.js 16 App 
 | File storage | Cloudinary |
 | PDF generation | React PDF Renderer |
 | Email | Nodemailer (SMTP) |
-| E-signature | YouSign API |
+| E-signature | In-house (react-signature-canvas + @react-pdf/renderer) |
 | Deployment | Vercel |
 
 ---
@@ -54,7 +54,6 @@ A full-stack management platform for driving schools, built with Next.js 16 App 
 - MongoDB instance (Atlas or local)
 - Cloudinary account
 - SMTP credentials (e.g. Gmail App Password)
-- YouSign account (for e-signature features)
 
 ### Installation
 
@@ -122,11 +121,6 @@ SMTP_FROM="EduDrive <noreply@yourdomain.com>"
 CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
-
-# YouSign (e-signature)
-YOUSIGN_API_KEY=your-api-key
-YOUSIGN_ENV=sandbox
-YOUSIGN_WEBHOOK_SECRET=your-webhook-secret
 
 # Cron jobs (protects /api/cron/* endpoints)
 CRON_SECRET=<random-secret>
