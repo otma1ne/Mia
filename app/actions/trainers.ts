@@ -5,6 +5,7 @@ import { hashPassword } from '@/lib/auth'
 import { generatePassword } from '@/lib/generate-password'
 import { sendTrainerWelcomeEmail } from '@/lib/email'
 import { revalidatePath } from 'next/cache'
+import type { ExpertiseLevel } from '@prisma/client'
 
 export interface TrainerRow {
   id: string          // Trainer.id
@@ -20,6 +21,8 @@ export interface TrainerRow {
   courseCount: number
   createdAt: Date
 }
+
+const VALID_EXPERTISE_LEVELS: ExpertiseLevel[] = ['DEBUTANT', 'INTERMEDIAIRE', 'AVANCE', 'EXPERT']
 
 export interface TrainersResult {
   trainers: TrainerRow[]
@@ -90,6 +93,17 @@ export async function getTrainers({
 }
 
 // ─────────────────────────────────────────
+// Categories for the "type de formation" multiselect
+// ─────────────────────────────────────────
+
+export async function getTrainerFormCategories() {
+  return db.category.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
+  })
+}
+
+// ─────────────────────────────────────────
 // Get a single trainer with full details
 // ─────────────────────────────────────────
 
@@ -98,6 +112,7 @@ export async function getTrainer(id: string) {
     where: { id },
     include: {
       user: { select: { name: true, email: true, phone: true, avatar: true, createdAt: true } },
+      categories: { select: { id: true, name: true } },
       availability: { orderBy: { dayOfWeek: 'asc' } },
       modules: {
         orderBy: { createdAt: 'desc' },
@@ -117,7 +132,8 @@ export async function getTrainer(id: string) {
 // ─────────────────────────────────────────
 
 export async function createTrainer(_prevState: unknown, formData: FormData) {
-  const name            = (formData.get('name')            as string)?.trim()
+  const firstName       = (formData.get('firstName')       as string)?.trim()
+  const lastName        = (formData.get('lastName')        as string)?.trim()
   const email           = (formData.get('email')           as string)?.trim()
   const phone           = (formData.get('phone')           as string)?.trim() || null
   const bio             = (formData.get('bio')             as string)?.trim() || ''
@@ -125,19 +141,32 @@ export async function createTrainer(_prevState: unknown, formData: FormData) {
     ?.split(',').map(s => s.trim()).filter(Boolean) ?? []
   const credentials     = (formData.get('credentials')     as string)
     ?.split(',').map(s => s.trim()).filter(Boolean) ?? []
+  const categoryIds     = formData.getAll('categoryIds') as string[]
+  const expertiseLevels = (formData.getAll('expertiseLevels') as string[])
+    .filter((l): l is ExpertiseLevel => VALID_EXPERTISE_LEVELS.includes(l as ExpertiseLevel))
+  const cvUrl             = (formData.get('cvUrl')             as string)?.trim()
+  const diplomeUrl        = (formData.get('diplomeUrl')        as string)?.trim()
+  const certifQualiopiUrl = (formData.get('certifQualiopiUrl') as string)?.trim() || null
+  const ndaUrl            = (formData.get('ndaUrl')            as string)?.trim() || null
 
-  if (!name || !email) {
-    return { error: 'Name and email are required.' }
+  const name = `${firstName} ${lastName}`.trim()
+
+  if (!firstName || !lastName || !email) {
+    return { error: 'Le prénom, le nom et l\'email sont obligatoires.' }
+  }
+
+  if (!cvUrl || !diplomeUrl) {
+    return { error: 'Le CV et le diplôme sont obligatoires.' }
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {
-    return { error: 'Invalid email address.' }
+    return { error: 'Adresse e-mail invalide.' }
   }
 
   const existing = await db.user.findUnique({ where: { email } })
   if (existing) {
-    return { error: 'A user with this email already exists.' }
+    return { error: 'Un utilisateur avec cet e-mail existe déjà.' }
   }
 
   const tempPassword = generatePassword()
@@ -151,7 +180,11 @@ export async function createTrainer(_prevState: unknown, formData: FormData) {
       password: hashed,
       role: 'TRAINER',
       trainer: {
-        create: { bio, specializations, credentials },
+        create: {
+          bio, specializations, credentials,
+          categoryIds, expertiseLevels,
+          cvUrl, diplomeUrl, certifQualiopiUrl, ndaUrl,
+        },
       },
     },
   })
