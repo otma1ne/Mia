@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import { Document, Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer'
 
 // ─────────────────────────────────────────
 // Styles
@@ -133,6 +133,17 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginTop: 8,
   },
+  signatureImage: {
+    width: 140,
+    height: 50,
+    objectFit: 'contain',
+    marginTop: 4,
+  },
+  signatureDate: {
+    fontSize: 8,
+    color: '#6b7280',
+    marginTop: 4,
+  },
   footer: {
     position: 'absolute',
     bottom: 32,
@@ -174,6 +185,7 @@ export interface ContratPDFProps {
   centerEmail: string
   // Meta
   generatedAt: Date
+  signature?: { dataUrl: string; signedAt: Date }
 }
 
 function fmt(d: Date) {
@@ -189,7 +201,7 @@ export default function ContratPDF({
   formationTitle, formationType, formationDuration, formationPrice,
   startDate, endDate,
   centerName, centerAddress, centerPhone, centerEmail,
-  generatedAt,
+  generatedAt, signature,
 }: ContratPDFProps) {
   return (
     <Document>
@@ -276,7 +288,14 @@ export default function ContratPDF({
           </View>
           <View style={styles.signatureBox}>
             <Text style={styles.signatureLabel}>Le / La stagiaire</Text>
-            <Text style={styles.signaturePlaceholder}>Signature précédée de la mention « Lu et approuvé »</Text>
+            {signature ? (
+              <>
+                <Image src={signature.dataUrl} style={styles.signatureImage} />
+                <Text style={styles.signatureDate}>Lu et approuvé — signé le {fmt(signature.signedAt)}</Text>
+              </>
+            ) : (
+              <Text style={styles.signaturePlaceholder}>Signature précédée de la mention « Lu et approuvé »</Text>
+            )}
           </View>
         </View>
 

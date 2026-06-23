@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import { Document, Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer'
 
 const styles = StyleSheet.create({
   page: {
@@ -86,6 +86,38 @@ const styles = StyleSheet.create({
     lineHeight: 1.7,
     whiteSpace: 'pre-wrap',
   },
+  signatureSection: {
+    marginTop: 24,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 4,
+    padding: 12,
+    minHeight: 80,
+    maxWidth: 220,
+  },
+  signatureLabel: {
+    fontSize: 9,
+    color: '#6b7280',
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  signaturePlaceholder: {
+    fontSize: 10,
+    color: '#9ca3af',
+    fontStyle: 'italic',
+    marginTop: 8,
+  },
+  signatureImage: {
+    width: 140,
+    height: 50,
+    objectFit: 'contain',
+    marginTop: 4,
+  },
+  signatureDate: {
+    fontSize: 8,
+    color: '#6b7280',
+    marginTop: 4,
+  },
   footer: {
     position: 'absolute',
     bottom: 32,
@@ -112,6 +144,7 @@ export interface ProgrammePDFProps {
   programme: string
   centerName: string
   generatedAt: Date
+  signature?: { dataUrl: string; signedAt: Date }
 }
 
 function fmt(d: Date) {
@@ -121,7 +154,7 @@ function fmt(d: Date) {
 export default function ProgrammePDF({
   formationTitle, formationType, formationDuration,
   startDate, endDate, programme,
-  centerName, generatedAt,
+  centerName, generatedAt, signature,
 }: ProgrammePDFProps) {
   return (
     <Document>
@@ -166,6 +199,19 @@ export default function ProgrammePDF({
         {/* Programme content */}
         <Text style={styles.sectionTitle}>Contenu du programme</Text>
         <Text style={styles.programmeContent}>{programme}</Text>
+
+        {/* Signature */}
+        <View style={styles.signatureSection}>
+          <Text style={styles.signatureLabel}>Le / La stagiaire</Text>
+          {signature ? (
+            <>
+              <Image src={signature.dataUrl} style={styles.signatureImage} />
+              <Text style={styles.signatureDate}>Lu et approuvé — signé le {fmt(signature.signedAt)}</Text>
+            </>
+          ) : (
+            <Text style={styles.signaturePlaceholder}>Signature précédée de la mention « Lu et approuvé »</Text>
+          )}
+        </View>
 
         {/* Footer */}
         <View style={styles.footer} fixed>
