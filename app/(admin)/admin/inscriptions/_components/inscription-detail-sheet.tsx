@@ -6,12 +6,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
-import { acceptInscription, declineInscription, confirmSignatureManually } from '@/app/actions/inscriptions'
+import { acceptInscription, declineInscription } from '@/app/actions/inscriptions'
 import type { Inscription, Formation } from '@prisma/client'
 import type { InscriptionStatus } from '@prisma/client'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { ExternalLink, CheckCircle, XCircle, AlertCircle, Loader2, PenLine, ShieldCheck } from 'lucide-react'
+import { ExternalLink, CheckCircle, XCircle, AlertCircle, Loader2, PenLine } from 'lucide-react'
 
 type InscriptionWithFormation = Inscription & {
   formation: Pick<Formation, 'id' | 'title'>
@@ -37,7 +37,6 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
   const [error, setError]                     = useState('')
   const [isAccepting, startAcceptTransition]    = useTransition()
   const [isDeclining, startDeclineTransition]   = useTransition()
-  const [isConfirming, startConfirmTransition]  = useTransition()
 
   const { label, className } = STATUS_MAP[inscription.status]
 
@@ -207,30 +206,10 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
                 <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5 text-sm text-blue-800">
                   <PenLine className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
-                    La demande de signature a été envoyée au candidat via YouSign.
+                    La demande de signature a été envoyée au candidat.
                     En attente de signature des documents contractuels (contrat, règlement intérieur, programme, CGV).
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full gap-2"
-                  disabled={isConfirming}
-                  onClick={() => {
-                    setError('')
-                    startConfirmTransition(async () => {
-                      const result = await confirmSignatureManually(inscription.id)
-                      if (result?.error) setError(result.error)
-                      else onOpenChange(false)
-                    })
-                  }}
-                >
-                  {isConfirming
-                    ? <Loader2 className="h-4 w-4 animate-spin" />
-                    : <ShieldCheck className="h-4 w-4" />
-                  }
-                  Confirmer la signature manuellement
-                </Button>
               </section>
             </>
           )}
