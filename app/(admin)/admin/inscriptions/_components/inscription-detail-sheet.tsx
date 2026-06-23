@@ -187,7 +187,7 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
           )}
 
           {/* Signature proof */}
-          {inscription.signatureDataUrl && (
+          {inscription.status === 'ACCEPTED' && inscription.signatureDataUrl && (
             <>
               <Separator />
               <section className="space-y-2">
