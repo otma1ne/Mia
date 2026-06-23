@@ -427,6 +427,14 @@ model Inscription {
   adminNote        String?
   evaluationData   Json?             // raw answers stored as JSON
   evaluationPdfUrl      String?           // Cloudinary URL of generated PDF
+  // Unsigned documents — generated at acceptance, shown to candidate for review before signing
+  contratUrl            String?
+  reglementUrl          String?
+  cgvUrl                String?
+  programmeUrl          String?
+  // Signature proof
+  signatureDataUrl      String?           // base64 PNG of the drawn signature
+  signedIp              String?           // candidate IP at time of signature
   yousignRequestId      String?           // YouSign signature_request ID (set when PENDING_SIGNATURE)
   // YouSign document IDs — saved at PENDING_SIGNATURE, used to download signed versions
   yousignContratDocId   String?
@@ -442,8 +450,9 @@ model Inscription {
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
 
-  formation Formation        @relation(fields: [formationId], references: [id])
-  evalToken EvaluationToken?
+  formation      Formation        @relation(fields: [formationId], references: [id])
+  evalToken      EvaluationToken?
+  signatureToken SignatureToken?
 }
 
 model EvaluationToken {
@@ -453,6 +462,17 @@ model EvaluationToken {
   expiresAt     DateTime
   usedAt        DateTime?
   createdAt     DateTime    @default(now())
+
+  inscription Inscription @relation(fields: [inscriptionId], references: [id], onDelete: Cascade)
+}
+
+model SignatureToken {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  inscriptionId String    @unique @db.ObjectId
+  token         String    @unique
+  expiresAt     DateTime
+  usedAt        DateTime?
+  createdAt     DateTime  @default(now())
 
   inscription Inscription @relation(fields: [inscriptionId], references: [id], onDelete: Cascade)
 }
