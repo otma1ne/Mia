@@ -1,4 +1,4 @@
-﻿// Plain service module — no 'use server', safe to import from both
+// Plain service module — no 'use server', safe to import from both
 // route handlers and server actions.
 
 import bcrypt from 'bcryptjs'
@@ -6,7 +6,6 @@ import { db } from '@/lib/db'
 import { cloudinary } from '@/lib/cloudinary'
 import { sendAcceptanceEmail, sendEnrollmentConfirmationEmail } from '@/lib/email'
 import { generatePassword } from '@/lib/generate-password'
-import { downloadSignedDocument } from '@/lib/yousign'
 import { revalidatePath } from 'next/cache'
 
 // ─────────────────────────────────────────
@@ -17,7 +16,7 @@ export async function uploadToCloudinary(buffer: Buffer, publicId: string): Prom
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:        'MIA Formation/signed-docs',
+        folder:        'mia-formation/signed-docs',
         resource_type: 'raw',
         format:        'pdf',
         public_id:     publicId,
@@ -33,51 +32,15 @@ export async function uploadToCloudinary(buffer: Buffer, publicId: string): Prom
 }
 
 // ─────────────────────────────────────────
-// Download signed PDFs from YouSign and store in Cloudinary
-// Returns null if the inscription is missing doc IDs (e.g. manually confirmed)
-// ─────────────────────────────────────────
-
-async function downloadAndStoreSignedDocs(inscription: {
-  id: string
-  yousignRequestId:      string | null
-  yousignContratDocId:   string | null
-  yousignReglementDocId: string | null
-  yousignCgvDocId:       string | null
-}): Promise<{ contrat: string; reglement: string; cgv: string } | null> {
-  const {
-    id,
-    yousignRequestId,
-    yousignContratDocId,
-    yousignReglementDocId,
-    yousignCgvDocId,
-  } = inscription
-
-  if (!yousignRequestId || !yousignContratDocId || !yousignReglementDocId || !yousignCgvDocId) {
-    console.warn('[downloadAndStoreSignedDocs] Missing YouSign IDs for inscription:', id)
-    return null
-  }
-
-  const docs = [
-    { key: 'contrat',   docId: yousignContratDocId   },
-    { key: 'reglement', docId: yousignReglementDocId  },
-    { key: 'cgv',       docId: yousignCgvDocId        },
-  ] as const
-
-  const urls: Record<string, string> = {}
-
-  await Promise.all(docs.map(async ({ key, docId }) => {
-    const buffer = await downloadSignedDocument(yousignRequestId, docId)
-    urls[key] = await uploadToCloudinary(buffer, `${id}-signed-${key}`)
-  }))
-
-  return urls as { contrat: string; reglement: string; cgv: string }
-}
-
-// ─────────────────────────────────────────
 // Main: process completed signature
+// signedUrls are the already-generated, already-uploaded signed PDFs
+// (produced by generateSigningDocuments with a `signature` prop)
 // ─────────────────────────────────────────
 
-export async function processSignatureComplete(inscriptionId: string): Promise<void> {
+export async function processSignatureComplete(
+  inscriptionId: string,
+  signedUrls: { contrat: string; reglement: string; cgv: string; programme: string }
+): Promise<void> {
   const inscription = await db.inscription.findUnique({
     where: { id: inscriptionId },
     include: { formation: { select: { title: true } } },
@@ -98,7 +61,6 @@ export async function processSignatureComplete(inscriptionId: string): Promise<v
 
   if (existingUser) {
     // Existing student — enroll in the new formation (no account creation needed)
-    // Check for duplicate enrollment
     const existingEnrollment = await db.formationEnrollment.findFirst({
       where: { userId: existingUser.id, formationId: inscription.formationId },
     })
@@ -111,12 +73,10 @@ export async function processSignatureComplete(inscriptionId: string): Promise<v
     }
 
     await db.$transaction(async (tx) => {
-      // Create formation enrollment
       const formationEnrollment = await tx.formationEnrollment.create({
         data: { userId: existingUser.id, formationId: inscription.formationId, status: 'ACTIVE' },
       })
 
-      // Get all modules for this formation and create module enrollments
       const modules = await tx.module.findMany({
         where: { formationId: inscription.formationId },
       })
@@ -134,29 +94,18 @@ export async function processSignatureComplete(inscriptionId: string): Promise<v
 
       await tx.inscription.update({
         where: { id: inscriptionId },
-        data:  { status: 'ACCEPTED' },
+        data: {
+          status:             'ACCEPTED',
+          signedContratUrl:   signedUrls.contrat,
+          signedReglementUrl: signedUrls.reglement,
+          signedCgvUrl:       signedUrls.cgv,
+          signedProgrammeUrl: signedUrls.programme,
+          signedAt:           new Date(),
+        },
       })
     })
 
     revalidatePath('/admin/inscriptions')
-
-    // Download signed PDFs (non-fatal)
-    try {
-      const signedUrls = await downloadAndStoreSignedDocs(inscription)
-      if (signedUrls) {
-        await db.inscription.update({
-          where: { id: inscriptionId },
-          data: {
-            signedContratUrl:   signedUrls.contrat,
-            signedReglementUrl: signedUrls.reglement,
-            signedCgvUrl:       signedUrls.cgv,
-            signedAt:           new Date(),
-          },
-        })
-      }
-    } catch (err) {
-      console.error('[processSignatureComplete] Failed to download/store signed docs (existing user):', err)
-    }
 
     // Send enrollment confirmation email (non-fatal)
     try {
@@ -187,12 +136,10 @@ export async function processSignatureComplete(inscriptionId: string): Promise<v
       },
     })
 
-    // Create formation enrollment
     const formationEnrollment = await tx.formationEnrollment.create({
       data: { userId: user.id, formationId: inscription.formationId, status: 'ACTIVE' },
     })
 
-    // Get all modules for this formation and create module enrollments
     const modules = await tx.module.findMany({
       where: { formationId: inscription.formationId },
     })
@@ -210,30 +157,18 @@ export async function processSignatureComplete(inscriptionId: string): Promise<v
 
     await tx.inscription.update({
       where: { id: inscriptionId },
-      data:  { status: 'ACCEPTED' },
+      data: {
+        status:             'ACCEPTED',
+        signedContratUrl:   signedUrls.contrat,
+        signedReglementUrl: signedUrls.reglement,
+        signedCgvUrl:       signedUrls.cgv,
+        signedProgrammeUrl: signedUrls.programme,
+        signedAt:           new Date(),
+      },
     })
   })
 
   revalidatePath('/admin/inscriptions')
-
-  // Download signed PDFs from YouSign and store in Cloudinary (non-fatal)
-  try {
-    const signedUrls = await downloadAndStoreSignedDocs(inscription)
-    if (signedUrls) {
-      await db.inscription.update({
-        where: { id: inscriptionId },
-        data: {
-          signedContratUrl:   signedUrls.contrat,
-          signedReglementUrl: signedUrls.reglement,
-          signedCgvUrl:       signedUrls.cgv,
-          signedAt:           new Date(),
-        },
-      })
-      console.log('[processSignatureComplete] Signed docs stored for:', inscriptionId)
-    }
-  } catch (err) {
-    console.error('[processSignatureComplete] Failed to download/store signed docs:', err)
-  }
 
   // Send welcome email with password (non-fatal)
   try {

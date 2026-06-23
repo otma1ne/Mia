@@ -161,8 +161,8 @@ model Center {
   email       String
   description String
   logo             String?
-  reglement        String?  // règlement intérieur (admin-authored, used in YouSign docs)
-  cgv              String?  // conditions générales de vente (admin-authored, used in YouSign docs)
+  reglement        String?  // règlement intérieur (admin-authored, used in signing docs)
+  cgv              String?  // conditions générales de vente (admin-authored, used in signing docs)
   enrollmentAlertDays Int      @default(7) // days before formation start to trigger alert
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -406,7 +406,7 @@ model Attendance {
 enum InscriptionStatus {
   PENDING           // form submitted, evaluation email sent
   EVALUATED         // student completed the evaluation form, PDF generated
-  PENDING_SIGNATURE // admin accepted, YouSign request created, awaiting student e-signature
+  PENDING_SIGNATURE // admin accepted, signature link sent, awaiting student e-signature
   ACCEPTED          // student signed all documents, account created
   DECLINED          // admin declined
 }
@@ -435,12 +435,6 @@ model Inscription {
   // Signature proof
   signatureDataUrl      String?           // base64 PNG of the drawn signature
   signedIp              String?           // candidate IP at time of signature
-  yousignRequestId      String?           // YouSign signature_request ID (set when PENDING_SIGNATURE)
-  // YouSign document IDs — saved at PENDING_SIGNATURE, used to download signed versions
-  yousignContratDocId   String?
-  yousignReglementDocId String?
-  yousignCgvDocId       String?
-  yousignProgrammeDocId String?
   // Signed PDFs — saved in Cloudinary after student signs (set when ACCEPTED)
   signedContratUrl      String?
   signedReglementUrl    String?

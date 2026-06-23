@@ -2,9 +2,8 @@
 
 import { db } from '@/lib/db'
 import { auth } from '@/auth'
-import { sendEvaluationEmail, sendDeclineEmail } from '@/lib/email'
+import { sendEvaluationEmail, sendDeclineEmail, sendSignatureRequestEmail } from '@/lib/email'
 import { processSignatureComplete } from '@/lib/inscription-service'
-import { createSignatureRequest, YouSignError } from '@/lib/yousign'
 import { generateSigningDocuments } from '@/lib/pdf/generate-documents'
 import { cloudinary } from '@/lib/cloudinary'
 import { EVALUATION_FIELDS, type EvaluationData } from '@/lib/evaluation-config'
@@ -12,6 +11,8 @@ import EvaluationPDF from '@/lib/pdf/evaluation-template'
 import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
+import { getClientIp } from '@/lib/rate-limit'
 import crypto from 'crypto'
 import React from 'react'
 
@@ -263,50 +264,40 @@ export async function acceptInscription(id: string): Promise<{ error?: string }>
   const center = await db.center.findFirst()
   if (!center) return { error: 'Les paramètres du centre sont introuvables. Veuillez configurer le centre.' }
 
-  // Generate the 4 signing documents (validates règlement/CGV/programme content)
-  let documentUrls: { contrat: string; reglement: string; cgv: string; programme: string }
+  // Generate the 4 unsigned documents (candidate will review them before signing)
+  let documentUrls: { contratUrl: string; reglementUrl: string; cgvUrl: string; programmeUrl: string }
   try {
-    const { contratUrl, reglementUrl, cgvUrl, programmeUrl } = await generateSigningDocuments({ inscription, center })
-    documentUrls = { contrat: contratUrl, reglement: reglementUrl, cgv: cgvUrl, programme: programmeUrl }
+    documentUrls = await generateSigningDocuments({ inscription, center })
   } catch (err) {
     if (err instanceof Error) return { error: err.message }
     return { error: 'Erreur lors de la génération des documents. Veuillez réessayer.' }
   }
 
-  // Create YouSign signature request — student will receive signing email
-  let yousignRequestId: string
-  let yousignDocumentIds: { contrat: string; reglement: string; cgv: string }
-  try {
-    const result = await createSignatureRequest(
-      {
-        firstName: inscription.firstName,
-        lastName:  inscription.lastName,
-        email:     inscription.email,
-      },
-      inscription.formation.title,
-      documentUrls
-    )
-    yousignRequestId  = result.requestId
-    yousignDocumentIds = result.documentIds
-  } catch (err) {
-    console.error('[acceptInscription] YouSign error:', err)
-    if (err instanceof YouSignError) {
-      return { error: `Erreur lors de la création de la demande de signature (étape: ${err.step}). Veuillez réessayer.` }
-    }
-    return { error: 'Erreur inattendue. Veuillez réessayer.' }
-  }
+  // Create signature token (valid 7 days) + persist unsigned document URLs
+  const token     = crypto.randomUUID()
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
-  // Update inscription: waiting for student e-signature + save doc IDs for later download
+  await db.signatureToken.create({
+    data: { inscriptionId: id, token, expiresAt },
+  })
+
   await db.inscription.update({
     where: { id },
     data: {
-      status:               'PENDING_SIGNATURE',
-      yousignRequestId,
-      yousignContratDocId:   yousignDocumentIds.contrat,
-      yousignReglementDocId: yousignDocumentIds.reglement,
-      yousignCgvDocId:       yousignDocumentIds.cgv,
+      status:       'PENDING_SIGNATURE',
+      contratUrl:   documentUrls.contratUrl,
+      reglementUrl: documentUrls.reglementUrl,
+      cgvUrl:       documentUrls.cgvUrl,
+      programmeUrl: documentUrls.programmeUrl,
     },
   })
+
+  // Send signing email (non-fatal)
+  try {
+    await sendSignatureRequestEmail(inscription.email, inscription.firstName, token)
+  } catch (err) {
+    console.error('[acceptInscription] Failed to send signature email:', err)
+  }
 
   revalidatePath('/admin/inscriptions')
   return {}
@@ -351,6 +342,69 @@ export async function declineInscription(
 }
 
 // ─────────────────────────────────────────
+// submitSignature
+// Public action — validated by token
+// ─────────────────────────────────────────
+
+export async function submitSignature(
+  token: string,
+  signatureDataUrl: string
+): Promise<{ error?: string }> {
+  const headersList = await headers()
+  const signedIp = getClientIp(headersList)
+
+  const sigToken = await db.signatureToken.findUnique({
+    where: { token },
+    include: {
+      inscription: { include: { formation: true } },
+    },
+  })
+
+  if (!sigToken)                        return { error: 'Lien invalide.' }
+  if (sigToken.usedAt)                  return { error: 'Ce lien a déjà été utilisé.' }
+  if (sigToken.expiresAt < new Date())  return { error: 'Ce lien a expiré.' }
+
+  const { inscription } = sigToken
+
+  const center = await db.center.findFirst()
+  if (!center) return { error: 'Les paramètres du centre sont introuvables.' }
+
+  const signedAt = new Date()
+
+  // Regenerate the 4 PDFs, this time with the signature embedded
+  let signedUrls: { contratUrl: string; reglementUrl: string; cgvUrl: string; programmeUrl: string }
+  try {
+    signedUrls = await generateSigningDocuments({
+      inscription,
+      center,
+      signature: { dataUrl: signatureDataUrl, signedAt },
+    })
+  } catch (err) {
+    if (err instanceof Error) return { error: err.message }
+    return { error: 'Erreur lors de la génération des documents signés. Veuillez réessayer.' }
+  }
+
+  await db.inscription.update({
+    where: { id: inscription.id },
+    data: { signatureDataUrl, signedIp },
+  })
+
+  await db.signatureToken.update({
+    where: { id: sigToken.id },
+    data:  { usedAt: new Date() },
+  })
+
+  await processSignatureComplete(inscription.id, {
+    contrat:   signedUrls.contratUrl,
+    reglement: signedUrls.reglementUrl,
+    cgv:       signedUrls.cgvUrl,
+    programme: signedUrls.programmeUrl,
+  })
+
+  redirect('/signature/merci')
+}
+
+// ─────────────────────────────────────────
 // getInscriptions — admin only (server query)
 // ─────────────────────────────────────────
 
@@ -362,23 +416,6 @@ export async function getInscriptions() {
     include: { formation: { select: { id: true, title: true } } },
     orderBy: { createdAt: 'desc' },
   })
-}
-
-// ─────────────────────────────────────────
-// confirmSignatureManually — admin only
-// For cases where the webhook fails to fire
-// ─────────────────────────────────────────
-
-export async function confirmSignatureManually(id: string): Promise<{ error?: string }> {
-  const session = await auth()
-  if (!session || session.user.role !== 'ADMIN') return { error: 'Non autorisé.' }
-
-  const inscription = await db.inscription.findUnique({ where: { id } })
-  if (!inscription) return { error: 'Demande introuvable.' }
-  if (inscription.status !== 'PENDING_SIGNATURE') return { error: 'Statut invalide pour cette action.' }
-
-  await processSignatureComplete(id)
-  return {}
 }
 
 export async function getPendingEvaluatedCount() {
