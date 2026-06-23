@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import type { ModuleStatus } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Dashboard — Auto-école' }
+export const metadata: Metadata = { title: 'Dashboard — MIA Formation' }
 
 const statusConfig: Record<ModuleStatus, { dot: string; label: string }> = {
   DRAFT:     { dot: 'bg-amber-400',        label: 'Brouillon' },

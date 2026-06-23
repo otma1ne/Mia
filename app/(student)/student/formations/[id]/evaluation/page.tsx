@@ -5,7 +5,7 @@ import { getFormationDetail } from '@/app/actions/student-dashboard'
 import { Card, CardContent } from '@/components/ui/card'
 import { ChevronLeft, ClipboardCheck, CheckCircle2 } from 'lucide-react'
 
-export const metadata: Metadata = { title: 'Évaluation finale — Auto-école' }
+export const metadata: Metadata = { title: 'Évaluation finale — MIA Formation' }
 
 interface Props {
   params: Promise<{ id: string }>

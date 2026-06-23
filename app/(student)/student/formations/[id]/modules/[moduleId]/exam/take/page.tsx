@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getExamForStudent } from '@/app/actions/exams'
 import ExamTaking from './_components/exam-taking'
 
-export const metadata: Metadata = { title: 'Examen en cours — Auto-école' }
+export const metadata: Metadata = { title: 'Examen en cours — MIA Formation' }
 
 interface Props {
   params: Promise<{ id: string; moduleId: string }>

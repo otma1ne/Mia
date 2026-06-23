@@ -14,7 +14,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, moduleId } = await params
   const module = await getStudentModuleDetail(id, moduleId)
-  return { title: module ? `${module.title} — Auto-école` : 'Module — Auto-école' }
+  return { title: module ? `${module.title} — MIA Formation` : 'Module — MIA Formation' }
 }
 
 export default async function StudentModulePage({ params }: Props) {
