@@ -68,6 +68,45 @@ export async function sendEvaluationEmail(
   })
 }
 
+export async function sendSignatureRequestEmail(
+  to: string,
+  firstName: string,
+  token: string
+) {
+  const link = `${APP_URL}/signature/${token}`
+
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: 'Documents à signer — MIA Formation',
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
+        ${emailHeader}
+        <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
+          <p style="font-size:16px;margin-top:0;">Bonjour <strong>${firstName}</strong>,</p>
+          <p style="color:#374151;">
+            Votre candidature a été acceptée. Pour finaliser votre inscription, merci de
+            consulter et signer électroniquement vos documents contractuels (contrat,
+            règlement intérieur, CGV, programme de formation).
+          </p>
+          <div style="text-align:center;margin:32px 0;">
+            <a href="${link}"
+               style="display:inline-block;background:#1e2128;color:#fff;text-decoration:none;
+                      padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;">
+              Consulter et signer mes documents
+            </a>
+          </div>
+          <p style="font-size:13px;color:#6b7280;">
+            ⚠️ Ce lien est valable pendant <strong>7 jours</strong>. Passé ce délai, contactez
+            notre équipe pour recevoir un nouveau lien.
+          </p>
+          ${emailFooter}
+        </div>
+      </div>
+    `,
+  })
+}
+
 export async function sendAcceptanceEmail(
   to: string,
   firstName: string,
