@@ -57,9 +57,10 @@ function formatDate(date: Date) {
 interface TrainersClientProps {
   data: TrainersResult
   search: string
+  categories: { id: string; name: string }[]
 }
 
-export default function TrainersClient({ data, search: initialSearch }: TrainersClientProps) {
+export default function TrainersClient({ data, search: initialSearch, categories }: TrainersClientProps) {
   const router   = useRouter()
   const pathname = usePathname()
   const params   = useSearchParams()
@@ -112,7 +113,7 @@ export default function TrainersClient({ data, search: initialSearch }: Trainers
             className="pl-8"
           />
         </div>
-        <CreateTrainerDialog />
+        <CreateTrainerDialog categories={categories} />
       </div>
 
       {/* Table card */}

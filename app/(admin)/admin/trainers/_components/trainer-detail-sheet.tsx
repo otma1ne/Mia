@@ -12,11 +12,18 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
-import { Mail, Phone, Calendar, BookOpen, Star, Award, Layers } from 'lucide-react'
+import { Mail, Phone, Calendar, BookOpen, Star, Award, Layers, GraduationCap, ExternalLink } from 'lucide-react'
 
 type Trainer = NonNullable<Awaited<ReturnType<typeof getTrainer>>>
 
 const DAY_NAMES = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+
+const EXPERTISE_LEVEL_LABELS: Record<string, string> = {
+  DEBUTANT:      'Débutant',
+  INTERMEDIAIRE: 'Intermédiaire',
+  AVANCE:        'Avancé',
+  EXPERT:        'Expert',
+}
 
 const courseStatusConfig = {
   DRAFT:     { label: 'Brouillon', className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
@@ -148,6 +155,79 @@ export default function TrainerDetailSheet({ trainerId, onClose }: TrainerDetail
                 </div>
               </>
             )}
+
+            {/* Type de formation */}
+            {trainer.categories.length > 0 && (
+              <>
+                <Separator />
+                <div className="p-6 flex flex-col gap-3">
+                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-2">
+                    <GraduationCap className="h-3.5 w-3.5" />
+                    Type de formation
+                  </h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {trainer.categories.map(c => (
+                      <Badge key={c.id} variant="secondary">{c.name}</Badge>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Niveau d'expertise */}
+            {trainer.expertiseLevels.length > 0 && (
+              <>
+                <Separator />
+                <div className="p-6 flex flex-col gap-3">
+                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    Niveau d&apos;expertise
+                  </h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {trainer.expertiseLevels.map(level => (
+                      <Badge key={level} variant="secondary">{EXPERTISE_LEVEL_LABELS[level] ?? level}</Badge>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Documents */}
+            <Separator />
+            <div className="p-6 flex flex-col gap-3">
+              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                Documents
+              </h3>
+              <ul className="flex flex-col gap-2">
+                <li>
+                  <a href={trainer.cvUrl} target="_blank" rel="noopener noreferrer"
+                     className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium">
+                    <ExternalLink className="h-4 w-4" />Voir le CV
+                  </a>
+                </li>
+                <li>
+                  <a href={trainer.diplomeUrl} target="_blank" rel="noopener noreferrer"
+                     className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium">
+                    <ExternalLink className="h-4 w-4" />Voir le diplôme
+                  </a>
+                </li>
+                {trainer.certifQualiopiUrl && (
+                  <li>
+                    <a href={trainer.certifQualiopiUrl} target="_blank" rel="noopener noreferrer"
+                       className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium">
+                      <ExternalLink className="h-4 w-4" />Certification Qualiopi
+                    </a>
+                  </li>
+                )}
+                {trainer.ndaUrl && (
+                  <li>
+                    <a href={trainer.ndaUrl} target="_blank" rel="noopener noreferrer"
+                       className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium">
+                      <ExternalLink className="h-4 w-4" />NDA
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </div>
 
             {/* Availability */}
             {trainer.availability.length > 0 && (

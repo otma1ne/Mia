@@ -107,6 +107,9 @@ await prisma.trainerAvailability.deleteMany()
       specializations: ['Permis B'],
       credentials: ['BEPECASER'],
       rating: 5,
+      expertiseLevels: ['EXPERT'],
+      cvUrl: 'https://example.com/seed-cv.pdf',
+      diplomeUrl: 'https://example.com/seed-diplome.pdf',
       availability: {
         create: [
           { dayOfWeek: 1, startTime: '08:00', endTime: '18:00' },
