@@ -13,8 +13,6 @@ export interface FormationRow {
   maxStudents: number
   enrollmentCount: number
   moduleCount: number
-  startDate: Date
-  endDate: Date
   createdAt: Date
 }
 
@@ -78,8 +76,6 @@ export async function getFormations({
       maxStudents: f.maxStudents,
       enrollmentCount: f._count.enrollments,
       moduleCount: f._count.modules,
-      startDate: f.startDate,
-      endDate: f.endDate,
       createdAt: f.createdAt,
     })),
     total,
@@ -135,20 +131,12 @@ export async function createFormation(_prevState: unknown, formData: FormData) {
   const categoryId  = (formData.get('categoryId')  as string)?.trim()
   const type        = (formData.get('type')        as FormationType)
   const maxStudents = Number(formData.get('maxStudents'))
-  const startDate   = formData.get('startDate') as string
-  const endDate     = formData.get('endDate')   as string
   const priceRaw    = formData.get('price')     as string
   const durationRaw = formData.get('duration')  as string
   const programme   = (formData.get('programme') as string)?.trim() || undefined
 
   if (!title || !description || !categoryId || !type) {
     return { error: 'Titre, description, catégorie et type sont requis.' }
-  }
-  if (!startDate || !endDate) {
-    return { error: 'Les dates de début et de fin sont requises.' }
-  }
-  if (new Date(startDate) >= new Date(endDate)) {
-    return { error: 'La date de fin doit être après la date de début.' }
   }
   if (isNaN(maxStudents) || maxStudents < 1) {
     return { error: 'La capacité doit être d\'au moins 1.' }
@@ -164,8 +152,6 @@ export async function createFormation(_prevState: unknown, formData: FormData) {
       categoryId,
       type,
       maxStudents,
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
       status: 'DRAFT',
       ...(price    !== undefined ? { price }    : {}),
       ...(duration !== undefined ? { duration } : {}),
@@ -212,4 +198,22 @@ export async function updateFormationStatus(id: string, status: FormationStatus)
 export async function deleteFormation(id: string) {
   await db.formation.delete({ where: { id } })
   revalidatePath('/admin/formations')
+}
+
+// ─────────────────────────────────────────
+// Compute formation date range from sessions
+// ─────────────────────────────────────────
+
+export async function getFormationDateRange(
+  formationId: string
+): Promise<{ startDate: Date | null; endDate: Date | null }> {
+  const result = await db.session.aggregate({
+    where: { formationId },
+    _min: { date: true },
+    _max: { date: true },
+  })
+  return {
+    startDate: result._min.date ?? null,
+    endDate:   result._max.date ?? null,
+  }
 }
