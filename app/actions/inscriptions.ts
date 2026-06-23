@@ -389,16 +389,16 @@ export async function submitSignature(
     data: { signatureDataUrl, signedIp },
   })
 
-  await db.signatureToken.update({
-    where: { id: sigToken.id },
-    data:  { usedAt: new Date() },
-  })
-
   await processSignatureComplete(inscription.id, {
     contrat:   signedUrls.contratUrl,
     reglement: signedUrls.reglementUrl,
     cgv:       signedUrls.cgvUrl,
     programme: signedUrls.programmeUrl,
+  })
+
+  await db.signatureToken.update({
+    where: { id: sigToken.id },
+    data:  { usedAt: new Date() },
   })
 
   redirect('/signature/merci')
