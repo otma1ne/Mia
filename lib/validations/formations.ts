@@ -6,11 +6,6 @@ export const createFormationSchema = z.object({
   categoryId: z.string().min(1, 'Catégorie requise'),
   type: z.enum(['PRESENTIAL', 'ONLINE', 'HYBRID']),
   maxStudents: z.coerce.number().min(1, 'Au moins 1 étudiant').max(100),
-  startDate: z.coerce.date().refine(d => d > new Date(), 'Date future requise'),
-  endDate: z.coerce.date(),
-}).refine(d => d.endDate > d.startDate, {
-  message: 'La date de fin doit être après la date de début',
-  path: ['endDate'],
 })
 
 export const createModuleSchema = z.object({
@@ -29,11 +24,6 @@ export const updateFormationSchema = z.object({
   categoryId: z.string().min(1, 'Catégorie requise').optional(),
   type: z.enum(['PRESENTIAL', 'ONLINE', 'HYBRID']).optional(),
   maxStudents: z.coerce.number().min(1, 'Au moins 1 étudiant').max(100).optional(),
-  startDate: z.coerce.date().optional(),
-  endDate: z.coerce.date().optional(),
-}).refine(d => !d.startDate || !d.endDate || d.endDate > d.startDate, {
-  message: 'La date de fin doit être après la date de début',
-  path: ['endDate'],
 })
 
 export const updateModuleSchema = z.object({
