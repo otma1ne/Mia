@@ -186,6 +186,28 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
             </>
           )}
 
+          {/* Signature proof */}
+          {inscription.signatureDataUrl && (
+            <>
+              <Separator />
+              <section className="space-y-2">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Preuve de signature</h3>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={inscription.signatureDataUrl}
+                  alt="Signature du candidat"
+                  className="h-16 border rounded-lg bg-white px-3"
+                />
+                {inscription.signedIp && (
+                  <p className="text-xs text-muted-foreground">
+                    Signé depuis l&apos;IP {inscription.signedIp}
+                    {inscription.signedAt && ` le ${format(new Date(inscription.signedAt), 'dd MMMM yyyy à HH:mm', { locale: fr })}`}
+                  </p>
+                )}
+              </section>
+            </>
+          )}
+
           {/* Admin note (if declined) */}
           {inscription.adminNote && (
             <>
@@ -206,7 +228,7 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
                 <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5 text-sm text-blue-800">
                   <PenLine className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
-                    La demande de signature a été envoyée au candidat.
+                    Le lien de signature a été envoyé au candidat par email.
                     En attente de signature des documents contractuels (contrat, règlement intérieur, programme, CGV).
                   </p>
                 </div>
