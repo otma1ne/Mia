@@ -134,8 +134,6 @@ await prisma.trainerAvailability.deleteMany()
       type: FormationType.PRESENTIAL,
       status: FormationStatus.PUBLISHED,
       maxStudents: 20,
-      startDate: new Date('2026-04-15'),
-      endDate: new Date('2026-09-30'),
     },
   })
   console.log('✅ Formation créée')
@@ -176,7 +174,6 @@ await prisma.trainerAvailability.deleteMany()
       type: ModuleType.PRACTICAL,
       status: ModuleStatus.PUBLISHED,
       duration: 0,
-      trainerId: trainer.id,
     },
   })
 
@@ -204,8 +201,6 @@ await prisma.trainerAvailability.deleteMany()
       type: FormationType.PRESENTIAL,
       status: FormationStatus.PUBLISHED,
       maxStudents: 20,
-      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-      endDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago (ENDED)
     },
   })
 
