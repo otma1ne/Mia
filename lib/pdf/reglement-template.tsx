@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import { Document, Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer'
 
 const styles = StyleSheet.create({
   page: {
@@ -53,6 +53,38 @@ const styles = StyleSheet.create({
     lineHeight: 1.7,
     whiteSpace: 'pre-wrap',
   },
+  signatureSection: {
+    marginTop: 24,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 4,
+    padding: 12,
+    minHeight: 80,
+    maxWidth: 220,
+  },
+  signatureLabel: {
+    fontSize: 9,
+    color: '#6b7280',
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  signaturePlaceholder: {
+    fontSize: 10,
+    color: '#9ca3af',
+    fontStyle: 'italic',
+    marginTop: 8,
+  },
+  signatureImage: {
+    width: 140,
+    height: 50,
+    objectFit: 'contain',
+    marginTop: 4,
+  },
+  signatureDate: {
+    fontSize: 8,
+    color: '#6b7280',
+    marginTop: 4,
+  },
   footer: {
     position: 'absolute',
     bottom: 32,
@@ -74,13 +106,14 @@ export interface ReglementPDFProps {
   content: string
   centerName: string
   generatedAt: Date
+  signature?: { dataUrl: string; signedAt: Date }
 }
 
 function fmt(d: Date) {
   return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(d))
 }
 
-export default function ReglementPDF({ content, centerName, generatedAt }: ReglementPDFProps) {
+export default function ReglementPDF({ content, centerName, generatedAt, signature }: ReglementPDFProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -100,6 +133,19 @@ export default function ReglementPDF({ content, centerName, generatedAt }: Regle
 
         {/* Content */}
         <Text style={styles.content}>{content}</Text>
+
+        {/* Signature */}
+        <View style={styles.signatureSection}>
+          <Text style={styles.signatureLabel}>Le / La stagiaire</Text>
+          {signature ? (
+            <>
+              <Image src={signature.dataUrl} style={styles.signatureImage} />
+              <Text style={styles.signatureDate}>Lu et approuvé — signé le {fmt(signature.signedAt)}</Text>
+            </>
+          ) : (
+            <Text style={styles.signaturePlaceholder}>Signature précédée de la mention « Lu et approuvé »</Text>
+          )}
+        </View>
 
         {/* Footer */}
         <View style={styles.footer} fixed>

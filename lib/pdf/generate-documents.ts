@@ -39,13 +39,14 @@ async function uploadPdf(buffer: Buffer, publicId: string): Promise<string> {
 export async function generateSigningDocuments(params: {
   inscription: InscriptionWithFormation
   center: Center
+  signature?: { dataUrl: string; signedAt: Date }
 }): Promise<{
   contratUrl: string
   reglementUrl: string
   cgvUrl: string
   programmeUrl: string
 }> {
-  const { inscription, center } = params
+  const { inscription, center, signature } = params
   const { formation } = inscription
 
   // Validate required content
@@ -92,6 +93,7 @@ export async function generateSigningDocuments(params: {
         centerPhone:       center.phone,
         centerEmail:       center.email,
         generatedAt,
+        signature,
       }) as React.ReactElement<DocumentProps>
     ),
 
@@ -100,6 +102,7 @@ export async function generateSigningDocuments(params: {
         content:     center.reglement,
         centerName:  center.name,
         generatedAt,
+        signature,
       }) as React.ReactElement<DocumentProps>
     ),
 
@@ -108,6 +111,7 @@ export async function generateSigningDocuments(params: {
         content:     center.cgv,
         centerName:  center.name,
         generatedAt,
+        signature,
       }) as React.ReactElement<DocumentProps>
     ),
 
@@ -121,17 +125,20 @@ export async function generateSigningDocuments(params: {
         programme:         formation.programme,
         centerName:        center.name,
         generatedAt,
+        signature,
       }) as React.ReactElement<DocumentProps>
     ),
   ])
 
   // ── Upload all 4 PDFs to Cloudinary in parallel ───────────────────────────
 
+  const suffix = signature ? '-signed' : ''
+
   const [contratUrl, reglementUrl, cgvUrl, programmeUrl] = await Promise.all([
-    uploadPdf(contratBuffer,   `${id}-contrat`),
-    uploadPdf(reglementBuffer, `${id}-reglement`),
-    uploadPdf(cgvBuffer,       `${id}-cgv`),
-    uploadPdf(programmeBuffer, `${id}-programme`),
+    uploadPdf(contratBuffer,   `${id}-contrat${suffix}`),
+    uploadPdf(reglementBuffer, `${id}-reglement${suffix}`),
+    uploadPdf(cgvBuffer,       `${id}-cgv${suffix}`),
+    uploadPdf(programmeBuffer, `${id}-programme${suffix}`),
   ])
 
   return { contratUrl, reglementUrl, cgvUrl, programmeUrl }
