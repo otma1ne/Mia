@@ -364,6 +364,10 @@ export async function submitSignature(
   if (sigToken.usedAt)                  return { error: 'Ce lien a déjà été utilisé.' }
   if (sigToken.expiresAt < new Date())  return { error: 'Ce lien a expiré.' }
 
+  if (!signatureDataUrl.startsWith('data:image/png;base64,') || signatureDataUrl.length > 500_000) {
+    return { error: 'Signature invalide. Veuillez réessayer.' }
+  }
+
   const { inscription } = sigToken
 
   const center = await db.center.findFirst()
