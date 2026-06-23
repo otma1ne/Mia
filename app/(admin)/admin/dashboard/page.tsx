@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { getDashboardStats, getRecentModules } from '@/app/actions/dashboard'
 import ModulesTable from './_components/modules-table'
 
-export const metadata: Metadata = { title: 'Tableau de bord — Auto-école' }
+export const metadata: Metadata = { title: 'Tableau de bord — MIA Formation' }
 
 function pctChange(current: number, prev: number) {
   if (prev === 0) return current > 0 ? '+100%' : '0%'
