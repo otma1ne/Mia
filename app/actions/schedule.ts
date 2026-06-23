@@ -6,8 +6,11 @@ import { revalidatePath } from 'next/cache'
 export interface SessionEvent {
   id: string
   moduleId: string
+  formationId: string
   moduleTitle: string
+  formationTitle: string
   trainerName: string
+  trainerId: string | null
   roomName: string | null
   date: Date
   startTime: string
@@ -31,11 +34,12 @@ export async function getSessions({
     where: { date: { gte: from, lte: to } },
     orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
     include: {
-      room: { select: { name: true } },
+      room:      { select: { name: true } },
+      trainer:   { include: { user: { select: { name: true } } } },
+      formation: { select: { title: true } },
       module: {
         select: {
           title: true,
-          trainer: { include: { user: { select: { name: true } } } },
           _count: { select: { enrollments: true } },
         },
       },
@@ -43,15 +47,18 @@ export async function getSessions({
   })
 
   return sessions.map(s => ({
-    id: s.id,
-    moduleId: s.moduleId,
-    moduleTitle: s.module.title,
-    trainerName: s.module.trainer?.user.name ?? '—',
-    roomName: s.room?.name ?? null,
-    date: s.date,
-    startTime: s.startTime,
-    endTime: s.endTime,
-    notes: s.notes,
+    id:             s.id,
+    moduleId:       s.moduleId,
+    formationId:    s.formationId,
+    moduleTitle:    s.module.title,
+    formationTitle: s.formation.title,
+    trainerName:    s.trainer?.user.name ?? '—',
+    trainerId:      s.trainerId,
+    roomName:       s.room?.name ?? null,
+    date:           s.date,
+    startTime:      s.startTime,
+    endTime:        s.endTime,
+    notes:          s.notes,
     enrollmentCount: s.module._count.enrollments,
   }))
 }
@@ -62,21 +69,22 @@ export async function getSessions({
 // ─────────────────────────────────────────
 
 export async function getScheduleFormData() {
-  const [modules, rooms] = await Promise.all([
+  const [modules, rooms, trainers] = await Promise.all([
     db.module.findMany({
-      where: {
-        type: 'PRACTICAL',
-        status: { in: ['PUBLISHED', 'DRAFT'] },
-      },
+      where: { status: { in: ['PUBLISHED', 'DRAFT'] } },
       orderBy: { title: 'asc' },
-      select: { id: true, title: true },
+      select: { id: true, title: true, formationId: true },
     }),
     db.room.findMany({
       orderBy: { name: 'asc' },
       select: { id: true, name: true, capacity: true },
     }),
+    db.trainer.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { name: true } } },
+    }),
   ])
-  return { modules, rooms }
+  return { modules, rooms, trainers }
 }
 
 // ─────────────────────────────────────────
@@ -86,6 +94,7 @@ export async function getScheduleFormData() {
 export async function createSession(_prevState: unknown, formData: FormData) {
   const moduleId  = (formData.get('moduleId')  as string)?.trim()
   const roomId    = (formData.get('roomId')    as string)?.trim() || null
+  const trainerId = (formData.get('trainerId') as string)?.trim() || null
   const date      = (formData.get('date')      as string)?.trim()
   const startTime = (formData.get('startTime') as string)?.trim()
   const endTime   = (formData.get('endTime')   as string)?.trim()
@@ -99,11 +108,21 @@ export async function createSession(_prevState: unknown, formData: FormData) {
     return { error: "L'heure de fin doit être après l'heure de début." }
   }
 
+  const module = await db.module.findUnique({
+    where: { id: moduleId },
+    select: { formationId: true },
+  })
+  if (!module) {
+    return { error: 'Module introuvable.' }
+  }
+
   await db.session.create({
     data: {
       moduleId,
-      roomId: roomId || null,
-      date: new Date(date),
+      formationId: module.formationId,
+      roomId:      roomId || null,
+      trainerId:   trainerId || null,
+      date:        new Date(date),
       startTime,
       endTime,
       notes,
