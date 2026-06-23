@@ -91,6 +91,30 @@ export default function InscriptionForm({ formations, defaultFormationId, user }
         {user.phone && <p className="text-xs text-muted-foreground">{user.phone}</p>}
       </div>
 
+      {/* Nationality + Date of birth row */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="nationality">Nationalité</Label>
+          <Input id="nationality" name="nationality" type="text" required placeholder="Marocaine" />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="dateOfBirth">Date de naissance</Label>
+          <Input id="dateOfBirth" name="dateOfBirth" type="date" required />
+        </div>
+      </div>
+
+      {/* Postal address */}
+      <div className="space-y-1.5">
+        <Label htmlFor="postalAddress">Adresse postale</Label>
+        <Input id="postalAddress" name="postalAddress" type="text" placeholder="Adresse postale (facultatif)" />
+      </div>
+
+      {/* Pôle emploi ID */}
+      <div className="space-y-1.5">
+        <Label htmlFor="poleEmploiId">Identifiant Pôle emploi</Label>
+        <Input id="poleEmploiId" name="poleEmploiId" type="text" placeholder="Identifiant Pôle emploi (facultatif)" />
+      </div>
+
       {/* Formation */}
       <div className="space-y-1.5">
         <Label>Formation souhaitée</Label>

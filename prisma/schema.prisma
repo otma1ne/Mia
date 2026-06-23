@@ -417,6 +417,10 @@ model Inscription {
   lastName         String
   email            String
   phone            String
+  nationality      String
+  dateOfBirth      DateTime
+  postalAddress    String?
+  poleEmploiId     String?
   formationId      String            @db.ObjectId
   cvUrl            String
   status           InscriptionStatus @default(PENDING)

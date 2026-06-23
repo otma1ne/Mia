@@ -24,16 +24,25 @@ export async function createInscription(
   _prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData
 ): Promise<{ error?: string; success?: boolean }> {
-  const firstName   = (formData.get('firstName')   as string)?.trim()
-  const lastName    = (formData.get('lastName')    as string)?.trim()
-  const email       = (formData.get('email')       as string)?.trim().toLowerCase()
-  const phone       = (formData.get('phone')       as string)?.trim()
-  const formationId = (formData.get('formationId') as string)?.trim()
-  const cvUrl       = (formData.get('cvUrl')       as string)?.trim()
+  const firstName     = (formData.get('firstName')     as string)?.trim()
+  const lastName      = (formData.get('lastName')      as string)?.trim()
+  const email         = (formData.get('email')         as string)?.trim().toLowerCase()
+  const phone         = (formData.get('phone')         as string)?.trim()
+  const nationality   = (formData.get('nationality')   as string)?.trim()
+  const dateOfBirthRaw = (formData.get('dateOfBirth')  as string)?.trim()
+  const postalAddress = (formData.get('postalAddress') as string)?.trim() || undefined
+  const poleEmploiId  = (formData.get('poleEmploiId')  as string)?.trim() || undefined
+  const formationId  = (formData.get('formationId')   as string)?.trim()
+  const cvUrl         = (formData.get('cvUrl')         as string)?.trim()
 
   // Validate required fields
-  if (!firstName || !lastName || !email || !phone || !formationId || !cvUrl) {
-    return { error: 'Tous les champs sont obligatoires.' }
+  if (!firstName || !lastName || !email || !phone || !nationality || !dateOfBirthRaw || !formationId || !cvUrl) {
+    return { error: 'Tous les champs obligatoires doivent être renseignés.' }
+  }
+
+  const dateOfBirth = new Date(dateOfBirthRaw)
+  if (Number.isNaN(dateOfBirth.getTime())) {
+    return { error: 'Date de naissance invalide.' }
   }
 
   // Check email not already a registered user
@@ -56,7 +65,11 @@ export async function createInscription(
 
   // Create inscription
   const inscription = await db.inscription.create({
-    data: { firstName, lastName, email, phone, formationId, cvUrl, status: 'PENDING' },
+    data: {
+      firstName, lastName, email, phone,
+      nationality, dateOfBirth, postalAddress, poleEmploiId,
+      formationId, cvUrl, status: 'PENDING',
+    },
   })
 
   // Create evaluation token (24h expiry)
@@ -90,11 +103,20 @@ export async function createInscriptionAsStudent(
   const session = await auth()
   if (!session) return { error: 'Vous devez être connecté.' }
 
-  const formationId = (formData.get('formationId') as string)?.trim()
-  const cvUrl       = (formData.get('cvUrl')       as string)?.trim()
+  const formationId   = (formData.get('formationId')   as string)?.trim()
+  const cvUrl         = (formData.get('cvUrl')         as string)?.trim()
+  const nationality   = (formData.get('nationality')   as string)?.trim()
+  const dateOfBirthRaw = (formData.get('dateOfBirth')  as string)?.trim()
+  const postalAddress = (formData.get('postalAddress') as string)?.trim() || undefined
+  const poleEmploiId  = (formData.get('poleEmploiId')  as string)?.trim() || undefined
 
-  if (!formationId || !cvUrl) {
-    return { error: 'Tous les champs sont obligatoires.' }
+  if (!formationId || !cvUrl || !nationality || !dateOfBirthRaw) {
+    return { error: 'Tous les champs obligatoires doivent être renseignés.' }
+  }
+
+  const dateOfBirth = new Date(dateOfBirthRaw)
+  if (Number.isNaN(dateOfBirth.getTime())) {
+    return { error: 'Date de naissance invalide.' }
   }
 
   const user = await db.user.findUnique({ where: { id: session.user.id } })
@@ -127,7 +149,11 @@ export async function createInscriptionAsStudent(
   }
 
   const inscription = await db.inscription.create({
-    data: { firstName, lastName, email, phone, formationId, cvUrl, status: 'PENDING' },
+    data: {
+      firstName, lastName, email, phone,
+      nationality, dateOfBirth, postalAddress, poleEmploiId,
+      formationId, cvUrl, status: 'PENDING',
+    },
   })
 
   const token     = crypto.randomUUID()
