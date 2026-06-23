@@ -684,7 +684,7 @@ export default function LandingPage({ categories }: { categories: LandingCategor
                 </div>
               ))}
             </div>
-            <Link href="/login"
+            <Link href="/register"
                   className="inline-flex items-center gap-2.5 px-6 py-[13px] rounded-[10px] text-white text-[14px] font-bold hover:-translate-y-0.5 transition-all"
                   style={{ background: MV_GRAD, boxShadow: '0 4px 20px rgba(139,40,224,0.25)' }}>
               Commencer ma formation <ArrowRight className="w-4 h-4" />
