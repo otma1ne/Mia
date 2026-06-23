@@ -99,6 +99,26 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
                 <dd className="font-medium">{inscription.phone}</dd>
               </div>
               <div className="flex justify-between">
+                <dt className="text-muted-foreground">Nationalité</dt>
+                <dd className="font-medium">{inscription.nationality}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Date de naissance</dt>
+                <dd className="font-medium">{format(new Date(inscription.dateOfBirth), 'dd MMMM yyyy', { locale: fr })}</dd>
+              </div>
+              {inscription.postalAddress && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Adresse postale</dt>
+                  <dd className="font-medium text-right">{inscription.postalAddress}</dd>
+                </div>
+              )}
+              {inscription.poleEmploiId && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">ID Pôle emploi</dt>
+                  <dd className="font-medium">{inscription.poleEmploiId}</dd>
+                </div>
+              )}
+              <div className="flex justify-between">
                 <dt className="text-muted-foreground">Formation</dt>
                 <dd className="font-medium">{inscription.formation.title}</dd>
               </div>

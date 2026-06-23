@@ -17,7 +17,7 @@ async function uploadPdf(buffer: Buffer, publicId: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:        'MIA Formation/signing-docs',
+        folder:        'mia-formation/signing-docs',
         resource_type: 'raw',
         format:        'pdf',
         public_id:     publicId,
