@@ -15,7 +15,6 @@ export const createModuleSchema = z.object({
   type: z.enum(['THEORY', 'PRACTICAL', 'ASSESSMENT']),
   duration: z.coerce.number().min(0, 'Durée non-négative'),
   videoUrl: z.string().url().optional().or(z.literal('')),
-  trainerId: z.string().optional(),
 })
 
 export const updateFormationSchema = z.object({
@@ -33,7 +32,6 @@ export const updateModuleSchema = z.object({
   type: z.enum(['THEORY', 'PRACTICAL', 'ASSESSMENT']).optional(),
   duration: z.coerce.number().min(0, 'Durée non-négative').optional(),
   videoUrl: z.string().url().optional().or(z.literal('')),
-  trainerId: z.string().optional(),
 })
 
 export type CreateFormationInput = z.infer<typeof createFormationSchema>
