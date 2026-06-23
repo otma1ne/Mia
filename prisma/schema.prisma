@@ -10,7 +10,7 @@
 // User ──< ModuleEnrollment
 // User ──< MaterialProgress
 // Trainer ──< TrainerAvailability
-// Trainer ──< Module (optional, PRACTICAL type)
+// Trainer ──< Session (optional, PRACTICAL type)
 // Category ──< Formation
 // Formation ──< Module
 // Formation ──< FormationEnrollment
@@ -139,7 +139,7 @@ model Trainer {
   updatedAt       DateTime @updatedAt
 
   user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  modules      Module[]              // assigned PRACTICAL modules
+  sessions     Session[]
   availability TrainerAvailability[]
   categories   Category[]            @relation(fields: [categoryIds], references: [id])
 }
@@ -234,8 +234,6 @@ model Formation {
   type        FormationType   @default(PRESENTIAL) // PRESENTIAL or REMOTE
   status      FormationStatus @default(DRAFT)
   maxStudents Int
-  startDate   DateTime
-  endDate     DateTime
   thumbnail   String?
   price       Float?          // tarif en MAD (used in contrat PDF)
   duration    Int?            // durée totale en heures (used in contrat + programme PDF)
@@ -245,6 +243,7 @@ model Formation {
 
   category     Category              @relation(fields: [categoryId], references: [id])
   modules      Module[]
+  sessions     Session[]
   enrollments  FormationEnrollment[]
   inscriptions Inscription[]
 }
@@ -300,12 +299,10 @@ model Module {
   status      ModuleStatus @default(DRAFT)
   videoUrl    String?                        // embedded video (THEORY/ASSESSMENT)
   duration    Int          @default(0)       // in minutes
-  trainerId   String?      @db.ObjectId      // required for PRACTICAL modules
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
   formation   Formation          @relation(fields: [formationId], references: [id], onDelete: Cascade)
-  trainer     Trainer?           @relation(fields: [trainerId], references: [id])
   enrollments ModuleEnrollment[]
   sessions    Session[]          // PRACTICAL: scheduled driving sessions
   materials   ModuleMaterial[]   // supplementary resources
@@ -382,16 +379,20 @@ model ModuleEnrollment {
 // ─────────────────────────────────────────
 
 model Session {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  moduleId  String   @db.ObjectId
-  roomId    String?  @db.ObjectId
-  date      DateTime
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  moduleId    String   @db.ObjectId
+  formationId String   @db.ObjectId
+  trainerId   String?  @db.ObjectId
+  roomId      String?  @db.ObjectId
+  date        DateTime
   startTime String   // "09:00"
   endTime   String   // "11:00"
   notes     String?
   createdAt DateTime @default(now())
 
   module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  formation   Formation    @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  trainer     Trainer?     @relation(fields: [trainerId], references: [id])
   room        Room?        @relation(fields: [roomId], references: [id])
   attendances Attendance[]
 }
