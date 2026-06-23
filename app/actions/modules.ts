@@ -35,8 +35,6 @@ export interface ModuleRow {
   status: ModuleStatus
   videoUrl: string | null
   duration: number
-  trainerId: string | null
-  trainerName: string | null
   formationId: string
   enrollmentCount: number
   materialCount: number
@@ -53,7 +51,6 @@ export async function getModulesForFormation(formationId: string): Promise<Modul
     where: { formationId },
     orderBy: { orderIndex: 'asc' },
     include: {
-      trainer: { include: { user: { select: { name: true } } } },
       _count: { select: { enrollments: true, materials: true, sessions: true } },
     },
   })
@@ -67,8 +64,6 @@ export async function getModulesForFormation(formationId: string): Promise<Modul
     status: m.status,
     videoUrl: m.videoUrl,
     duration: m.duration,
-    trainerId: m.trainerId,
-    trainerName: m.trainer?.user.name ?? null,
     formationId: m.formationId,
     enrollmentCount: m._count.enrollments,
     materialCount: m._count.materials,
@@ -82,7 +77,6 @@ export async function getModule(id: string) {
     where: { id },
     include: {
       formation: { select: { id: true, title: true } },
-      trainer: { include: { user: { select: { name: true, email: true, avatar: true } } } },
       materials: { orderBy: { id: 'asc' } },
       sessions: {
         orderBy: { date: 'asc' },
@@ -94,11 +88,7 @@ export async function getModule(id: string) {
 }
 
 export async function getModuleFormData() {
-  const trainers = await db.trainer.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: { user: { select: { name: true } } },
-  })
-  return { trainers }
+  return { trainers: [] as { id: string; user: { name: string } }[] }
 }
 
 // ─────────────────────────────────────────
@@ -114,13 +104,9 @@ export async function createModule(_prevState: unknown, formData: FormData) {
   const type        = (formData.get('type')        as ModuleType)
   const videoUrl    = (formData.get('videoUrl')    as string)?.trim() || null
   const duration    = Number(formData.get('duration')) || 0
-  const trainerId   = (formData.get('trainerId')   as string)?.trim() || null
 
   if (!formationId || !title || !description || !type) {
     return { error: 'Formation, titre, description et type sont requis.' }
-  }
-  if (type === 'PRACTICAL' && !trainerId) {
-    return { error: 'Un formateur est requis pour les modules de conduite.' }
   }
 
   // Auto-assign next orderIndex
@@ -140,7 +126,6 @@ export async function createModule(_prevState: unknown, formData: FormData) {
       status: 'DRAFT',
       videoUrl,
       duration,
-      trainerId: trainerId || undefined,
       orderIndex,
     },
   })
@@ -160,7 +145,6 @@ export interface ModuleUpdateData {
   type?: ModuleType
   videoUrl?: string | null
   duration?: number
-  trainerId?: string | null
 }
 
 export async function updateModule(id: string, data: ModuleUpdateData) {
@@ -180,7 +164,6 @@ export async function updateModule(id: string, data: ModuleUpdateData) {
       ...(data.type        !== undefined ? { type: data.type }               : {}),
       ...(data.videoUrl    !== undefined ? { videoUrl: data.videoUrl }       : {}),
       ...(data.duration    !== undefined ? { duration: data.duration }       : {}),
-      ...(data.trainerId   !== undefined ? { trainerId: data.trainerId }     : {}),
     },
   })
 
