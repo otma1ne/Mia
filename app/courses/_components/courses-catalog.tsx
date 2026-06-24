@@ -133,7 +133,7 @@ export default function CoursesCatalog({ data, search: initialSearch, activeType
                   : 'border-zinc-200 text-zinc-500 hover:border-zinc-400 hover:text-zinc-700'
               )}
             >
-              Toutes les catégories
+              Tous les secteurs
             </button>
             {categories.map(cat => (
               <button

@@ -192,10 +192,10 @@ export default function CreateTrainerDialog({ categories }: CreateTrainerDialogP
           {/* Type de formation — multiselect of existing categories */}
           <div className="flex flex-col gap-1.5">
             <Label>
-              Type de formation <span className="text-muted-foreground">(facultatif)</span>
+              Secteurs d&apos;activité <span className="text-muted-foreground">(facultatif)</span>
             </Label>
             {categories.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Aucune catégorie de formation disponible.</p>
+              <p className="text-xs text-muted-foreground">Aucun secteur d&apos;activité disponible.</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {categories.map(c => (

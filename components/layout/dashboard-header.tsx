@@ -54,7 +54,7 @@ const pageTitles: Record<string, string> = {
   '/admin/courses':     'Cours',
   '/admin/schedule':    'Planning',
   '/admin/center':        'Centre',
-  '/admin/categories':    'Catégories',
+  '/admin/categories':    "Secteurs d'activité",
   '/admin/inscriptions':  'Inscriptions',
   '/admin/settings':      'Paramètres',
   '/trainer/dashboard': 'Tableau de bord',

@@ -31,14 +31,14 @@ function CreateCategoryDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button size="sm" className="gap-1.5" />}>
         <CirclePlus className="h-4 w-4" />
-        Ajouter une catégorie
+        Ajouter un secteur
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Nouvelle catégorie</DialogTitle>
+          <DialogTitle>Nouveau secteur d&apos;activité</DialogTitle>
           <DialogDescription>
-            Les catégories permettent de classer les formations et les cours.
+            Les secteurs d&apos;activité permettent de classer les formations et les cours.
           </DialogDescription>
         </DialogHeader>
 
@@ -91,7 +91,7 @@ function EditCategoryDialog({ category }: { category: CategoryRow }) {
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Modifier la catégorie</DialogTitle>
+          <DialogTitle>Modifier le secteur d&apos;activité</DialogTitle>
           <DialogDescription>Mettez à jour le nom ou la description.</DialogDescription>
         </DialogHeader>
 
@@ -155,7 +155,7 @@ function DeleteCategoryDialog({ category }: { category: CategoryRow }) {
           size="icon"
           className="h-8 w-8 text-muted-foreground hover:text-destructive"
           disabled={!canDelete}
-          title={!canDelete ? `${category.formationCount} formation(s) utilisent cette catégorie` : 'Supprimer'}
+          title={!canDelete ? `${category.formationCount} formation(s) utilisent ce secteur` : 'Supprimer'}
         />
       }>
         <Trash2 className="h-3.5 w-3.5" />
@@ -163,7 +163,7 @@ function DeleteCategoryDialog({ category }: { category: CategoryRow }) {
 
       <DialogContent showCloseButton={false} className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Supprimer la catégorie</DialogTitle>
+          <DialogTitle>Supprimer le secteur d&apos;activité</DialogTitle>
           <DialogDescription>
             Voulez-vous vraiment supprimer <strong>{category.name}</strong> ?
             Cette action est irréversible.
@@ -202,7 +202,7 @@ export default function CategoriesClient({ categories }: CategoriesClientProps) 
       {/* Toolbar */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {categories.length} catégorie{categories.length !== 1 ? 's' : ''}
+          {categories.length} secteur{categories.length !== 1 ? "s d’activité" : " d’activité"}
         </p>
         <CreateCategoryDialog />
       </div>
@@ -212,7 +212,7 @@ export default function CategoriesClient({ categories }: CategoriesClientProps) 
         {categories.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
             <Layers className="h-8 w-8 opacity-40" />
-            <p className="text-sm">Aucune catégorie. Commencez par en créer une.</p>
+            <p className="text-sm">Aucun secteur d&apos;activité. Commencez par en créer un.</p>
           </div>
         ) : (
           <div className="divide-y">

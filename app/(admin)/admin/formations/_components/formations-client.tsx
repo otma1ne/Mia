@@ -162,7 +162,7 @@ export default function FormationsClient({
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-10 px-5 text-xs">#</TableHead>
               <TableHead className="px-5 text-xs">Formation</TableHead>
-              <TableHead className="px-5 text-xs">Catégorie</TableHead>
+              <TableHead className="px-5 text-xs">Secteur</TableHead>
               <TableHead className="px-5 text-xs">Type</TableHead>
               <TableHead className="px-5 text-xs">Statut</TableHead>
               <TableHead className="px-5 text-right text-xs">Inscrits</TableHead>
