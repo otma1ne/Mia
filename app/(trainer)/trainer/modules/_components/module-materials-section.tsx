@@ -172,7 +172,7 @@ export default function ModuleMaterialsSection({ moduleId }: ModuleMaterialsSect
       ) : materials.length === 0 ? (
         <p className="text-xs text-muted-foreground py-2">Aucune ressource ajoutée pour l&apos;instant.</p>
       ) : (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           {materials.map(m => (
             <div key={m.id} className="flex items-center gap-2.5 rounded-lg border bg-muted/30 px-3 py-2.5">
               <span className="text-muted-foreground">{typeIcon(m.type)}</span>
@@ -206,7 +206,7 @@ export default function ModuleMaterialsSection({ moduleId }: ModuleMaterialsSect
       )}
 
       <Dialog open={addOpen} onOpenChange={open => { if (!open) closeDialog() }}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm">
+        <DialogContent showCloseButton={false} className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Ajouter une ressource</DialogTitle>
             <DialogDescription>Ajoutez un lien ou téléversez un fichier pour ce module.</DialogDescription>
@@ -238,15 +238,15 @@ export default function ModuleMaterialsSection({ moduleId }: ModuleMaterialsSect
           {addMode === 'url' && (
             <form action={urlFormAction} className="flex flex-col gap-4">
               <input type="hidden" name="moduleId" value={moduleId} />
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">Titre</label>
                 <Input name="title" placeholder="ex. Diapositives Semaine 1" required />
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">URL</label>
                 <Input name="url" type="url" placeholder="https://…" required />
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">Type</label>
                 <Select name="type" defaultValue="link" labelItems={Object.fromEntries(TYPE_OPTIONS.map(t => [t.value, t.label]))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
@@ -269,11 +269,11 @@ export default function ModuleMaterialsSection({ moduleId }: ModuleMaterialsSect
 
           {addMode === 'file' && (
             <form onSubmit={handleFileSubmit} className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">Titre</label>
                 <Input ref={titleInputRef} name="title" placeholder="ex. Support de cours PDF" required />
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">Fichier</label>
                 {!selectedFile ? (
                   <label className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/30 py-7 cursor-pointer hover:border-primary/50 hover:bg-muted/20 transition-colors">

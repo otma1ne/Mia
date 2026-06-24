@@ -425,6 +425,137 @@ export async function sendBilanReminderEmail(
   })
 }
 
+// ─────────────────────────────────────────
+// Attestation de fin de formation
+// ─────────────────────────────────────────
+
+export async function sendAttestationEmail(
+  to: string,
+  firstName: string,
+  formationTitle: string,
+  attestationUrl: string
+) {
+  const dashboardUrl = `${APP_URL}/student/documents`
+
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: `🎓 Votre attestation de fin de formation — ${formationTitle}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
+        ${emailHeader}
+        <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
+          <p style="font-size:16px;margin-top:0;">Félicitations <strong>${firstName}</strong> ! 🎓</p>
+          <p style="color:#374151;">
+            Vous avez terminé avec succès la formation <strong>${formationTitle}</strong>.
+          </p>
+          <p style="color:#374151;">
+            Votre <strong>attestation de fin de formation</strong> (certificat de réalisation) est maintenant disponible.
+            Vous pouvez la télécharger directement ci-dessous ou depuis votre espace étudiant.
+          </p>
+          <div style="text-align:center;margin:32px 0;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="${attestationUrl}"
+               style="display:inline-block;background:#16a34a;color:#fff;text-decoration:none;
+                      padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;">
+              Télécharger mon attestation
+            </a>
+            <a href="${dashboardUrl}"
+               style="display:inline-block;background:#1e2128;color:#fff;text-decoration:none;
+                      padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;">
+              Mon espace documents
+            </a>
+          </div>
+          <p style="font-size:13px;color:#6b7280;">
+            Ce document est votre certificat de réalisation officiel, conformément à l'article L6353-1 du Code du travail.
+          </p>
+          ${emailFooter}
+        </div>
+      </div>
+    `,
+  })
+}
+
+// ─────────────────────────────────────────
+// Convocation à une session
+// ─────────────────────────────────────────
+
+export async function sendConvocationEmail(params: {
+  to: string
+  firstName: string
+  formationTitle: string
+  moduleName: string
+  sessionDate: Date
+  startTime: string
+  endTime: string
+  trainerName?: string | null
+  roomName?: string | null
+  formationType: string
+  notes?: string | null
+}) {
+  const {
+    to, firstName, formationTitle, moduleName,
+    sessionDate, startTime, endTime, trainerName,
+    roomName, formationType, notes,
+  } = params
+
+  const dateStr = new Intl.DateTimeFormat('fr-FR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  }).format(new Date(sessionDate))
+
+  const isRemote = formationType !== 'PRESENTIAL'
+  const locationLine = isRemote
+    ? `<p style="margin:0;font-size:14px;color:#374151;">📡 <strong>Session à distance</strong></p>`
+    : roomName
+      ? `<p style="margin:0;font-size:14px;color:#374151;">📍 Salle : <strong>${roomName}</strong></p>`
+      : `<p style="margin:0;font-size:14px;color:#374151;">📍 En présentiel</p>`
+
+  const dashboardUrl = `${APP_URL}/student/schedule`
+
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: `📅 Convocation — ${formationTitle} — ${dateStr}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
+        ${emailHeader}
+        <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
+          <p style="font-size:16px;margin-top:0;">Bonjour <strong>${firstName}</strong>,</p>
+          <p style="color:#374151;">
+            Vous êtes convoqué(e) à la session suivante dans le cadre de votre formation
+            <strong>${formationTitle}</strong>.
+          </p>
+
+          <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:20px 24px;margin:24px 0;">
+            <p style="margin:0 0 12px;font-size:15px;font-weight:600;">${moduleName}</p>
+            <p style="margin:0 0 6px;font-size:14px;color:#374151;">
+              📅 <strong>${dateStr}</strong>
+            </p>
+            <p style="margin:0 0 6px;font-size:14px;color:#374151;">
+              🕐 De <strong>${startTime}</strong> à <strong>${endTime}</strong>
+            </p>
+            ${locationLine}
+            ${trainerName ? `<p style="margin:6px 0 0;font-size:14px;color:#374151;">👤 Formateur : <strong>${trainerName}</strong></p>` : ''}
+            ${notes ? `<p style="margin:12px 0 0;font-size:13px;color:#6b7280;font-style:italic;">${notes}</p>` : ''}
+          </div>
+
+          <p style="color:#374151;">
+            Merci d'être présent(e) à l'heure. En cas d'empêchement, veuillez contacter votre centre de formation dès que possible.
+          </p>
+
+          <div style="text-align:center;margin:32px 0;">
+            <a href="${dashboardUrl}"
+               style="display:inline-block;background:#1e2128;color:#fff;text-decoration:none;
+                      padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;">
+              Voir mon planning
+            </a>
+          </div>
+          ${emailFooter}
+        </div>
+      </div>
+    `,
+  })
+}
+
 export async function sendCommercialWelcomeEmail(
   to: string,
   name: string,

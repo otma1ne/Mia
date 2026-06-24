@@ -104,18 +104,18 @@ export default function RoomsManager({ centerId, initialRooms }: RoomsManagerPro
 
       {/* Add room dialog */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Ajouter une salle</DialogTitle>
             <DialogDescription>Ajoutez une nouvelle salle de cours ou de formation.</DialogDescription>
           </DialogHeader>
           <form ref={formRef} action={action} className="flex flex-col gap-4 py-2">
             <input type="hidden" name="centerId" value={centerId} />
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="roomName">Nom de la salle</Label>
               <Input id="roomName" name="name" placeholder="Salle 101" required />
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="capacity">Capacité</Label>
               <Input id="capacity" name="capacity" type="number" min="1" placeholder="30" required />
             </div>
@@ -132,7 +132,7 @@ export default function RoomsManager({ centerId, initialRooms }: RoomsManagerPro
 
       {/* Delete confirmation */}
       <Dialog open={!!deleteTarget} onOpenChange={open => { if (!open) setDeleteTarget(null) }}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm">
+        <DialogContent showCloseButton={false} className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Supprimer la salle</DialogTitle>
             <DialogDescription>

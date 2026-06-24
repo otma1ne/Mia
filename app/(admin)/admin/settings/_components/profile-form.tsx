@@ -73,22 +73,22 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
       <form action={action} className="flex flex-col gap-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="name">Nom complet</Label>
             <Input id="name" name="name" defaultValue={user.name} required />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="email">E-mail</Label>
             <Input id="email" value={user.email} disabled className="opacity-60" />
             <p className="text-[11px] text-muted-foreground">L&apos;e-mail ne peut pas être modifié.</p>
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="phone">
               Téléphone <span className="text-muted-foreground">(facultatif)</span>
             </Label>
             <Input id="phone" name="phone" type="tel" defaultValue={user.phone ?? ''} placeholder="+33 6 00 00 00 00" />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label>Membre depuis</Label>
             <Input
               value={new Intl.DateTimeFormat('fr-FR', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(user.createdAt))}

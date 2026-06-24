@@ -365,7 +365,7 @@ export default function ScheduleClient({
 
       {/* Delete confirmation */}
       <Dialog open={!!deleteTarget} onOpenChange={open => { if (!open) setDeleteTarget(null) }}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm">
+        <DialogContent showCloseButton={false} className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Supprimer la séance</DialogTitle>
             <DialogDescription>

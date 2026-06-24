@@ -19,7 +19,7 @@ interface Props {
 export default function EditContactDialog({ contact, onClose }: Props) {
   return (
     <Dialog open={!!contact} onOpenChange={o => { if (!o) onClose() }}>
-      <DialogContent className="sm:max-w-md" showCloseButton={false}>
+      <DialogContent className="sm:max-w-lg" showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>Modifier le contact</DialogTitle>
         </DialogHeader>

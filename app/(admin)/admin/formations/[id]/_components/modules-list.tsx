@@ -240,7 +240,7 @@ export default function ModulesList({ formationId, initialModules }: ModulesList
 
       {/* Delete dialog */}
       <Dialog open={!!deleteTarget} onOpenChange={open => { if (!open) setDeleteTarget(null) }}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm">
+        <DialogContent showCloseButton={false} className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Supprimer le module</DialogTitle>
             <DialogDescription>

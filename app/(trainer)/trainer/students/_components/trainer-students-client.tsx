@@ -222,7 +222,7 @@ export default function TrainerStudentsClient({ data, search: initialSearch }: T
 
       {/* Edit progress dialog */}
       <Dialog open={!!editTarget} onOpenChange={open => { if (!open) setEditTarget(null) }}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm">
+        <DialogContent showCloseButton={false} className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Modifier la progression</DialogTitle>
             <DialogDescription>
@@ -232,7 +232,7 @@ export default function TrainerStudentsClient({ data, search: initialSearch }: T
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">
                 Progression&nbsp;: <span className="text-primary tabular-nums">{editProgress}%</span>
               </label>
@@ -252,7 +252,7 @@ export default function TrainerStudentsClient({ data, search: initialSearch }: T
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">Statut</label>
               <Select
                 value={editStatus}

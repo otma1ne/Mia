@@ -58,13 +58,13 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
 
         <form ref={formRef} action={action} className="flex flex-col gap-4 py-2">
           {/* Title */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="title">Titre</Label>
             <Input id="title" name="title" placeholder="Développement Web Full-Stack" required />
           </div>
 
           {/* Description */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="description">Description</Label>
             <textarea
               id="description"
@@ -78,7 +78,7 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
 
           {/* Category + Type */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label>Secteur d&apos;activité</Label>
               <Select name="categoryId" required labelItems={Object.fromEntries(categories.map(c => [c.id, c.name]))}>
                 <SelectTrigger className="w-full">
@@ -91,7 +91,7 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label>Type</Label>
               <Select name="type" required labelItems={{
                 PRESENTIAL: 'Présentiel',
@@ -111,25 +111,25 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
           </div>
 
           {/* Capacity */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="maxStudents">Capacité max</Label>
             <Input id="maxStudents" name="maxStudents" type="number" min="1" placeholder="20" required />
           </div>
 
           {/* Price + Duration */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="price">Tarif (MAD)</Label>
               <Input id="price" name="price" type="number" min="0" step="0.01" placeholder="5000" />
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="duration">Durée (heures)</Label>
               <Input id="duration" name="duration" type="number" min="1" placeholder="120" />
             </div>
           </div>
 
           {/* Programme */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="programme">Programme de formation</Label>
             <textarea
               id="programme"

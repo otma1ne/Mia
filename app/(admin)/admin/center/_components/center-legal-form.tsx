@@ -52,7 +52,7 @@ export default function CenterLegalForm({ centerId, initialReglement, initialCgv
       )}
 
       {/* Règlement intérieur */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <label className="text-sm font-medium" htmlFor="reglement">
           Règlement intérieur
         </label>
@@ -67,7 +67,7 @@ export default function CenterLegalForm({ centerId, initialReglement, initialCgv
       </div>
 
       {/* CGV */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <label className="text-sm font-medium" htmlFor="cgv">
           Conditions Générales de Vente (CGV)
         </label>

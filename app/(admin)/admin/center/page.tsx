@@ -8,7 +8,7 @@ export default async function CentersPage() {
   const centers = await getCenters()
 
   return (
-    <div className="p-4 lg:p-6 max-w-3xl">
+    <div className="p-4 lg:p-6">
       <CentersListClient centers={centers} />
     </div>
   )

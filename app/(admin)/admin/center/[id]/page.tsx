@@ -22,7 +22,7 @@ export default async function CenterDetailPage({
   if (!center) notFound()
 
   return (
-    <div className="flex flex-col gap-6 p-4 lg:p-6 max-w-3xl">
+    <div className="flex flex-col gap-6 p-4 lg:p-6">
       {/* Back + header */}
       <div className="flex items-center gap-3">
         <Link

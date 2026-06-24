@@ -18,7 +18,7 @@ interface Props {
 export default function CreateContactDialog({ open, onClose }: Props) {
   return (
     <Dialog open={open} onOpenChange={o => { if (!o) onClose() }}>
-      <DialogContent className="sm:max-w-md" showCloseButton={false}>
+      <DialogContent className="sm:max-w-lg" showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>Nouveau contact</DialogTitle>
           <DialogDescription>Ajoutez un nouveau prospect à votre liste.</DialogDescription>

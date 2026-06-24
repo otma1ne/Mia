@@ -5,6 +5,7 @@ import ContratPDF    from './contrat-template'
 import ReglementPDF  from './reglement-template'
 import CGVPDF        from './cgv-template'
 import ProgrammePDF  from './programme-template'
+import AttestationPDF from './attestation-template'
 import type { Inscription, Formation, Center } from '@prisma/client'
 import { getFormationDateRange } from '@/app/actions/formations'
 
@@ -144,4 +145,39 @@ export async function generateSigningDocuments(params: {
   ])
 
   return { contratUrl, reglementUrl, cgvUrl, programmeUrl }
+}
+
+// ─────────────────────────────────────────
+// Generate attestation de fin de formation
+// ─────────────────────────────────────────
+
+export async function generateAttestation(params: {
+  enrollmentId: string
+  studentName: string
+  formation: Pick<Formation, 'id' | 'title' | 'type' | 'duration'>
+  center: Pick<Center, 'name' | 'address'>
+}): Promise<string> {
+  const { enrollmentId, studentName, formation, center } = params
+
+  const { startDate, endDate } = await getFormationDateRange(formation.id)
+
+  const formationType = formation.type === 'PRESENTIAL' ? 'Présentiel' :
+                        formation.type === 'REMOTE_LIVE' ? 'À distance (live)' :
+                        'À distance (auto-rythmé)'
+
+  const buffer = await renderToBuffer(
+    React.createElement(AttestationPDF, {
+      studentName,
+      formationTitle:    formation.title,
+      formationType,
+      formationDuration: formation.duration,
+      startDate,
+      endDate,
+      centerName:    center.name,
+      centerAddress: center.address,
+      issuedAt:      new Date(),
+    }) as React.ReactElement<DocumentProps>
+  )
+
+  return uploadPdf(buffer, `attestation-${enrollmentId}`)
 }

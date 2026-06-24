@@ -89,7 +89,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
 
   return (
     <Sheet open={!!formationId} onOpenChange={open => { if (!open) onClose() }}>
-      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto gap-0 p-0">
+      <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto gap-0 p-0">
         {isPending || !formation ? (
           <div className="flex h-full items-center justify-center">
             <span className="text-sm text-muted-foreground">
@@ -206,7 +206,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
               {editingDetails ? (
                 <div className="flex flex-col gap-3">
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-2">
                       <label className="text-xs text-muted-foreground">Tarif (MAD)</label>
                       <Input
                         type="number"
@@ -218,7 +218,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                         className="h-8 text-sm"
                       />
                     </div>
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-2">
                       <label className="text-xs text-muted-foreground">Durée (heures)</label>
                       <Input
                         type="number"
@@ -230,7 +230,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                       />
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-col gap-2">
                     <label className="text-xs text-muted-foreground">Programme de formation</label>
                     <textarea
                       rows={6}

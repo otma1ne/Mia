@@ -35,16 +35,16 @@ export default function PasswordForm() {
       </div>
 
       <form ref={formRef} action={action} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="current">Mot de passe actuel</Label>
           <Input id="current" name="current" type="password" autoComplete="current-password" required />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="next">Nouveau mot de passe</Label>
             <Input id="next" name="next" type="password" autoComplete="new-password" required />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="confirm">Confirmer le nouveau mot de passe</Label>
             <Input id="confirm" name="confirm" type="password" autoComplete="new-password" required />
           </div>

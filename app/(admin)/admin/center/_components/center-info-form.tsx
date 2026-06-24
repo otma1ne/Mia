@@ -57,25 +57,25 @@ export default function CenterInfoForm({ center }: CenterInfoFormProps) {
         {center && <input type="hidden" name="centerId" value={center.id} />}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="name">Nom du centre</Label>
             <Input id="name" name="name" defaultValue={center?.name ?? ''} placeholder="Centre de Formation" required />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="email">E-mail</Label>
             <Input id="email" name="email" type="email" defaultValue={center?.email ?? ''} placeholder="contact@centre.ma" required />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="phone">Téléphone</Label>
             <Input id="phone" name="phone" defaultValue={center?.phone ?? ''} placeholder="+33 1 00 00 00 00" required />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="address">Adresse</Label>
             <Input id="address" name="address" defaultValue={center?.address ?? ''} placeholder="1 rue de la Paix, Paris, France" required />
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="description">
             Description <span className="text-muted-foreground">(facultatif)</span>
           </Label>
@@ -89,7 +89,7 @@ export default function CenterInfoForm({ center }: CenterInfoFormProps) {
           />
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="enrollmentAlertDays">Délai d&apos;alerte inscription</Label>
           <p className="text-xs text-muted-foreground -mt-1">
             Nombre de jours avant le début d&apos;une formation pour déclencher une alerte d&apos;inscription.
