@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getFormation } from '@/app/actions/formations'
-import { getModulesForFormation, getModuleFormData } from '@/app/actions/modules'
+import { getModulesForFormation } from '@/app/actions/modules'
 import { ChevronLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import ModulesList from './_components/modules-list'
@@ -22,24 +22,15 @@ const statusDot: Record<string, string> = {
   COMPLETED: 'bg-blue-500',
 }
 
-function formatDate(d: Date) {
-  return new Intl.DateTimeFormat('fr-FR', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(d))
-}
-
 export default async function FormationDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const [formation, modules, { trainers }] = await Promise.all([
+  const [formation, modules] = await Promise.all([
     getFormation(id),
     getModulesForFormation(id),
-    getModuleFormData(),
   ])
 
   if (!formation) notFound()
@@ -75,7 +66,6 @@ export default async function FormationDetailPage({
       <ModulesList
         formationId={id}
         initialModules={modules}
-        trainers={trainers}
       />
     </div>
   )

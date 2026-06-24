@@ -59,6 +59,7 @@ function minutesToPx(minutes: number, pxPerHour = 64) {
 
 interface Module  { id: string; title: string }
 interface Room    { id: string; name: string; capacity: number }
+interface Trainer { id: string; user: { name: string } }
 
 interface ScheduleClientProps {
   initialSessions: SessionEvent[]
@@ -66,6 +67,7 @@ interface ScheduleClientProps {
   view: 'week' | 'list'
   modules: Module[]
   rooms: Room[]
+  trainers: Trainer[]
 }
 
 export default function ScheduleClient({
@@ -74,6 +76,7 @@ export default function ScheduleClient({
   view: initialView,
   modules,
   rooms,
+  trainers,
 }: ScheduleClientProps) {
   const router   = useRouter()
   const pathname = usePathname()
@@ -178,7 +181,7 @@ export default function ScheduleClient({
             </button>
           </div>
 
-          <CreateSessionDialog modules={modules} rooms={rooms} onCreated={handleCreated} />
+          <CreateSessionDialog modules={modules} rooms={rooms} trainers={trainers} onCreated={handleCreated} />
         </div>
       </div>
 

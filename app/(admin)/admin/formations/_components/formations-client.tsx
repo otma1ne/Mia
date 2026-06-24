@@ -46,10 +46,6 @@ const statusConfig: Record<FormationStatus, { dot: string; label: string }> = {
   COMPLETED: { dot: 'bg-blue-500',         label: 'Terminée' },
 }
 
-function formatDate(d: Date) {
-  return new Intl.DateTimeFormat('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(d))
-}
-
 interface Category { id: string; name: string }
 
 interface FormationsClientProps {
@@ -171,14 +167,13 @@ export default function FormationsClient({
               <TableHead className="px-5 text-xs">Statut</TableHead>
               <TableHead className="px-5 text-right text-xs">Inscrits</TableHead>
               <TableHead className="px-5 text-right text-xs">Modules</TableHead>
-              <TableHead className="px-5 text-xs">Début</TableHead>
               <TableHead className="w-10 px-5" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {formations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="px-5 py-12 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={8} className="px-5 py-12 text-center text-sm text-muted-foreground">
                   {initialSearch
                     ? `Aucune formation ne correspond à "${initialSearch}".`
                     : activeTab !== 'all'
@@ -219,7 +214,6 @@ export default function FormationsClient({
                     <TableCell className="px-5 py-4 text-right tabular-nums text-muted-foreground">
                       {formation.moduleCount}
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-muted-foreground">{'—'}</TableCell>
                     <TableCell
                       className="px-5 py-4"
                       onClick={e => e.stopPropagation()}

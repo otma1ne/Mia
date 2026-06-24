@@ -42,14 +42,9 @@ const statusConfig: Record<ModuleStatus, { dot: string; label: string }> = {
   COMPLETED: { dot: 'bg-blue-500',         label: 'Terminé' },
 }
 
-// ─────────────────────────────────────────
-// Trainer option type
-// ─────────────────────────────────────────
-
 interface ModulesListProps {
   formationId: string
   initialModules: ModuleRow[]
-  trainers?: unknown[]
 }
 
 export default function ModulesList({ formationId, initialModules }: ModulesListProps) {
