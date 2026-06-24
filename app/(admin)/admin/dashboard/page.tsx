@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardAction, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { getDashboardStats, getRecentModules } from '@/app/actions/dashboard'
+import { getDashboardStats, getRecentModules, getRevenueDashboard } from '@/app/actions/dashboard'
 import ModulesTable from './_components/modules-table'
+import RevenueChart from './_components/revenue-chart'
 
 export const metadata: Metadata = { title: 'Tableau de bord — MIA Formation' }
 
@@ -14,10 +15,17 @@ function pctChange(current: number, prev: number) {
   return `${sign}${change.toFixed(1)}%`
 }
 
+function formatMAD(n: number) {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M MAD`
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}k MAD`
+  return `${n.toLocaleString('fr-FR')} MAD`
+}
+
 export default async function AdminDashboardPage() {
-  const [stats, modules] = await Promise.all([
+  const [stats, modules, revenue] = await Promise.all([
     getDashboardStats(),
     getRecentModules(),
+    getRevenueDashboard(),
   ])
 
   const statCards = [
@@ -55,9 +63,33 @@ export default async function AdminDashboardPage() {
     },
   ] as const
 
+  const revenueCards = [
+    {
+      label:   'CA cette semaine',
+      value:   formatMAD(revenue.revenueThisWeek),
+      pct:     pctChange(revenue.revenueThisWeek, revenue.revenueLastWeek),
+      trend:   revenue.revenueThisWeek >= revenue.revenueLastWeek ? 'up' : 'down',
+      sub:     'vs semaine dernière',
+    },
+    {
+      label:   'CA ce mois',
+      value:   formatMAD(revenue.revenueThisMonth),
+      pct:     pctChange(revenue.revenueThisMonth, revenue.revenueLastMonth),
+      trend:   revenue.revenueThisMonth >= revenue.revenueLastMonth ? 'up' : 'down',
+      sub:     `${revenue.inscriptionsThisMonth} inscription${revenue.inscriptionsThisMonth !== 1 ? 's' : ''} signée${revenue.inscriptionsThisMonth !== 1 ? 's' : ''}`,
+    },
+    {
+      label:   'CA cette année',
+      value:   formatMAD(revenue.revenueThisYear),
+      pct:     pctChange(revenue.revenueThisYear, revenue.revenueLastYear),
+      trend:   revenue.revenueThisYear >= revenue.revenueLastYear ? 'up' : 'down',
+      sub:     'vs année précédente',
+    },
+  ] as const
+
   return (
     <div className="flex flex-col gap-6 p-4 lg:p-6">
-      {/* Stat cards */}
+      {/* Activity KPI cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map(({ label, value, pct, trend, strong, sub }) => (
           <Card key={label}>
@@ -87,6 +119,56 @@ export default async function AdminDashboardPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Revenue section */}
+      <div className="flex flex-col gap-4">
+        <div>
+          <h2 className="text-sm font-semibold">Chiffre d&apos;affaires</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Inscriptions acceptées (contrats signés) × tarif de formation
+          </p>
+        </div>
+
+        {/* Revenue KPI cards */}
+        <div className="grid gap-4 sm:grid-cols-3">
+          {revenueCards.map(({ label, value, pct, trend, sub }) => (
+            <Card key={label}>
+              <CardHeader>
+                <CardDescription>{label}</CardDescription>
+                <CardAction>
+                  <Badge
+                    variant="outline"
+                    className={trend === 'up'
+                      ? 'border-transparent bg-emerald-50 text-emerald-600'
+                      : 'border-transparent bg-red-50 text-red-600'}
+                  >
+                    {trend === 'up'
+                      ? <TrendingUp className="h-3 w-3" />
+                      : <TrendingDown className="h-3 w-3" />
+                    }
+                    {pct}
+                  </Badge>
+                </CardAction>
+                <CardTitle className="text-2xl font-semibold tabular-nums">{value}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">{sub}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Monthly bar chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold">CA mois par mois</CardTitle>
+            <CardDescription>12 derniers mois — inscriptions acceptées</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RevenueChart data={revenue.monthly} />
+          </CardContent>
+        </Card>
       </div>
 
       {/* Modules table */}
