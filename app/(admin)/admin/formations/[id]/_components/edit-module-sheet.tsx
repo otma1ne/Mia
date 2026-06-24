@@ -89,8 +89,6 @@ export default function EditModuleSheet({ module, onClose, onUpdated }: EditModu
                 </Select>
               </div>
 
-              {/* trainer-per-module removed: trainer select hidden */}
-
               <div className="space-y-1.5">
                 <Label htmlFor="em-duration">Durée (minutes)</Label>
                 <Input id="em-duration" name="duration" type="number" min={0} defaultValue={module.duration} />

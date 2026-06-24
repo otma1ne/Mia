@@ -20,7 +20,6 @@ interface CreateModuleDialogProps {
 }
 
 export default function CreateModuleDialog({ formationId, onCreated }: CreateModuleDialogProps) {
-  const trainers: { id: string; user: { name: string } }[] = [] // trainer-per-module removed
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<string>('THEORY')
 
@@ -82,22 +81,6 @@ export default function CreateModuleDialog({ formationId, onCreated }: CreateMod
                 </SelectContent>
               </Select>
             </div>
-
-            {type === 'PRACTICAL' && (
-              <div className="space-y-1.5">
-                <Label>Formateur</Label>
-                <Select name="trainerId" required labelItems={Object.fromEntries(trainers.map(t => [t.id, t.user.name]))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choisir un formateur" />
-                  </SelectTrigger>
-                  <SelectContent className="min-w-80">
-                    {trainers.map(t => (
-                      <SelectItem key={t.id} value={t.id} label={t.user.name}>{t.user.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
 
             <div className="space-y-1.5">
               <Label htmlFor="cm-duration">Durée (minutes)</Label>

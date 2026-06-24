@@ -17,14 +17,16 @@ import { CirclePlus } from 'lucide-react'
 
 interface Module  { id: string; title: string }
 interface Room    { id: string; name: string; capacity: number }
+interface Trainer { id: string; user: { name: string } }
 interface CreateSessionDialogProps {
   modules: Module[]
   rooms: Room[]
+  trainers: Trainer[]
   defaultDate?: Date
   onCreated?: () => void
 }
 
-export default function CreateSessionDialog({ modules, rooms, defaultDate, onCreated }: CreateSessionDialogProps) {
+export default function CreateSessionDialog({ modules, rooms, trainers, defaultDate, onCreated }: CreateSessionDialogProps) {
   const [open, setOpen] = useState(false)
   const [state, action, pending] = useActionState(createSession, null)
   const formRef = useRef<HTMLFormElement>(null)
@@ -53,7 +55,7 @@ export default function CreateSessionDialog({ modules, rooms, defaultDate, onCre
         <form ref={formRef} action={action} className="flex flex-col gap-4 py-2">
           {/* Module */}
           <div className="flex flex-col gap-1.5">
-            <Label>Module de conduite</Label>
+            <Label>Module</Label>
             <Select name="moduleId" required labelItems={Object.fromEntries(modules.map(m => [m.id, m.title]))}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Sélectionner un module…" />
@@ -63,6 +65,23 @@ export default function CreateSessionDialog({ modules, rooms, defaultDate, onCre
                   ? <SelectItem value="" disabled>Aucun module disponible</SelectItem>
                   : modules.map(m => <SelectItem key={m.id} value={m.id} label={m.title}>{m.title}</SelectItem>)
                 }
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Trainer (optional) */}
+          <div className="flex flex-col gap-1.5">
+            <Label>
+              Formateur <span className="text-muted-foreground">(facultatif)</span>
+            </Label>
+            <Select name="trainerId" labelItems={Object.fromEntries(trainers.map(t => [t.id, t.user.name]))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Sans formateur assigné" />
+              </SelectTrigger>
+              <SelectContent className="min-w-80">
+                {trainers.map(t => (
+                  <SelectItem key={t.id} value={t.id} label={t.user.name}>{t.user.name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

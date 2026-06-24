@@ -13,7 +13,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { DatePicker } from '@/components/ui/date-picker'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -126,18 +125,6 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="duration">Durée (heures)</Label>
               <Input id="duration" name="duration" type="number" min="1" placeholder="120" />
-            </div>
-          </div>
-
-          {/* Dates */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label>Date de début</Label>
-              <DatePicker name="startDate" placeholder="Date de début" />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Date de fin</Label>
-              <DatePicker name="endDate" placeholder="Date de fin" />
             </div>
           </div>
 
