@@ -36,11 +36,13 @@ export async function GET(request: NextRequest) {
     // 0. Send Bilan Chaud when formation ends
     // ────────────────────────────────────────────────────────────────
 
-    // 1. Get all formations that have ended
+    // 1. Get all formations that have ended:
+    // has at least one session AND no session is in the future (all sessions are past)
     const endedFormations = await db.formation.findMany({
       where: {
-        endDate: {
-          lte: now,
+        sessions: {
+          some: {},
+          none: { date: { gte: now } },
         },
       },
       select: { id: true },

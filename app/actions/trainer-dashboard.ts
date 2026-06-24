@@ -57,7 +57,7 @@ export async function getTrainerDashboardStats(): Promise<TrainerDashboardStats>
 
   const [modules, upcomingSessions, enrollmentStats] = await Promise.all([
     db.module.findMany({
-      where: { trainerId },
+      where: { sessions: { some: { trainerId } } },
       select: {
         id: true,
         title: true,
@@ -68,7 +68,7 @@ export async function getTrainerDashboardStats(): Promise<TrainerDashboardStats>
     }),
     db.session.findMany({
       where: {
-        module: { trainerId },
+        trainerId,
         date: { gte: now, lte: in7Days },
       },
       orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
@@ -79,7 +79,7 @@ export async function getTrainerDashboardStats(): Promise<TrainerDashboardStats>
       },
     }),
     db.moduleEnrollment.findMany({
-      where: { module: { trainerId } },
+      where: { module: { sessions: { some: { trainerId } } } },
       select: { status: true },
     }),
   ])
@@ -152,7 +152,7 @@ export async function getTrainerModules({
 } = {}): Promise<TrainerModulesResult> {
   const trainerId = await getTrainerId()
 
-  const baseWhere = { trainerId }
+  const baseWhere = { sessions: { some: { trainerId } } }
   const where = {
     ...baseWhere,
     ...(status ? { status } : {}),
@@ -249,14 +249,14 @@ export async function getTrainerStudents({
 
   const whereQuery = search.trim()
     ? {
-        module: { trainerId },
+        module: { sessions: { some: { trainerId } } },
         OR: [
           { user: { name: { contains: search, mode: 'insensitive' as const } } },
           { user: { email: { contains: search, mode: 'insensitive' as const } } },
           { module: { title: { contains: search, mode: 'insensitive' as const } } },
         ],
       }
-    : { module: { trainerId } }
+    : { module: { sessions: { some: { trainerId } } } }
 
   const [total, enrollments] = await Promise.all([
     db.moduleEnrollment.count({ where: whereQuery }),
@@ -317,7 +317,7 @@ export async function getTrainerSessions({
 
   const sessions = await db.session.findMany({
     where: {
-      module: { trainerId },
+      trainerId,
       date: { gte: from, lte: to },
     },
     orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
@@ -364,7 +364,7 @@ export async function getTrainerSessionOptions(): Promise<TrainerSessionOption[]
 
   const sessions = await db.session.findMany({
     where: {
-      module: { trainerId },
+      trainerId,
       date: { gte: from, lte: to },
     },
     orderBy: [{ date: 'desc' }, { startTime: 'asc' }],
@@ -415,7 +415,6 @@ export async function getTrainerSessionsForAttendance(
       module: {
         select: {
           title: true,
-          trainerId: true,
           enrollments: {
             where: { status: { in: ['ACTIVE', 'COMPLETED'] } },
             include: {
@@ -431,7 +430,7 @@ export async function getTrainerSessionsForAttendance(
     },
   })
 
-  if (!session || session.module.trainerId !== trainerId) return null
+  if (!session || session.trainerId !== trainerId) return null
 
   return {
     sessionId: session.id,
@@ -462,9 +461,9 @@ export async function saveAttendance(
 
   const session = await db.session.findUnique({
     where: { id: sessionId },
-    include: { module: { select: { trainerId: true } } },
+    select: { trainerId: true },
   })
-  if (!session || session.module.trainerId !== trainerId) {
+  if (!session || session.trainerId !== trainerId) {
     return { success: false, error: 'Non autorisé.' }
   }
 
@@ -508,10 +507,15 @@ export async function updateStudentProgress(
 
   const enrollment = await db.moduleEnrollment.findUnique({
     where: { id: enrollmentId },
-    include: { module: { select: { trainerId: true } } },
+    select: { moduleId: true },
   })
+  if (!enrollment) return { success: false, error: 'Non autorisé.' }
 
-  if (!enrollment || enrollment.module.trainerId !== trainerId) {
+  const hasSession = await db.session.findFirst({
+    where: { moduleId: enrollment.moduleId, trainerId },
+    select: { id: true },
+  })
+  if (!hasSession) {
     return { success: false, error: 'Non autorisé.' }
   }
 

@@ -219,7 +219,7 @@ export default function FormationsClient({
                     <TableCell className="px-5 py-4 text-right tabular-nums text-muted-foreground">
                       {formation.moduleCount}
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-muted-foreground">{formatDate(formation.startDate)}</TableCell>
+                    <TableCell className="px-5 py-4 text-muted-foreground">{'—'}</TableCell>
                     <TableCell
                       className="px-5 py-4"
                       onClick={e => e.stopPropagation()}

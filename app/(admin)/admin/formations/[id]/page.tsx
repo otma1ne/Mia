@@ -67,7 +67,7 @@ export default async function FormationDetailPage({
 
         <div className="shrink-0 flex gap-2 items-center text-sm text-muted-foreground">
           <Badge variant="secondary">{formation.category.name}</Badge>
-          <span>{formatDate(formation.startDate)} → {formatDate(formation.endDate)}</span>
+          <span className="text-muted-foreground italic text-xs">Dates à définir</span>
         </div>
       </div>
 

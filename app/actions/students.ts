@@ -99,8 +99,6 @@ export async function getStudent(id: string) {
               title: true,
               type: true,
               status: true,
-              startDate: true,
-              endDate: true,
             },
           },
         },

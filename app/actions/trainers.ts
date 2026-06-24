@@ -65,7 +65,7 @@ export async function getTrainers({
       orderBy: { createdAt: 'desc' },
       include: {
         user: { select: { name: true, email: true, phone: true, avatar: true } },
-        _count: { select: { modules: true } },
+        _count: { select: { sessions: true } },
       },
     }),
   ])
@@ -82,7 +82,7 @@ export async function getTrainers({
       specializations: t.specializations,
       credentials: t.credentials,
       rating: t.rating,
-      courseCount: t._count.modules,
+      courseCount: t._count.sessions,
       createdAt: t.createdAt,
     })),
     total,
@@ -114,13 +114,17 @@ export async function getTrainer(id: string) {
       user: { select: { name: true, email: true, phone: true, avatar: true, createdAt: true } },
       categories: { select: { id: true, name: true } },
       availability: { orderBy: { dayOfWeek: 'asc' } },
-      modules: {
-        orderBy: { createdAt: 'desc' },
+      sessions: {
+        orderBy: { date: 'desc' },
+        take: 20,
         select: {
           id: true,
-          title: true,
-          status: true,
-          _count: { select: { enrollments: true } },
+          date: true,
+          startTime: true,
+          endTime: true,
+          formationId: true,
+          formation: { select: { title: true } },
+          module: { select: { title: true } },
         },
       },
     },

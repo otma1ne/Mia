@@ -35,7 +35,6 @@ export default async function AdminAttendancePage({
         select: {
           title: true,
           formation: { select: { title: true } },
-          trainer: { include: { user: { select: { name: true } } } },
         },
       },
       room: { select: { name: true } },
@@ -59,7 +58,6 @@ export default async function AdminAttendancePage({
           select: {
             title: true,
             formation: { select: { title: true } },
-            trainer: { include: { user: { select: { name: true } } } },
             enrollments: {
               select: {
                 id: true,

@@ -46,7 +46,6 @@ interface SessionData {
   module: {
     title: string
     formation: { title: string }
-    trainer: { user: { name: string } } | null
     enrollments: StudentAttendance[]
   }
   room: { name: string } | null
@@ -143,7 +142,7 @@ export default function AdminAttendanceClient({
             <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg text-sm">
               <div>
                 <p className="text-muted-foreground">Moniteur</p>
-                <p className="font-medium">{sessionData.module.trainer?.user.name ?? '—'}</p>
+                <p className="font-medium">—</p>
               </div>
               {sessionData.room && (
                 <div>

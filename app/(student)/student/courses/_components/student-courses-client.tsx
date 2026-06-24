@@ -145,7 +145,7 @@ export default function StudentCoursesClient({
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3 shrink-0" />
-                      {format(new Date(formation.startDate), 'MMM d')} – {format(new Date(formation.endDate), 'MMM d, yyyy')}
+                      Dates à définir
                     </div>
                   </div>
 

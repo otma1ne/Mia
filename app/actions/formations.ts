@@ -104,7 +104,6 @@ export async function getFormation(id: string) {
       modules: {
         orderBy: { orderIndex: 'asc' },
         include: {
-          trainer: { include: { user: { select: { name: true } } } },
           _count: { select: { enrollments: true } },
         },
       },

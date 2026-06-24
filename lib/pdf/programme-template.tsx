@@ -139,15 +139,16 @@ export interface ProgrammePDFProps {
   formationTitle: string
   formationType: string
   formationDuration?: number | null
-  startDate: Date
-  endDate: Date
+  startDate: Date | null
+  endDate: Date | null
   programme: string
   centerName: string
   generatedAt: Date
   signature?: { dataUrl: string; signedAt: Date }
 }
 
-function fmt(d: Date) {
+function fmt(d: Date | null) {
+  if (!d) return 'À définir'
   return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(d))
 }
 

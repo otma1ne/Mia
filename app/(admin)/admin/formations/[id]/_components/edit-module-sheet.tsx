@@ -13,25 +13,16 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
 
-interface TrainerOption {
-  id: string
-  user: { name: string }
-}
-
 interface EditModuleSheetProps {
   module: ModuleRow | null
-  trainers: TrainerOption[]
   onClose: () => void
   onUpdated: (partial: Partial<ModuleRow> & { id: string }) => void
 }
 
-export default function EditModuleSheet({ module, trainers, onClose, onUpdated }: EditModuleSheetProps) {
+export default function EditModuleSheet({ module, onClose, onUpdated }: EditModuleSheetProps) {
   const [type, setType] = useState(module?.type ?? 'THEORY')
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
-
-  // Sync type when module changes
-  const currentType = module?.type ?? type
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -44,7 +35,6 @@ export default function EditModuleSheet({ module, trainers, onClose, onUpdated }
       description: (fd.get('description') as string).trim(),
       type:        fd.get('type')         as any,
       duration:    Number(fd.get('duration')) || 0,
-      trainerId:   (fd.get('trainerId')   as string)?.trim() || null,
     }
 
     startTransition(async () => {
@@ -99,21 +89,7 @@ export default function EditModuleSheet({ module, trainers, onClose, onUpdated }
                 </Select>
               </div>
 
-              {type === 'PRACTICAL' && (
-                <div className="space-y-1.5">
-                  <Label>Formateur</Label>
-                  <Select name="trainerId" defaultValue={module.trainerId ?? undefined} labelItems={Object.fromEntries(trainers.map(t => [t.id, t.user.name]))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choisir un formateur" />
-                    </SelectTrigger>
-                    <SelectContent className="min-w-80">
-                      {trainers.map(t => (
-                        <SelectItem key={t.id} value={t.id} label={t.user.name}>{t.user.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
+              {/* trainer-per-module removed: trainer select hidden */}
 
               <div className="space-y-1.5">
                 <Label htmlFor="em-duration">Durée (minutes)</Label>

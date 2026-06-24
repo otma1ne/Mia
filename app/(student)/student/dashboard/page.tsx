@@ -114,7 +114,6 @@ export default async function StudentDashboardPage() {
                     <div key={e.id} className="flex items-center gap-3 rounded-lg border px-3 py-2.5">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{e.formationTitle}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{e.trainerName}</p>
                       </div>
                       <div className="flex flex-col items-end gap-1 shrink-0">
                         <Badge variant="outline" className={cn('text-[10px]', statusCfg.className)}>
