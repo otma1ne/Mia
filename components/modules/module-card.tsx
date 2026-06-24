@@ -107,12 +107,6 @@ export default function ModuleCard({ module, formationId, orderNumber }: ModuleC
               </p>
             )}
 
-            {/* Trainer */}
-            {module.trainerName && (
-              <p className="text-xs text-muted-foreground mt-1">
-                Formateur : {module.trainerName}
-              </p>
-            )}
           </div>
 
           {/* CTA arrow */}

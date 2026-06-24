@@ -181,9 +181,6 @@ export default function ModuleViewClient({ module, examStatus }: Props) {
           )}
         </div>
         <p className="text-sm text-muted-foreground">{module.description}</p>
-        {module.trainerName && (
-          <p className="text-xs text-muted-foreground">Formateur : {module.trainerName}</p>
-        )}
       </div>
 
       {/* Video (THEORY / ASSESSMENT) */}
