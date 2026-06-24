@@ -104,6 +104,19 @@ export async function deleteRoom(id: string) {
 }
 
 // ─────────────────────────────────────────
+// Access plans (array of Cloudinary URLs)
+// ─────────────────────────────────────────
+
+export async function saveAccessPlans(centerId: string, urls: string[]) {
+  await db.center.update({
+    where: { id: centerId },
+    data: { accessPlans: urls },
+  })
+  revalidatePath(PATH)
+  return { success: true }
+}
+
+// ─────────────────────────────────────────
 // Save legal content (règlement + CGV)
 // ─────────────────────────────────────────
 
