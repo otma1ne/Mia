@@ -49,7 +49,7 @@ const adminSections: NavSection[] = [
       { label: "Secteurs d'activité",   href: '/admin/categories',    icon: Tag },
       { label: 'Commercial',   href: '/admin/commercial',    icon: Briefcase },
       { label: 'Planning',     href: '/admin/schedule',      icon: CalendarDays },
-      { label: 'Centre',       href: '/admin/center',        icon: Building2 },
+      { label: 'Centres',      href: '/admin/center',        icon: Building2 },
     ],
   },
 ]

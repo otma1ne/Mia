@@ -3,10 +3,41 @@
 import { db } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 
-const PATH = '/admin/center'
+const LIST_PATH = '/admin/center'
+
+function detailPath(centerId: string) {
+  return `/admin/center/${centerId}`
+}
 
 // ─────────────────────────────────────────
-// Get center (first record, or null)
+// Get all centers (list)
+// ─────────────────────────────────────────
+
+export async function getCenters() {
+  return db.center.findMany({
+    orderBy: { name: 'asc' },
+    include: {
+      _count: { select: { rooms: true } },
+    },
+  })
+}
+
+// ─────────────────────────────────────────
+// Get one center by ID (detail page)
+// ─────────────────────────────────────────
+
+export async function getCenterById(id: string) {
+  return db.center.findUnique({
+    where: { id },
+    include: {
+      operatingHours: { orderBy: { dayOfWeek: 'asc' } },
+      rooms: { orderBy: { name: 'asc' } },
+    },
+  })
+}
+
+// ─────────────────────────────────────────
+// Backward compat — used by inscriptions PDF
 // ─────────────────────────────────────────
 
 export async function getCenter() {
@@ -20,6 +51,7 @@ export async function getCenter() {
 
 // ─────────────────────────────────────────
 // Upsert center info
+// Returns { success, centerId } so callers can redirect after creation
 // ─────────────────────────────────────────
 
 export async function saveCenterInfo(_prevState: unknown, formData: FormData) {
@@ -32,24 +64,36 @@ export async function saveCenterInfo(_prevState: unknown, formData: FormData) {
   const enrollmentAlertDays = Math.max(1, parseInt(formData.get('enrollmentAlertDays') as string) || 7)
 
   if (!name || !address || !phone || !email) {
-    return { error: 'Name, address, phone and email are required.' }
+    return { error: 'Nom, adresse, téléphone et e-mail sont obligatoires.' }
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email)) return { error: 'Invalid email address.' }
+  if (!emailRegex.test(email)) return { error: 'Adresse e-mail invalide.' }
 
   if (centerId) {
     await db.center.update({
       where: { id: centerId },
       data: { name, address, phone, email, description: description ?? '', enrollmentAlertDays },
     })
+    revalidatePath(detailPath(centerId))
+    revalidatePath(LIST_PATH)
+    return { success: true, centerId }
   } else {
-    await db.center.create({
+    const created = await db.center.create({
       data: { name, address, phone, email, description: description ?? '', enrollmentAlertDays },
     })
+    revalidatePath(LIST_PATH)
+    return { success: true, centerId: created.id }
   }
+}
 
-  revalidatePath(PATH)
+// ─────────────────────────────────────────
+// Delete a center
+// ─────────────────────────────────────────
+
+export async function deleteCenter(id: string) {
+  await db.center.delete({ where: { id } })
+  revalidatePath(LIST_PATH)
   return { success: true }
 }
 
@@ -61,7 +105,6 @@ export async function saveOperatingHours(
   centerId: string,
   hours: { dayOfWeek: number; open: string; close: string; enabled: boolean }[]
 ) {
-  // Delete existing and re-create enabled ones
   await db.operatingHours.deleteMany({ where: { centerId } })
 
   const enabled = hours.filter(h => h.enabled)
@@ -76,7 +119,7 @@ export async function saveOperatingHours(
     })
   }
 
-  revalidatePath(PATH)
+  revalidatePath(detailPath(centerId))
   return { success: true }
 }
 
@@ -89,18 +132,19 @@ export async function createRoom(_prevState: unknown, formData: FormData) {
   const name     = (formData.get('name')     as string)?.trim()
   const capacity = Number(formData.get('capacity'))
 
-  if (!centerId || !name) return { error: 'Center and room name are required.' }
-  if (isNaN(capacity) || capacity < 1) return { error: 'Capacity must be at least 1.' }
+  if (!centerId || !name) return { error: 'Centre et nom de salle obligatoires.' }
+  if (isNaN(capacity) || capacity < 1) return { error: 'La capacité doit être d\'au moins 1.' }
 
   await db.room.create({ data: { centerId, name, capacity } })
 
-  revalidatePath(PATH)
+  revalidatePath(detailPath(centerId))
   return { success: true }
 }
 
 export async function deleteRoom(id: string) {
+  const room = await db.room.findUnique({ where: { id }, select: { centerId: true } })
   await db.room.delete({ where: { id } })
-  revalidatePath(PATH)
+  if (room) revalidatePath(detailPath(room.centerId))
 }
 
 // ─────────────────────────────────────────
@@ -112,7 +156,7 @@ export async function saveAccessPlans(centerId: string, urls: string[]) {
     where: { id: centerId },
     data: { accessPlans: urls },
   })
-  revalidatePath(PATH)
+  revalidatePath(detailPath(centerId))
   return { success: true }
 }
 
@@ -131,6 +175,6 @@ export async function saveCenterLegal(
       cgv:       data.cgv.trim()       || null,
     },
   })
-  revalidatePath(PATH)
+  revalidatePath(detailPath(centerId))
   return { success: true }
 }
