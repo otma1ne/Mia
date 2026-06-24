@@ -363,8 +363,6 @@ export interface FormationDetailModule {
   status: ModuleStatus
   videoUrl: string | null
   duration: number
-  trainerName: string | null
-  trainerAvatar: string | null
   isLocked: boolean
   isCompleted: boolean
   progress: number
@@ -495,8 +493,6 @@ export async function getFormationDetail(
         status: module.status,
         videoUrl: module.videoUrl,
         duration: module.duration,
-        trainerName: null,
-        trainerAvatar: null,
         isLocked,
         isCompleted,
         progress: enrollment?.progress ?? 0,
@@ -529,8 +525,6 @@ export interface StudentModuleDetail {
   status: ModuleStatus
   videoUrl: string | null
   duration: number
-  trainerName: string | null
-  trainerAvatar: string | null
   formationId: string
   formationTitle: string
   isLocked: boolean
@@ -630,8 +624,6 @@ export async function getStudentModuleDetail(
     status: module.status,
     videoUrl: module.videoUrl,
     duration: module.duration,
-    trainerName: null,
-    trainerAvatar: null,
     formationId: module.formation.id,
     formationTitle: module.formation.title,
     isLocked,
