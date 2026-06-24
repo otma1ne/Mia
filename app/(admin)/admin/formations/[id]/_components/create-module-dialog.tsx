@@ -43,7 +43,7 @@ export default function CreateModuleDialog({ formationId, onCreated }: CreateMod
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Nouveau module</DialogTitle>
           </DialogHeader>

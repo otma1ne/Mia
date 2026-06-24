@@ -383,6 +383,7 @@ export interface FormationDetailResult {
   enrollmentCount: number
   enrollmentProgress: number
   enrollmentStatus: EnrollmentStatus
+  certificate: string | null
   modules: FormationDetailModule[]
   allModulesCompleted: boolean
 }
@@ -394,7 +395,7 @@ export async function getFormationDetail(
 
   const formationEnrollment = await db.formationEnrollment.findUnique({
     where: { userId_formationId: { userId, formationId } },
-    select: { id: true, progress: true, status: true },
+    select: { id: true, progress: true, status: true, certificate: true },
   })
   if (!formationEnrollment) return null
 
@@ -464,6 +465,7 @@ export async function getFormationDetail(
     enrollmentCount: formation._count.enrollments,
     enrollmentProgress: formationEnrollment.progress,
     enrollmentStatus: formationEnrollment.status,
+    certificate: formationEnrollment.certificate,
     allModulesCompleted,
     modules: formation.modules.map((module, idx) => {
       const mats = module.materials.map(m => ({

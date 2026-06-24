@@ -228,7 +228,7 @@ export default function ExamBuilder({ moduleId, exam }: Props) {
 
       {/* Delete confirm */}
       <Dialog open={!!deleteTarget} onOpenChange={o => { if (!o) setDeleteTarget(null) }}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm">
+        <DialogContent showCloseButton={false} className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Supprimer la question</DialogTitle>
             <DialogDescription>

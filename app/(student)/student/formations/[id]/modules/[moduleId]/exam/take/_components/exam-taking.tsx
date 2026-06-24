@@ -249,7 +249,7 @@ export default function ExamTaking({
 
       {/* Confirm submit */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+        <DialogContent className="sm:max-w-lg" showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>Soumettre l&apos;examen ?</DialogTitle>
             <DialogDescription>

@@ -49,7 +49,7 @@ export default function StudentDetailSheet({ studentId, onClose }: StudentDetail
 
   return (
     <Sheet open={!!studentId} onOpenChange={open => { if (!open) onClose() }}>
-      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto gap-0 p-0">
+      <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto gap-0 p-0">
         {isPending || !student ? (
           <div className="flex h-full items-center justify-center">
             <span className="text-sm text-muted-foreground">

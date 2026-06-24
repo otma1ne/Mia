@@ -46,7 +46,7 @@ export default function CreateSessionDialog({ modules, rooms, trainers, defaultD
         Ajouter une séance
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Ajouter une séance</DialogTitle>
           <DialogDescription>Planifier une nouvelle séance de cours.</DialogDescription>
@@ -54,7 +54,7 @@ export default function CreateSessionDialog({ modules, rooms, trainers, defaultD
 
         <form ref={formRef} action={action} className="flex flex-col gap-4 py-2">
           {/* Module */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label>Module</Label>
             <Select name="moduleId" required labelItems={Object.fromEntries(modules.map(m => [m.id, m.title]))}>
               <SelectTrigger className="w-full">
@@ -70,7 +70,7 @@ export default function CreateSessionDialog({ modules, rooms, trainers, defaultD
           </div>
 
           {/* Trainer (optional) */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label>
               Formateur <span className="text-muted-foreground">(facultatif)</span>
             </Label>
@@ -87,25 +87,25 @@ export default function CreateSessionDialog({ modules, rooms, trainers, defaultD
           </div>
 
           {/* Date */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label>Date</Label>
             <DatePicker name="date" placeholder="Choisir une date" defaultValue={defaultDate} />
           </div>
 
           {/* Start + End time */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="startTime">Heure de début</Label>
               <Input id="startTime" name="startTime" type="time" required />
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="endTime">Heure de fin</Label>
               <Input id="endTime" name="endTime" type="time" required />
             </div>
           </div>
 
           {/* Room (optional) */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label>
               Salle <span className="text-muted-foreground">(facultatif)</span>
             </Label>
@@ -124,7 +124,7 @@ export default function CreateSessionDialog({ modules, rooms, trainers, defaultD
           </div>
 
           {/* Notes */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="notes">
               Notes <span className="text-muted-foreground">(facultatif)</span>
             </Label>

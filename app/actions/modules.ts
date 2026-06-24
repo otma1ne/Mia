@@ -5,6 +5,8 @@ import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import type { ModuleStatus, ModuleType } from '@prisma/client'
+import { generateAttestation } from '@/lib/pdf/generate-documents'
+import { sendAttestationEmail } from '@/lib/email'
 
 // ─────────────────────────────────────────
 // Auth helpers
@@ -285,10 +287,50 @@ export async function markModuleComplete(moduleId: string) {
     ? Math.round((completedModules / totalModules) * 100)
     : 0
 
+  const now = new Date()
   await db.formationEnrollment.update({
     where: { id: formationEnrollmentId },
-    data: { progress: newProgress, completedAt: newProgress === 100 ? new Date() : undefined },
+    data: { progress: newProgress, completedAt: newProgress === 100 ? now : undefined },
   })
+
+  // Generate attestation when formation is 100% complete
+  if (newProgress === 100) {
+    try {
+      const enrollment = await db.formationEnrollment.findUnique({
+        where: { id: formationEnrollmentId },
+        include: {
+          user: { select: { name: true, email: true } },
+          formation: { select: { id: true, title: true, type: true, duration: true } },
+        },
+      })
+      const center = await db.center.findFirst({
+        select: { name: true, address: true },
+      })
+      if (enrollment && center) {
+        const attestationUrl = await generateAttestation({
+          enrollmentId: formationEnrollmentId,
+          studentName:  enrollment.user.name ?? `${enrollment.user.name}`,
+          formation:    enrollment.formation,
+          center,
+        })
+        await db.formationEnrollment.update({
+          where: { id: formationEnrollmentId },
+          data: { certificate: attestationUrl },
+        })
+        if (enrollment.user.email) {
+          const firstName = enrollment.user.name?.split(' ')[0] ?? 'Apprenant'
+          await sendAttestationEmail(
+            enrollment.user.email,
+            firstName,
+            enrollment.formation.title,
+            attestationUrl
+          )
+        }
+      }
+    } catch (err) {
+      console.error('[markModuleComplete] Attestation generation failed:', err)
+    }
+  }
 
   revalidatePath(`/student/formations`)
   return { success: true }

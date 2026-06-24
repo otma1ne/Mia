@@ -349,7 +349,7 @@ export default function ModuleViewClient({ module, examStatus }: Props) {
               <span className="font-medium">Module terminé</span>
             </div>
           ) : (
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               {!allMaterialsDone && materials.length > 0 && (
                 <p className="text-xs text-muted-foreground">
                   Complétez toutes les ressources pour valider ce module.

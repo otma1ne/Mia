@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import {
   MapPin, Monitor, Video, BookOpen, Calendar, User,
-  ChevronLeft, ClipboardCheck, ChevronRight,
+  ChevronLeft, ClipboardCheck, ChevronRight, Download,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
@@ -87,7 +87,7 @@ export default function FormationDetailClient({ formation }: Props) {
           </div>
 
           {/* Overall progress */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
                 Progression — {completedCount} / {totalCount} module{totalCount !== 1 ? 's' : ''} terminé{completedCount !== 1 ? 's' : ''}
@@ -117,6 +117,32 @@ export default function FormationDetailClient({ formation }: Props) {
             orderNumber={idx + 1}
           />
         ))}
+
+        {/* Attestation card */}
+        {formation.certificate && (
+          <div className="rounded-xl border-2 border-emerald-300 bg-emerald-50/30 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                  <Download className="h-4 w-4 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-emerald-800">Attestation de fin de formation</p>
+                  <p className="text-xs text-emerald-600">Certificat de réalisation disponible</p>
+                </div>
+              </div>
+              <a
+                href={formation.certificate}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'border-emerald-300 text-emerald-700 hover:bg-emerald-50 shrink-0')}
+              >
+                <Download className="h-4 w-4 mr-1.5" />
+                Télécharger
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* Final evaluation card */}
         {totalCount > 0 && (

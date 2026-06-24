@@ -55,7 +55,7 @@ export default function TrainerDetailSheet({ trainerId, onClose }: TrainerDetail
 
   return (
     <Sheet open={!!trainerId} onOpenChange={open => { if (!open) onClose() }}>
-      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto gap-0 p-0">
+      <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto gap-0 p-0">
         {isPending || !trainer ? (
           <div className="flex h-full items-center justify-center">
             <span className="text-sm text-muted-foreground">
@@ -144,7 +144,7 @@ export default function TrainerDetailSheet({ trainerId, onClose }: TrainerDetail
                     <Award className="h-3.5 w-3.5" />
                     Diplômes &amp; certifications
                   </h3>
-                  <ul className="flex flex-col gap-1.5">
+                  <ul className="flex flex-col gap-2">
                     {trainer.credentials.map(c => (
                       <li key={c} className="text-sm flex items-center gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />

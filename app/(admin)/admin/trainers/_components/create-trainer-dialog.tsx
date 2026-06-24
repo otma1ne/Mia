@@ -66,7 +66,7 @@ function FileUploadField({ name, label, required }: FileUploadFieldProps) {
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <Label>
         {label} {!required && <span className="text-muted-foreground">(facultatif)</span>}
       </Label>
@@ -138,21 +138,21 @@ export default function CreateTrainerDialog({ categories }: CreateTrainerDialogP
 
         <form ref={formRef} action={action} className="flex flex-col gap-4 py-2">
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="firstName">Prénom</Label>
               <Input id="firstName" name="firstName" placeholder="Alice" required />
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="lastName">Nom</Label>
               <Input id="lastName" name="lastName" placeholder="Martin" required />
             </div>
 
-            <div className="flex flex-col gap-1.5 col-span-2">
+            <div className="flex flex-col gap-2 col-span-2">
               <Label htmlFor="email">Adresse e-mail</Label>
               <Input id="email" name="email" type="email" placeholder="alice@exemple.com" required />
             </div>
 
-            <div className="flex flex-col gap-1.5 col-span-2 sm:col-span-1">
+            <div className="flex flex-col gap-2 col-span-2 sm:col-span-1">
               <Label htmlFor="phone">
                 Téléphone <span className="text-muted-foreground">(facultatif)</span>
               </Label>
@@ -160,14 +160,14 @@ export default function CreateTrainerDialog({ categories }: CreateTrainerDialogP
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="bio">
               Biographie <span className="text-muted-foreground">(facultatif)</span>
             </Label>
             <Input id="bio" name="bio" placeholder="Courte biographie professionnelle…" />
           </div>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="specializations">
               Spécialisations <span className="text-muted-foreground">(séparées par des virgules)</span>
             </Label>
@@ -178,7 +178,7 @@ export default function CreateTrainerDialog({ categories }: CreateTrainerDialogP
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="credentials">
               Diplômes &amp; certifications <span className="text-muted-foreground">(séparés par des virgules)</span>
             </Label>
@@ -190,7 +190,7 @@ export default function CreateTrainerDialog({ categories }: CreateTrainerDialogP
           </div>
 
           {/* Type de formation — multiselect of existing categories */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label>
               Secteurs d&apos;activité <span className="text-muted-foreground">(facultatif)</span>
             </Label>
@@ -212,7 +212,7 @@ export default function CreateTrainerDialog({ categories }: CreateTrainerDialogP
           </div>
 
           {/* Niveau d'expertise — multiselect */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label>
               Niveau d&apos;expertise <span className="text-muted-foreground">(facultatif)</span>
             </Label>

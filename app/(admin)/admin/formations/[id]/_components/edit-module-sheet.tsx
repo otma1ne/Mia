@@ -50,7 +50,7 @@ export default function EditModuleSheet({ module, onClose, onUpdated }: EditModu
 
   return (
     <Sheet open={!!module} onOpenChange={open => { if (!open) onClose() }}>
-      <SheetContent className="sm:max-w-md">
+      <SheetContent className="sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>Modifier le module</SheetTitle>
         </SheetHeader>

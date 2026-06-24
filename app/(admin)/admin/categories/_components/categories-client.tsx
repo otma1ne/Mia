@@ -34,7 +34,7 @@ function CreateCategoryDialog() {
         Ajouter un secteur
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Nouveau secteur d&apos;activité</DialogTitle>
           <DialogDescription>
@@ -43,11 +43,11 @@ function CreateCategoryDialog() {
         </DialogHeader>
 
         <form ref={formRef} action={action} className="flex flex-col gap-4 py-2">
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="create-name">Nom <span className="text-destructive">*</span></Label>
             <Input id="create-name" name="name" placeholder="ex: Développement Web & Mobile" required />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="create-desc">Description</Label>
             <Input id="create-desc" name="description" placeholder="Courte description (optionnel)" />
           </div>
@@ -89,7 +89,7 @@ function EditCategoryDialog({ category }: { category: CategoryRow }) {
         <Pencil className="h-3.5 w-3.5" />
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Modifier le secteur d&apos;activité</DialogTitle>
           <DialogDescription>Mettez à jour le nom ou la description.</DialogDescription>
@@ -98,7 +98,7 @@ function EditCategoryDialog({ category }: { category: CategoryRow }) {
         <form ref={formRef} action={action} className="flex flex-col gap-4 py-2">
           <input type="hidden" name="id" value={category.id} />
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor={`edit-name-${category.id}`}>Nom <span className="text-destructive">*</span></Label>
             <Input
               id={`edit-name-${category.id}`}
@@ -107,7 +107,7 @@ function EditCategoryDialog({ category }: { category: CategoryRow }) {
               required
             />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <Label htmlFor={`edit-desc-${category.id}`}>Description</Label>
             <Input
               id={`edit-desc-${category.id}`}
@@ -161,7 +161,7 @@ function DeleteCategoryDialog({ category }: { category: CategoryRow }) {
         <Trash2 className="h-3.5 w-3.5" />
       </DialogTrigger>
 
-      <DialogContent showCloseButton={false} className="sm:max-w-sm">
+      <DialogContent showCloseButton={false} className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Supprimer le secteur d&apos;activité</DialogTitle>
           <DialogDescription>

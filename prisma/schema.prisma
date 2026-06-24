@@ -131,8 +131,8 @@ model Trainer {
   rating          Float?
   expertiseLevels   ExpertiseLevel[]
   categoryIds       String[] @db.ObjectId // "type de formation"
-  cvUrl             String
-  diplomeUrl        String
+  cvUrl             String?
+  diplomeUrl        String?
   certifQualiopiUrl String?
   ndaUrl            String?
   createdAt       DateTime @default(now())
@@ -388,8 +388,9 @@ model Session {
   date        DateTime
   startTime String   // "09:00"
   endTime   String   // "11:00"
-  notes     String?
-  createdAt DateTime @default(now())
+  notes               String?
+  convocationSentAt   DateTime?
+  createdAt           DateTime @default(now())
 
   module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   formation   Formation    @relation(fields: [formationId], references: [id], onDelete: Cascade)
@@ -435,12 +436,12 @@ model Inscription {
   lastName         String
   email            String
   phone            String
-  nationality      String
-  dateOfBirth      DateTime
+  nationality      String?
+  dateOfBirth      DateTime?
   postalAddress    String?
   poleEmploiId     String?
   formationId      String            @db.ObjectId
-  cvUrl            String
+  cvUrl            String?
   status           InscriptionStatus @default(PENDING)
   adminNote        String?
   evaluationData   Json?             // raw answers stored as JSON
