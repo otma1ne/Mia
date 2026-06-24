@@ -2,7 +2,7 @@
 import { getCategories } from '@/app/actions/categories'
 import CategoriesClient from './_components/categories-client'
 
-export const metadata: Metadata = { title: 'Catégories — MIA Formation' }
+export const metadata: Metadata = { title: "Secteurs d'activité — MIA Formation" }
 
 export default async function CategoriesPage() {
   const categories = await getCategories()

@@ -48,7 +48,7 @@ export default function ModulesTable({ modules }: { modules: RecentModuleRow[] }
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-10 px-5 text-xs">#</TableHead>
               <TableHead className="px-5 text-xs">Module</TableHead>
-              <TableHead className="px-5 text-xs">Catégorie</TableHead>
+              <TableHead className="px-5 text-xs">Secteur</TableHead>
               <TableHead className="px-5 text-xs">Statut</TableHead>
               <TableHead className="px-5 text-right text-xs">Élèves</TableHead>
               <TableHead className="px-5 text-xs">Moniteur</TableHead>

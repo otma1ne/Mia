@@ -79,7 +79,7 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
           {/* Category + Type */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label>Catégorie</Label>
+              <Label>Secteur d&apos;activité</Label>
               <Select name="categoryId" required labelItems={Object.fromEntries(categories.map(c => [c.id, c.name]))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Choisir…" />
