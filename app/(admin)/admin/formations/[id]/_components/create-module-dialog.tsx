@@ -14,18 +14,13 @@ import {
 } from '@/components/ui/select'
 import { Plus } from 'lucide-react'
 
-interface TrainerOption {
-  id: string
-  user: { name: string }
-}
-
 interface CreateModuleDialogProps {
   formationId: string
-  trainers: TrainerOption[]
   onCreated: (module: ModuleRow) => void
 }
 
-export default function CreateModuleDialog({ formationId, trainers, onCreated }: CreateModuleDialogProps) {
+export default function CreateModuleDialog({ formationId, onCreated }: CreateModuleDialogProps) {
+  const trainers: { id: string; user: { name: string } }[] = [] // trainer-per-module removed
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<string>('THEORY')
 

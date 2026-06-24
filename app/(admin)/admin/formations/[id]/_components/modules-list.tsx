@@ -46,18 +46,13 @@ const statusConfig: Record<ModuleStatus, { dot: string; label: string }> = {
 // Trainer option type
 // ─────────────────────────────────────────
 
-interface TrainerOption {
-  id: string
-  user: { name: string }
-}
-
 interface ModulesListProps {
   formationId: string
   initialModules: ModuleRow[]
-  trainers: TrainerOption[]
+  trainers?: unknown[]
 }
 
-export default function ModulesList({ formationId, initialModules, trainers }: ModulesListProps) {
+export default function ModulesList({ formationId, initialModules }: ModulesListProps) {
   const [modules, setModules] = useState<ModuleRow[]>(initialModules)
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null)
   const [editTarget, setEditTarget] = useState<ModuleRow | null>(null)
@@ -106,7 +101,7 @@ export default function ModulesList({ formationId, initialModules, trainers }: M
             {modules.length} module{modules.length !== 1 ? 's' : ''} — parcours séquentiel
           </p>
         </div>
-        <CreateModuleDialog formationId={formationId} trainers={trainers} onCreated={m => setModules(prev => [...prev, m])} />
+        <CreateModuleDialog formationId={formationId} onCreated={m => setModules(prev => [...prev, m])} />
       </div>
 
       {/* Empty state */}
@@ -177,9 +172,7 @@ export default function ModulesList({ formationId, initialModules, trainers }: M
                       Vidéo
                     </span>
                   )}
-                  {module.trainerName && (
-                    <span>{module.trainerName}</span>
-                  )}
+                  {/* trainer name removed (field no longer on Module) */}
                 </div>
 
                 {/* Status dot */}
@@ -238,7 +231,6 @@ export default function ModulesList({ formationId, initialModules, trainers }: M
       {/* Edit sheet */}
       <EditModuleSheet
         module={editTarget}
-        trainers={trainers}
         onClose={() => setEditTarget(null)}
         onUpdated={updated =>
           setModules(prev => prev.map(m => m.id === updated.id ? { ...m, ...updated } : m))

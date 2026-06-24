@@ -81,7 +81,6 @@ export async function getRecentModules(): Promise<RecentModuleRow[]> {
     orderBy: { createdAt: 'desc' },
     include: {
       formation: { include: { category: { select: { name: true } } } },
-      trainer: { include: { user: { select: { name: true } } } },
       _count: { select: { enrollments: true } },
     },
   })
@@ -91,6 +90,6 @@ export async function getRecentModules(): Promise<RecentModuleRow[]> {
     categoryName: m.formation.category.name,
     status: m.status,
     enrollmentCount: m._count.enrollments,
-    trainerName: m.trainer?.user.name ?? '—',
+    trainerName: '—',
   }))
 }

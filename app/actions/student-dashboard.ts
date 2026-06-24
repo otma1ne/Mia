@@ -38,7 +38,6 @@ export interface StudentDashboardStats {
     id: string
     formationId: string
     formationTitle: string
-    trainerName: string
     status: EnrollmentStatus
     progress: number
     enrolledAt: Date
@@ -58,11 +57,6 @@ export async function getStudentDashboardStats(): Promise<StudentDashboardStats>
         formation: {
           select: {
             title: true,
-            modules: {
-              where: { type: 'PRACTICAL' },
-              take: 1,
-              include: { trainer: { include: { user: { select: { name: true } } } } },
-            },
           },
         },
       },
@@ -102,7 +96,6 @@ export async function getStudentDashboardStats(): Promise<StudentDashboardStats>
       id: e.id,
       formationId: e.formationId,
       formationTitle: e.formation.title,
-      trainerName: e.formation.modules[0]?.trainer?.user.name ?? '—',
       status: e.status,
       progress: e.progress,
       enrolledAt: e.enrolledAt,
@@ -124,8 +117,6 @@ export interface StudentEnrollmentRow {
   progress: number
   grade: number | null
   enrolledAt: Date
-  startDate: Date
-  endDate: Date
 }
 
 export interface StudentEnrollmentsResult {
@@ -169,8 +160,6 @@ export async function getStudentEnrollments({
           select: {
             title: true,
             type: true,
-            startDate: true,
-            endDate: true,
             category: { select: { name: true } },
           },
         },
@@ -189,8 +178,6 @@ export async function getStudentEnrollments({
       progress: e.progress,
       grade: e.grade,
       enrolledAt: e.enrolledAt,
-      startDate: e.formation.startDate,
-      endDate: e.formation.endDate,
     })),
     total,
     page,
@@ -212,8 +199,6 @@ export interface BrowsableFormationRow {
   enrollmentCount: number
   maxStudents: number
   moduleCount: number
-  startDate: Date
-  endDate: Date
   isEnrolled: boolean
 }
 
@@ -258,7 +243,7 @@ export async function getStudentBrowsableFormations({
       where,
       skip: (page - 1) * pageSize,
       take: pageSize,
-      orderBy: { startDate: 'asc' },
+      orderBy: { createdAt: 'asc' },
       include: {
         category: { select: { name: true } },
         _count: { select: { enrollments: true, modules: true } },
@@ -276,8 +261,6 @@ export async function getStudentBrowsableFormations({
       enrollmentCount: f._count.enrollments,
       maxStudents: f.maxStudents,
       moduleCount: f._count.modules,
-      startDate: f.startDate,
-      endDate: f.endDate,
       isEnrolled: enrolledIds.includes(f.id),
     })),
     total,
@@ -398,8 +381,6 @@ export interface FormationDetailResult {
   type: FormationType
   status: FormationStatus
   categoryName: string
-  startDate: Date
-  endDate: Date
   maxStudents: number
   enrollmentCount: number
   enrollmentProgress: number
@@ -427,7 +408,6 @@ export async function getFormationDetail(
       modules: {
         orderBy: { orderIndex: 'asc' },
         include: {
-          trainer: { include: { user: { select: { name: true, avatar: true } } } },
           materials: { select: { id: true, title: true, url: true, type: true } },
           sessions: {
             orderBy: { date: 'asc' },
@@ -482,8 +462,6 @@ export async function getFormationDetail(
     type: formation.type,
     status: formation.status,
     categoryName: formation.category.name,
-    startDate: formation.startDate,
-    endDate: formation.endDate,
     maxStudents: formation.maxStudents,
     enrollmentCount: formation._count.enrollments,
     enrollmentProgress: formationEnrollment.progress,
@@ -517,8 +495,8 @@ export async function getFormationDetail(
         status: module.status,
         videoUrl: module.videoUrl,
         duration: module.duration,
-        trainerName: module.trainer?.user.name ?? null,
-        trainerAvatar: module.trainer?.user.avatar ?? null,
+        trainerName: null,
+        trainerAvatar: null,
         isLocked,
         isCompleted,
         progress: enrollment?.progress ?? 0,
@@ -582,7 +560,6 @@ export async function getStudentModuleDetail(
     where: { id: moduleId },
     include: {
       formation: { select: { id: true, title: true } },
-      trainer: { include: { user: { select: { name: true, avatar: true } } } },
       materials: { select: { id: true, title: true, url: true, type: true }, orderBy: { id: 'asc' } },
       sessions: {
         orderBy: { date: 'asc' },
@@ -653,8 +630,8 @@ export async function getStudentModuleDetail(
     status: module.status,
     videoUrl: module.videoUrl,
     duration: module.duration,
-    trainerName: module.trainer?.user.name ?? null,
-    trainerAvatar: module.trainer?.user.avatar ?? null,
+    trainerName: null,
+    trainerAvatar: null,
     formationId: module.formation.id,
     formationTitle: module.formation.title,
     isLocked,

@@ -251,30 +251,26 @@ export default function TrainerDetailSheet({ trainerId, onClose }: TrainerDetail
 
             <Separator />
 
-            {/* Modules */}
+            {/* Sessions */}
             <div className="p-6 flex flex-col gap-4">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-2">
                 <BookOpen className="h-3.5 w-3.5" />
-                Modules assignés ({trainer.modules.length})
+                Séances assignées ({trainer.sessions.length})
               </h3>
-              {trainer.modules.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Aucun module assigné.</p>
+              {trainer.sessions.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Aucune séance assignée.</p>
               ) : (
                 <ul className="flex flex-col gap-3">
-                  {trainer.modules.map(module => {
-                    const cfg = courseStatusConfig[module.status]
-                    return (
-                      <li key={module.id} className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium truncate">{module.title}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            {module._count.enrollments} étudiant{module._count.enrollments !== 1 ? 's' : ''}
-                          </p>
-                        </div>
-                        <Badge className={cfg.className}>{cfg.label}</Badge>
-                      </li>
-                    )
-                  })}
+                  {trainer.sessions.map(session => (
+                    <li key={session.id} className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{session.formation.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {session.module.title} · {new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short' }).format(new Date(session.date))} {session.startTime}–{session.endTime}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               )}
             </div>

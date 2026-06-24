@@ -176,11 +176,11 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
               </h3>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Début</span>
-                <span>{formatDate(formation.startDate)}</span>
+                <span className="text-muted-foreground italic">Dates à définir</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Fin</span>
-                <span>{formatDate(formation.endDate)}</span>
+                <span className="text-muted-foreground italic">Dates à définir</span>
               </div>
             </div>
 
@@ -283,7 +283,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                           <span className="text-sm truncate">{module.title}</span>
                         </div>
                         <span className="text-xs text-muted-foreground shrink-0">
-                          {module.trainer?.user.name ?? '—'}
+                          {'—'}
                         </span>
                       </li>
                     ))}

@@ -25,11 +25,11 @@ async function assertModuleOwnership(moduleId: string) {
     select: { id: true },
   })
   if (!trainer) redirect('/unauthorized')
-  const module = await db.module.findUnique({
-    where: { id: moduleId },
-    select: { trainerId: true },
+  const assigned = await db.session.findFirst({
+    where: { moduleId, trainerId: trainer.id },
+    select: { id: true },
   })
-  if (!module || module.trainerId !== trainer.id) redirect('/unauthorized')
+  if (!assigned) redirect('/unauthorized')
 }
 
 // ─────────────────────────────────────────
@@ -56,11 +56,11 @@ export async function getModuleMaterials(moduleId: string): Promise<MaterialRow[
       select: { id: true },
     })
     if (!trainer) redirect('/unauthorized')
-    const module = await db.module.findUnique({
-      where: { id: moduleId },
-      select: { trainerId: true },
+    const assigned = await db.session.findFirst({
+      where: { moduleId, trainerId: trainer.id },
+      select: { id: true },
     })
-    if (!module || module.trainerId !== trainer.id) redirect('/unauthorized')
+    if (!assigned) redirect('/unauthorized')
   }
   return db.moduleMaterial.findMany({
     where: { moduleId },

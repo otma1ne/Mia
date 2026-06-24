@@ -6,6 +6,7 @@ import ReglementPDF  from './reglement-template'
 import CGVPDF        from './cgv-template'
 import ProgrammePDF  from './programme-template'
 import type { Inscription, Formation, Center } from '@prisma/client'
+import { getFormationDateRange } from '@/app/actions/formations'
 
 type InscriptionWithFormation = Inscription & { formation: Formation }
 
@@ -68,6 +69,7 @@ export async function generateSigningDocuments(params: {
 
   const generatedAt = new Date()
   const id          = inscription.id
+  const { startDate, endDate } = await getFormationDateRange(formation.id)
 
   const formationType = formation.type === 'PRESENTIAL' ? 'Présentiel' :
                         formation.type === 'REMOTE_LIVE' ? 'À distance (live)' :
@@ -86,8 +88,8 @@ export async function generateSigningDocuments(params: {
         formationType,
         formationDuration: formation.duration,
         formationPrice:    formation.price,
-        startDate:         formation.startDate,
-        endDate:           formation.endDate,
+        startDate,
+        endDate,
         centerName:        center.name,
         centerAddress:     center.address,
         centerPhone:       center.phone,
@@ -120,8 +122,8 @@ export async function generateSigningDocuments(params: {
         formationTitle:    formation.title,
         formationType,
         formationDuration: formation.duration,
-        startDate:         formation.startDate,
-        endDate:           formation.endDate,
+        startDate,
+        endDate,
         programme:         formation.programme,
         centerName:        center.name,
         generatedAt,

@@ -78,8 +78,7 @@ export default function FormationDetailClient({ formation }: Props) {
             </span>
             <span className="flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
-              {format(new Date(formation.startDate), 'd MMM yyyy', { locale: fr })} –{' '}
-              {format(new Date(formation.endDate), 'd MMM yyyy', { locale: fr })}
+              Dates à définir
             </span>
             <span className="flex items-center gap-1.5">
               <User className="h-3.5 w-3.5" />

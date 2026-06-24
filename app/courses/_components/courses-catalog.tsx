@@ -37,8 +37,8 @@ interface Formation {
   enrollmentCount: number
   maxStudents: number
   moduleCount: number
-  startDate: Date
-  endDate: Date
+  startDate: Date | null
+  endDate: Date | null
 }
 
 interface Category {
@@ -209,8 +209,9 @@ export default function CoursesCatalog({ data, search: initialSearch, activeType
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-zinc-500">
                     <Clock className="h-3 w-3 shrink-0 text-zinc-400" />
-                    {format(new Date(formation.startDate), 'd MMM', { locale: fr })} –{' '}
-                    {format(new Date(formation.endDate), 'd MMM yyyy', { locale: fr })}
+                    {formation.startDate && formation.endDate
+                      ? `${format(new Date(formation.startDate), 'd MMM', { locale: fr })} – ${format(new Date(formation.endDate), 'd MMM yyyy', { locale: fr })}`
+                      : 'Dates à définir'}
                   </div>
                 </div>
 
