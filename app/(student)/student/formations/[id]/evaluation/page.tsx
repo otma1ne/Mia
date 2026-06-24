@@ -2,10 +2,100 @@ import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getFormationDetail } from '@/app/actions/student-dashboard'
+import { getEvaluationState, type EvaluationAnswers } from '@/app/actions/evaluation'
 import { Card, CardContent } from '@/components/ui/card'
-import { ChevronLeft, ClipboardCheck, CheckCircle2 } from 'lucide-react'
+import {
+  ChevronLeft, ClipboardCheck, CheckCircle2, Star,
+  ThumbsUp, ThumbsDown, BookOpen, MessageSquare,
+} from 'lucide-react'
+import EvaluationForm from './_components/evaluation-form'
+import { format } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 export const metadata: Metadata = { title: 'Évaluation finale — MIA Formation' }
+
+function StarDisplay({ value }: { value: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map(n => (
+        <Star
+          key={n}
+          className={`h-4 w-4 ${n <= value ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/20'}`}
+        />
+      ))}
+    </div>
+  )
+}
+
+function EvaluationSummary({
+  answers,
+  submittedAt,
+}: {
+  answers: EvaluationAnswers
+  submittedAt: Date
+}) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2 text-emerald-600">
+        <CheckCircle2 className="h-5 w-5" />
+        <span className="text-sm font-medium">
+          Évaluation soumise le {format(new Date(submittedAt), 'dd MMMM yyyy', { locale: fr })}
+        </span>
+      </div>
+
+      <div className="rounded-lg border bg-card p-5 flex flex-col gap-4">
+        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          Vos notes
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { label: 'Satisfaction globale', value: answers.overallRating },
+            { label: 'Qualité du contenu', value: answers.contentRating },
+            { label: 'Qualité du formateur', value: answers.trainerRating },
+          ].map(({ label, value }) => (
+            <div key={label} className="flex flex-col gap-1.5">
+              <p className="text-xs text-muted-foreground">{label}</p>
+              <StarDisplay value={value} />
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 pt-1 border-t">
+          {answers.wouldRecommend ? (
+            <ThumbsUp className="h-4 w-4 text-emerald-600" />
+          ) : (
+            <ThumbsDown className="h-4 w-4 text-red-500" />
+          )}
+          <span className="text-sm">
+            {answers.wouldRecommend
+              ? 'Vous recommandez cette formation'
+              : 'Vous ne recommandez pas cette formation'}
+          </span>
+        </div>
+
+        {answers.bestLearning && (
+          <div className="flex flex-col gap-1 pt-1 border-t">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+              <BookOpen className="h-3.5 w-3.5" />
+              Ce que vous avez retenu
+            </div>
+            <p className="text-sm">{answers.bestLearning}</p>
+          </div>
+        )}
+
+        {answers.suggestions && (
+          <div className="flex flex-col gap-1 pt-1 border-t">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+              <MessageSquare className="h-3.5 w-3.5" />
+              Suggestions
+            </div>
+            <p className="text-sm">{answers.suggestions}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 interface Props {
   params: Promise<{ id: string }>
@@ -13,14 +103,13 @@ interface Props {
 
 export default async function EvaluationPage({ params }: Props) {
   const { id: formationId } = await params
-  const formation = await getFormationDetail(formationId)
+  const [formation, evalState] = await Promise.all([
+    getFormationDetail(formationId),
+    getEvaluationState(formationId),
+  ])
 
   if (!formation) notFound()
-
-  // Gate: all modules must be completed
-  if (!formation.allModulesCompleted) {
-    redirect(`/student/formations/${formationId}`)
-  }
+  if (!formation.allModulesCompleted) redirect(`/student/formations/${formationId}`)
 
   return (
     <div className="flex flex-col gap-6 p-4 lg:p-6 max-w-2xl mx-auto w-full">
@@ -39,60 +128,45 @@ export default async function EvaluationPage({ params }: Props) {
         <p className="text-sm text-muted-foreground">{formation.title}</p>
       </div>
 
-      {/* Completion confirmation */}
+      {/* Completion banner */}
       <Card>
-        <CardContent className="py-6 flex flex-col items-center gap-4 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-            <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+        <CardContent className="py-5 flex items-center gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+            <CheckCircle2 className="h-6 w-6 text-emerald-600" />
           </div>
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold text-lg">Parcours terminé !</p>
-            <p className="text-sm text-muted-foreground max-w-sm">
-              Vous avez complété tous les modules de cette formation.
-              Vous pouvez maintenant passer l&apos;évaluation finale.
+          <div>
+            <p className="font-semibold">Parcours terminé !</p>
+            <p className="text-sm text-muted-foreground">
+              {formation.modules.length} module{formation.modules.length !== 1 ? 's' : ''} complété{formation.modules.length !== 1 ? 's' : ''}.
+              Partagez votre retour pour nous aider à améliorer la formation.
             </p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground pt-1">
-            <span className="flex items-center gap-1.5">
-              <ClipboardCheck className="h-4 w-4" />
-              {formation.modules.length} module{formation.modules.length !== 1 ? 's' : ''} terminé{formation.modules.length !== 1 ? 's' : ''}
-            </span>
           </div>
         </CardContent>
       </Card>
 
-      {/* Evaluation placeholder */}
+      {/* Evaluation section */}
       <Card>
-        <CardContent className="py-6 flex flex-col gap-4">
+        <CardContent className="py-5 flex flex-col gap-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 shrink-0">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <ClipboardCheck className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <p className="font-semibold">Questionnaire d&apos;évaluation</p>
+              <p className="font-semibold">Questionnaire de satisfaction</p>
               <p className="text-sm text-muted-foreground">
-                Répondez aux questions pour valider votre formation.
+                Anonyme · 2 minutes
               </p>
             </div>
           </div>
 
-          <div className="rounded-lg border border-dashed border-muted-foreground/30 p-8 flex flex-col items-center gap-2 text-center">
-            <ClipboardCheck className="h-8 w-8 text-muted-foreground/40" />
-            <p className="text-sm font-medium text-muted-foreground">
-              L&apos;évaluation sera disponible prochainement.
-            </p>
-            <p className="text-xs text-muted-foreground/70">
-              Votre moniteur vous contactera pour organiser l&apos;examen final.
-            </p>
-          </div>
-
-          <Link
-            href={`/student/formations/${formationId}`}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 h-8 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground self-start"
-          >
-            Retour à la formation
-          </Link>
+          {evalState?.submitted && evalState.answers ? (
+            <EvaluationSummary
+              answers={evalState.answers}
+              submittedAt={evalState.submittedAt!}
+            />
+          ) : (
+            <EvaluationForm formationId={formationId} />
+          )}
         </CardContent>
       </Card>
     </div>

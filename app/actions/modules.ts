@@ -309,7 +309,7 @@ export async function markModuleComplete(moduleId: string) {
       if (enrollment && center) {
         const attestationUrl = await generateAttestation({
           enrollmentId: formationEnrollmentId,
-          studentName:  enrollment.user.name ?? `${enrollment.user.name}`,
+          studentName:  enrollment.user.name ?? 'Apprenant',
           formation:    enrollment.formation,
           center,
         })
