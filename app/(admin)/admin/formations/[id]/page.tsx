@@ -2,8 +2,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getFormation } from '@/app/actions/formations'
 import { getModulesForFormation } from '@/app/actions/modules'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { buttonVariants } from '@/components/ui/button'
 import ModulesList from './_components/modules-list'
 
 export const metadata = { title: 'Gestion des modules' }
@@ -56,9 +57,15 @@ export default async function FormationDetailPage({
           </p>
         </div>
 
-        <div className="shrink-0 flex gap-2 items-center text-sm text-muted-foreground">
+        <div className="shrink-0 flex gap-2 items-center flex-wrap">
           <Badge variant="secondary">{formation.category.name}</Badge>
-          <span className="text-muted-foreground italic text-xs">Dates à définir</span>
+          <Link
+            href={`/admin/formations/${id}/suivi`}
+            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+          >
+            <Users className="h-3.5 w-3.5 mr-1.5" />
+            Suivi étudiants
+          </Link>
         </div>
       </div>
 

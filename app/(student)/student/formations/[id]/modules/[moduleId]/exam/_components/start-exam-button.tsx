@@ -20,7 +20,7 @@ export default function StartExamButton({ moduleId, formationId }: Props) {
     setError(null)
     startTransition(async () => {
       const result = await startExamAttempt(moduleId)
-      if (result?.error && !result.attemptId) {
+      if (result?.error) {
         setError(result.error)
         return
       }

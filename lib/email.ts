@@ -556,6 +556,61 @@ export async function sendConvocationEmail(params: {
   })
 }
 
+export async function sendGradingNotificationEmail(params: {
+  to: string
+  trainerName: string
+  studentName: string
+  formationTitle: string
+  moduleName: string
+  gradingUrl: string
+}) {
+  const { to, trainerName, studentName, formationTitle, moduleName, gradingUrl } = params
+
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: `📝 Correction requise — ${moduleName} — MIA Formation`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#1e2128;">
+        ${emailHeader}
+        <div style="padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;">
+          <p style="font-size:16px;margin-top:0;">Bonjour <strong>${trainerName}</strong>,</p>
+          <p style="color:#374151;">
+            Un étudiant vient de soumettre un examen contenant des <strong>questions ouvertes</strong>
+            qui nécessitent votre correction.
+          </p>
+
+          <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:20px 24px;margin:24px 0;">
+            <p style="margin:0 0 8px;font-size:14px;color:#92400e;font-weight:600;">Détails</p>
+            <p style="margin:0 0 6px;font-size:14px;color:#374151;">
+              👤 Étudiant : <strong>${studentName}</strong>
+            </p>
+            <p style="margin:0 0 6px;font-size:14px;color:#374151;">
+              📚 Formation : <strong>${formationTitle}</strong>
+            </p>
+            <p style="margin:0;font-size:14px;color:#374151;">
+              📋 Module : <strong>${moduleName}</strong>
+            </p>
+          </div>
+
+          <p style="color:#374151;">
+            Veuillez vous connecter à votre espace pour consulter et noter les réponses ouvertes.
+          </p>
+
+          <div style="text-align:center;margin:32px 0;">
+            <a href="${gradingUrl}"
+               style="display:inline-block;background:#7c3aed;color:#fff;text-decoration:none;
+                      padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;">
+              Corriger les réponses
+            </a>
+          </div>
+          ${emailFooter}
+        </div>
+      </div>
+    `,
+  })
+}
+
 export async function sendCommercialWelcomeEmail(
   to: string,
   name: string,

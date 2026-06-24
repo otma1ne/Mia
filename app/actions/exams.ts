@@ -5,6 +5,7 @@ import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import type { QuestionType } from '@prisma/client'
+import { sendGradingNotificationEmail } from '@/lib/email'
 
 // ─────────────────────────────────────────
 // Auth helpers
@@ -389,9 +390,17 @@ export async function submitExamAttempt(attemptId: string, answers: SubmittedAns
   const attempt = await db.examAttempt.findUnique({
     where: { id: attemptId },
     include: {
+      user: { select: { name: true } },
       exam: {
         include: {
           questions: { include: { choices: true } },
+          module: {
+            select: {
+              title: true,
+              formationId: true,
+              formation: { select: { title: true } },
+            },
+          },
         },
       },
       moduleEnrollment: { select: { id: true, formationEnrollmentId: true } },
@@ -492,6 +501,44 @@ export async function submitExamAttempt(attemptId: string, answers: SubmittedAns
 
   // Still mark module as attempted (completedAt) per "just log" policy
   await completeAssessmentModule(attempt.moduleEnrollment.id, attempt.moduleEnrollment.formationEnrollmentId)
+
+  // Notify trainer (or admin fallback) that open answers need grading
+  try {
+    const formationId = attempt.exam.module.formationId
+    const gradingUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/admin/grading`
+
+    const trainerSession = await db.session.findFirst({
+      where: { formationId, trainerId: { not: null } },
+      include: { trainer: { include: { user: { select: { name: true, email: true } } } } },
+    })
+
+    const recipients: { name: string; email: string }[] = []
+    if (trainerSession?.trainer?.user?.email) {
+      recipients.push({
+        name: trainerSession.trainer.user.name ?? 'Formateur',
+        email: trainerSession.trainer.user.email,
+      })
+    } else {
+      const admins = await db.user.findMany({
+        where: { role: 'ADMIN' },
+        select: { name: true, email: true },
+      })
+      recipients.push(...admins.map(a => ({ name: a.name, email: a.email })))
+    }
+
+    for (const r of recipients) {
+      await sendGradingNotificationEmail({
+        to: r.email,
+        trainerName: r.name,
+        studentName: attempt.user?.name ?? 'Apprenant',
+        formationTitle: attempt.exam.module.formation.title,
+        moduleName: attempt.exam.module.title,
+        gradingUrl,
+      })
+    }
+  } catch (err) {
+    console.error('[submitExamAttempt] Grading notification failed:', err)
+  }
 
   revalidatePath(`/student/formations`)
   return { success: true, score: null, passed: null, needsGrading: true }
