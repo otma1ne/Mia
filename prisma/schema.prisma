@@ -177,6 +177,7 @@ model Center {
   logo             String?
   reglement        String?  // règlement intérieur (admin-authored, used in signing docs)
   cgv              String?  // conditions générales de vente (admin-authored, used in signing docs)
+  accessPlans      String[] // Cloudinary URLs of access plan documents (PDF/images)
   enrollmentAlertDays Int      @default(7) // days before formation start to trigger alert
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

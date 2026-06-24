@@ -4,6 +4,7 @@ import CenterInfoForm from './_components/center-info-form'
 import OperatingHoursForm from './_components/operating-hours-form'
 import RoomsManager from './_components/rooms-manager'
 import CenterLegalForm from './_components/center-legal-form'
+import CenterAccessPlansForm from './_components/center-access-plans-form'
 
 export const metadata: Metadata = { title: 'Centre — MIA Formation' }
 
@@ -50,6 +51,14 @@ export default async function CenterPage() {
           centerId={center.id}
           initialReglement={center.reglement ?? null}
           initialCgv={center.cgv ?? null}
+        />
+      )}
+
+      {/* Access plans — only if center exists */}
+      {center && (
+        <CenterAccessPlansForm
+          centerId={center.id}
+          initialPlans={center.accessPlans ?? []}
         />
       )}
 
