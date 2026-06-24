@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { saveCenterInfo } from '@/app/actions/center'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,14 +23,20 @@ interface CenterInfoFormProps {
 }
 
 export default function CenterInfoForm({ center }: CenterInfoFormProps) {
+  const router = useRouter()
   const [state, action, pending] = useActionState(saveCenterInfo, null)
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     if (state?.success) {
-      setSaved(true)
-      const t = setTimeout(() => setSaved(false), 2500)
-      return () => clearTimeout(t)
+      if (!center && state.centerId) {
+        // New center created — redirect to its detail page
+        router.replace(`/admin/center/${state.centerId}`)
+      } else {
+        setSaved(true)
+        const t = setTimeout(() => setSaved(false), 2500)
+        return () => clearTimeout(t)
+      }
     }
   }, [state])
 
