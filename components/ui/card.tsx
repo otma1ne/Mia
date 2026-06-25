@@ -17,11 +17,11 @@ function Card({
       data-interactive={interactive || undefined}
       className={cn(
         "group/card flex flex-col gap-4 overflow-hidden rounded-lg bg-card text-sm text-card-foreground",
-        "border border-border shadow-(--shadow-xs)",
+        "border border-border shadow-[var(--shadow-xs)]",
         "has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0",
         "data-[size=sm]:gap-3",
         "data-interactive:transition-all data-interactive:duration-200",
-        "data-interactive:hover:-translate-y-0.75 data-interactive:hover:shadow-(--shadow-md) data-interactive:hover:border-accent",
+        "data-interactive:hover:-translate-y-[3px] data-interactive:hover:shadow-[var(--shadow-md)] data-interactive:hover:border-accent",
         className
       )}
       {...props}
