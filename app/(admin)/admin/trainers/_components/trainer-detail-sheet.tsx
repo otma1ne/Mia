@@ -199,13 +199,13 @@ export default function TrainerDetailSheet({ trainerId, onClose }: TrainerDetail
               </h3>
               <ul className="flex flex-col gap-2">
                 <li>
-                  <a href={trainer.cvUrl} target="_blank" rel="noopener noreferrer"
+                  <a href={trainer.cvUrl ?? undefined} target="_blank" rel="noopener noreferrer"
                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium">
                     <ExternalLink className="h-4 w-4" />Voir le CV
                   </a>
                 </li>
                 <li>
-                  <a href={trainer.diplomeUrl} target="_blank" rel="noopener noreferrer"
+                  <a href={trainer.diplomeUrl ?? undefined} target="_blank" rel="noopener noreferrer"
                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium">
                     <ExternalLink className="h-4 w-4" />Voir le diplôme
                   </a>

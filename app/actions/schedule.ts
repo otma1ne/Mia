@@ -1,7 +1,9 @@
 'use server'
 
 import { db } from '@/lib/db'
+import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
+import type { AttendanceStatus } from '@prisma/client'
 
 export interface SessionEvent {
   id: string
@@ -112,8 +114,39 @@ export async function createSession(_prevState: unknown, formData: FormData) {
     where: { id: moduleId },
     select: { formationId: true },
   })
-  if (!module) {
-    return { error: 'Module introuvable.' }
+  if (!module) return { error: 'Module introuvable.' }
+
+  const sessionDate = new Date(date)
+
+  // ── Trainer conflict detection ──────────────────────────────────
+  if (trainerId) {
+    const conflict = await db.session.findFirst({
+      where: {
+        trainerId,
+        date: sessionDate,
+        startTime: { lt: endTime },
+        endTime:   { gt: startTime },
+      },
+      select: { startTime: true, endTime: true, module: { select: { title: true } } },
+    })
+    if (conflict) {
+      return {
+        error: `Ce formateur a déjà une séance de ${conflict.startTime} à ${conflict.endTime} (${conflict.module.title}).`,
+      }
+    }
+  }
+
+  // ── Room capacity validation ─────────────────────────────────────
+  if (roomId) {
+    const [room, enrolledCount] = await Promise.all([
+      db.room.findUnique({ where: { id: roomId }, select: { name: true, capacity: true } }),
+      db.moduleEnrollment.count({ where: { moduleId, status: { not: 'DROPPED' } } }),
+    ])
+    if (room && enrolledCount > room.capacity) {
+      return {
+        error: `La salle "${room.name}" (${room.capacity} place${room.capacity > 1 ? 's' : ''}) est insuffisante pour les ${enrolledCount} inscrits.`,
+      }
+    }
   }
 
   await db.session.create({
@@ -122,7 +155,7 @@ export async function createSession(_prevState: unknown, formData: FormData) {
       formationId: module.formationId,
       roomId:      roomId || null,
       trainerId:   trainerId || null,
-      date:        new Date(date),
+      date:        sessionDate,
       startTime,
       endTime,
       notes,
@@ -130,6 +163,46 @@ export async function createSession(_prevState: unknown, formData: FormData) {
   })
 
   revalidatePath('/admin/schedule')
+  return { success: true }
+}
+
+// ─────────────────────────────────────────
+// Admin: save attendance (bypass trainer check)
+// ─────────────────────────────────────────
+
+export async function saveAttendanceAdmin(
+  sessionId: string,
+  records: { moduleEnrollmentId: string; status: AttendanceStatus; note?: string | null }[]
+) {
+  const session = await auth()
+  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    return { error: 'Non autorisé.' }
+  }
+
+  await Promise.all(
+    records.map(r =>
+      db.attendance.upsert({
+        where: {
+          moduleEnrollmentId_sessionId: {
+            moduleEnrollmentId: r.moduleEnrollmentId,
+            sessionId,
+          },
+        },
+        create: {
+          moduleEnrollmentId: r.moduleEnrollmentId,
+          sessionId,
+          status: r.status,
+          note: r.note ?? null,
+        },
+        update: {
+          status: r.status,
+          note: r.note ?? null,
+        },
+      })
+    )
+  )
+
+  revalidatePath('/admin/attendance')
   return { success: true }
 }
 

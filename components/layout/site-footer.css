@@ -1,0 +1,90 @@
+.sf-root {
+  background: var(--mia-near-black);
+  color: #fff;
+}
+.sf-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 32px 40px;
+}
+.sf-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
+  gap: 40px;
+  margin-bottom: 56px;
+}
+.sf-tagline {
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 200px;
+  color: var(--mia-slate);
+  margin-top: 16px;
+}
+.sf-col-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mia-slate);
+  margin-bottom: 20px;
+}
+.sf-links { display: flex; flex-direction: column; gap: 12px; }
+.sf-link {
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.sf-link:hover { color: #fff; }
+.sf-newsletter-sub {
+  font-size: 14px;
+  color: var(--mia-slate);
+  margin-bottom: 16px;
+}
+.sf-newsletter-row { display: flex; gap: 8px; }
+.sf-newsletter-input {
+  flex: 1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  background: #22222A;
+  border: 1px solid #33333D;
+  color: #fff;
+}
+.sf-newsletter-input::placeholder { color: rgba(255,255,255,0.3); }
+.sf-newsletter-btn {
+  padding: 10px 16px;
+  border-radius: 32px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+  background: var(--mia-purple);
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.sf-newsletter-btn:hover { background: var(--mia-violet); }
+.sf-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.sf-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+.sf-legal { display: flex; gap: 20px; }
+.sf-legal-link {
+  font-size: 12px;
+  color: rgba(255,255,255,0.25);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.sf-legal-link:hover { color: rgba(255,255,255,0.6); }
+
+@media (max-width: 767px) {
+  .sf-grid { grid-template-columns: 1fr 1fr; }
+}

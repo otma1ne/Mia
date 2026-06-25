@@ -1,25 +1,24 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  Card, CardContent, CardDescription, CardHeader, CardTitle,
 } from '@/components/ui/card'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { AlertCircle, User } from 'lucide-react'
+import { AlertCircle, Check, Loader2, User } from 'lucide-react'
 import type { AttendanceStatus } from '@prisma/client'
+import { saveAttendanceAdmin } from '@/app/actions/schedule'
+import { cn } from '@/lib/utils'
+
+// ─────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────
 
 interface SessionOption {
   id: string
@@ -27,8 +26,8 @@ interface SessionOption {
   date: Date
 }
 
-interface StudentAttendance {
-  id: string
+interface StudentEnrollment {
+  id: string              // moduleEnrollmentId
   userId: string
   formationEnrollmentId: string
   user: { name: string; email: string }
@@ -43,47 +42,115 @@ interface AttendanceRecord {
 
 interface SessionData {
   id: string
+  date: Date
+  startTime: string
+  endTime: string
+  trainer: { user: { name: string } } | null
   module: {
     title: string
     formation: { title: string }
-    enrollments: StudentAttendance[]
+    enrollments: StudentEnrollment[]
   }
   room: { name: string } | null
   attendances: AttendanceRecord[]
 }
 
-interface AdminAttendanceClientProps {
+interface Props {
   sessionOptions: SessionOption[]
   selectedSessionId: string | null
   sessionData: SessionData | null
 }
 
-const attendanceStatusConfig: Record<AttendanceStatus, { label: string; className: string }> = {
-  PRESENT: { label: 'Présent', className: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
-  ABSENT: { label: 'Absent', className: 'bg-red-100 text-red-800 border-red-200' },
-  LATE: { label: 'En retard', className: 'bg-amber-100 text-amber-800 border-amber-200' },
-  EXCUSED: { label: 'Excusé', className: 'bg-blue-100 text-blue-800 border-blue-200' },
+// ─────────────────────────────────────────
+// Config
+// ─────────────────────────────────────────
+
+const STATUS_CONFIG: Record<AttendanceStatus, { label: string; active: string; inactive: string }> = {
+  PRESENT: {
+    label: 'Présent',
+    active:   'border-emerald-400 bg-emerald-50 text-emerald-700',
+    inactive: 'border-border text-muted-foreground hover:border-emerald-300 hover:text-emerald-600',
+  },
+  ABSENT: {
+    label: 'Absent',
+    active:   'border-red-300 bg-red-50 text-red-700',
+    inactive: 'border-border text-muted-foreground hover:border-red-200 hover:text-red-600',
+  },
+  LATE: {
+    label: 'En retard',
+    active:   'border-amber-300 bg-amber-50 text-amber-700',
+    inactive: 'border-border text-muted-foreground hover:border-amber-200 hover:text-amber-600',
+  },
+  EXCUSED: {
+    label: 'Excusé',
+    active:   'border-blue-300 bg-blue-50 text-blue-700',
+    inactive: 'border-border text-muted-foreground hover:border-blue-200 hover:text-blue-600',
+  },
 }
+
+const STATUSES: AttendanceStatus[] = ['PRESENT', 'ABSENT', 'LATE', 'EXCUSED']
+
+// ─────────────────────────────────────────
+// Main component
+// ─────────────────────────────────────────
 
 export default function AdminAttendanceClient({
   sessionOptions,
   selectedSessionId,
   sessionData,
-}: AdminAttendanceClientProps) {
+}: Props) {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // Get the label for the selected session
-  const selectedSession = selectedSessionId
-    ? sessionOptions.find((opt) => opt.id === selectedSessionId)
+  // Local attendance state: moduleEnrollmentId → status
+  const [localStatus, setLocalStatus] = useState<Record<string, AttendanceStatus>>(() => {
+    if (!sessionData) return {}
+    const map: Record<string, AttendanceStatus> = {}
+    for (const enrollment of sessionData.module.enrollments) {
+      const existing = sessionData.attendances.find(
+        a => a.moduleEnrollmentId === enrollment.id
+      )
+      map[enrollment.id] = existing?.status ?? 'ABSENT'
+    }
+    return map
+  })
+
+  const selectedLabel = selectedSessionId
+    ? sessionOptions.find(o => o.id === selectedSessionId)
     : null
-  const selectedSessionLabel = selectedSession
-    ? `${format(new Date(selectedSession.date), 'EEE d MMM', { locale: fr })} • ${selectedSession.label}`
-    : ''
 
-  const handleSessionChange = (value: unknown) => {
-    const sessionId = String(value)
-    router.push(`?sessionId=${sessionId}`)
+  function handleSessionChange(value: unknown) {
+    setSaved(false)
+    setError(null)
+    router.push(`?sessionId=${String(value)}`)
   }
+
+  function handleStatus(moduleEnrollmentId: string, status: AttendanceStatus) {
+    setSaved(false)
+    setLocalStatus(prev => ({ ...prev, [moduleEnrollmentId]: status }))
+  }
+
+  function handleSave() {
+    if (!sessionData) return
+    setSaved(false)
+    setError(null)
+    startTransition(async () => {
+      const records = Object.entries(localStatus).map(([moduleEnrollmentId, status]) => ({
+        moduleEnrollmentId,
+        status,
+      }))
+      const result = await saveAttendanceAdmin(sessionData.id, records)
+      if (result?.error) {
+        setError(result.error)
+      } else {
+        setSaved(true)
+      }
+    })
+  }
+
+  const presentCount = Object.values(localStatus).filter(s => s === 'PRESENT').length
 
   if (sessionOptions.length === 0) {
     return (
@@ -99,24 +166,26 @@ export default function AdminAttendanceClient({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       {/* Session selector */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Sélectionner une séance</CardTitle>
-          <CardDescription>Choisissez une séance pour voir et gérer les présences</CardDescription>
+          <CardDescription>Choisissez une séance pour consulter et modifier les présences.</CardDescription>
         </CardHeader>
         <CardContent>
           <Select value={selectedSessionId ?? ''} onValueChange={handleSessionChange}>
             <SelectTrigger>
-              <SelectValue placeholder="Choisir une séance...">
-                {selectedSessionLabel || 'Choisir une séance...'}
+              <SelectValue placeholder="Choisir une séance…">
+                {selectedLabel
+                  ? `${format(new Date(selectedLabel.date), 'EEE d MMM', { locale: fr })} • ${selectedLabel.label}`
+                  : 'Choisir une séance…'}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="w-full min-w-80">
-              {sessionOptions.map((option) => (
-                <SelectItem key={option.id} value={option.id}>
-                  {format(new Date(option.date), 'EEE d MMM', { locale: fr })} • {option.label}
+            <SelectContent className="min-w-80">
+              {sessionOptions.map(opt => (
+                <SelectItem key={opt.id} value={opt.id}>
+                  {format(new Date(opt.date), 'EEE d MMM', { locale: fr })} • {opt.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -124,12 +193,12 @@ export default function AdminAttendanceClient({
         </CardContent>
       </Card>
 
-      {/* Session details */}
+      {/* Session detail + attendance */}
       {sessionData && (
         <Card>
           <CardHeader>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
                 <CardTitle>{sessionData.module.title}</CardTitle>
                 <CardDescription className="mt-1">
                   {sessionData.module.formation.title}
@@ -137,81 +206,102 @@ export default function AdminAttendanceClient({
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Session info */}
-            <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg text-sm">
+
+          <CardContent className="flex flex-col gap-5">
+            {/* Meta info */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 rounded-lg bg-muted p-4 text-sm">
               <div>
-                <p className="text-muted-foreground">Moniteur</p>
-                <p className="font-medium">—</p>
+                <p className="text-xs text-muted-foreground">Date</p>
+                <p className="font-medium">
+                  {format(new Date(sessionData.date), 'dd MMM yyyy', { locale: fr })}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Horaires</p>
+                <p className="font-medium">{sessionData.startTime} – {sessionData.endTime}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Formateur</p>
+                <p className="font-medium">{sessionData.trainer?.user.name ?? '—'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Présents</p>
+                <p className="font-medium">
+                  {presentCount} / {sessionData.module.enrollments.length}
+                </p>
               </div>
               {sessionData.room && (
                 <div>
-                  <p className="text-muted-foreground">Salle</p>
+                  <p className="text-xs text-muted-foreground">Salle</p>
                   <p className="font-medium">{sessionData.room.name}</p>
                 </div>
               )}
-              <div>
-                <p className="text-muted-foreground">Inscrits</p>
-                <p className="font-medium">{sessionData.module.enrollments.length} étudiant(s)</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Présences</p>
-                <p className="font-medium">
-                  {sessionData.attendances.filter((a) => a.status === 'PRESENT').length} présent(s)
-                </p>
-              </div>
             </div>
 
-            {/* Attendance list */}
-            <div className="space-y-2">
-              <h4 className="font-semibold text-sm">Présences</h4>
-              {sessionData.module.enrollments.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-4 text-center">
-                  Aucun étudiant inscrit à cette séance.
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {sessionData.module.enrollments.map((enrollment) => {
-                    const attendance = sessionData.attendances.find(
-                      (a) =>
-                        a.moduleEnrollmentId ===
-                        `${enrollment.formationEnrollmentId}-${enrollment.userId}`
-                    )
-
-                    const status = (attendance?.status ?? 'ABSENT') as AttendanceStatus
-                    const statusCfg = attendanceStatusConfig[status]
-
-                    return (
-                      <div
-                        key={enrollment.id}
-                        className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-                      >
-                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">{enrollment.user.name}</p>
-                          <p className="text-xs text-muted-foreground truncate">
-                            {enrollment.user.email}
-                          </p>
-                        </div>
-                        <Badge variant="outline" className={`shrink-0 text-xs ${statusCfg.className}`}>
-                          {statusCfg.label}
-                        </Badge>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Info box */}
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-700">
-              <p>
-                <strong>Note :</strong> Utilisez la page Présences pour les moniteurs pour modifier le
-                statut de présence.
+            {/* Student rows */}
+            {sessionData.module.enrollments.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">
+                Aucun étudiant inscrit à cette séance.
               </p>
-            </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {sessionData.module.enrollments.map(enrollment => {
+                  const current = localStatus[enrollment.id] ?? 'ABSENT'
+
+                  return (
+                    <div
+                      key={enrollment.id}
+                      className="flex items-center gap-3 rounded-lg border bg-background px-4 py-3 flex-wrap"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium leading-tight">{enrollment.user.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{enrollment.user.email}</p>
+                      </div>
+                      <div className="flex gap-1.5 flex-wrap shrink-0">
+                        {STATUSES.map(status => {
+                          const cfg = STATUS_CONFIG[status]
+                          const isActive = current === status
+                          return (
+                            <button
+                              key={status}
+                              type="button"
+                              onClick={() => handleStatus(enrollment.id, status)}
+                              className={cn(
+                                'rounded-md border px-2.5 py-1 text-xs font-medium transition-colors',
+                                isActive ? cfg.active : cfg.inactive
+                              )}
+                            >
+                              {cfg.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Save row */}
+            {sessionData.module.enrollments.length > 0 && (
+              <div className="flex items-center gap-3 pt-2 border-t">
+                <Button onClick={handleSave} disabled={isPending} size="sm">
+                  {isPending
+                    ? <><Loader2 className="h-4 w-4 mr-1.5 animate-spin" />Enregistrement…</>
+                    : 'Enregistrer les présences'}
+                </Button>
+                {saved && (
+                  <span className="inline-flex items-center gap-1 text-sm text-emerald-600 font-medium">
+                    <Check className="h-4 w-4" />
+                    Enregistré
+                  </span>
+                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

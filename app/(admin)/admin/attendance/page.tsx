@@ -59,6 +59,7 @@ export default async function AdminAttendancePage({
             title: true,
             formation: { select: { title: true } },
             enrollments: {
+              where: { status: { not: 'DROPPED' } },
               select: {
                 id: true,
                 userId: true,
@@ -68,7 +69,8 @@ export default async function AdminAttendancePage({
             },
           },
         },
-        room: { select: { name: true } },
+        trainer: { include: { user: { select: { name: true } } } },
+        room:    { select: { name: true } },
         attendances: {
           select: {
             id: true,
