@@ -10,8 +10,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import {
   ArrowRight, MapPin, Phone, Mail, Clock, Star,
-  ChevronLeft, ChevronRight, CheckCircle2,
-  Code2, Brain, TrendingUp, Layers, BookOpen,
+  ChevronLeft, ChevronRight, CheckCircle2, BookOpen,
 } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -41,19 +40,6 @@ const FORMATION_TYPE_LABELS: Record<string, string> = {
   REMOTE_ASYNC: 'En ligne (Async)',
 }
 
-// ─── Legacy color constants — kept until Task 7 rewrites the bottom sections ──
-// TODO(task-7): remove these once about/pourquoi/certs/financements/témoignages/contact/CTA/footer are rewritten
-const MV      = '#8B28E0'
-const MV_L    = '#C080F0'
-const MV_BG   = '#F8F0FF'
-const MV_BDR  = '#E0C0FF'
-const MV_GRAD = 'linear-gradient(135deg, #9B30EF 0%, #6C18C0 100%)'
-const BG_DARK  = '#060A14'
-const BG_WHITE = '#FFFFFF'
-const INK   = '#111827'
-const INK_2 = '#6B7280'
-const INK_3 = '#9CA3AF'
-const LINE  = '#E5E7EB'
 
 const STATS = [
   { n: '850+',  label: 'Étudiants formés'    },
@@ -115,23 +101,6 @@ const TESTIMONIALS = [
   },
 ]
 
-const FALLBACK_CATS: LandingCategory[] = [
-  { name: 'Développement Web & Mobile', description: 'React, Node.js, TypeScript — développeur fullstack en 6 mois.', count: 4 },
-  { name: 'Data Science & IA',          description: 'Python, Machine Learning, Deep Learning.',                        count: 3 },
-  { name: 'Business & Management',      description: 'Gestion de projet, marketing digital, leadership.',               count: 3 },
-  { name: 'Design UX/UI',               description: 'Figma, design systems, prototypage produit.',                     count: 2 },
-]
-
-type LucideIcon = React.ComponentType<{ className?: string; style?: React.CSSProperties }>
-
-function catIcon(name: string): LucideIcon {
-  const n = name.toLowerCase()
-  if (n.includes('web') || n.includes('développ') || n.includes('mobile')) return Code2
-  if (n.includes('data') || n.includes('ia') || n.includes('intelligence')) return Brain
-  if (n.includes('business') || n.includes('management') || n.includes('marketing')) return TrendingUp
-  if (n.includes('design') || n.includes('ux') || n.includes('ui')) return Layers
-  return BookOpen
-}
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <span className="section-label">{children}</span>
@@ -211,7 +180,6 @@ export default function LandingPage({
   categories: LandingCategory[]
 }) {
   const rafRef = useRef<((time: number) => void) | null>(null)
-  const cats   = categories.length > 0 ? categories : FALLBACK_CATS
 
   useLayoutEffect(() => {
     const lenis = new Lenis({ autoRaf: false, lerp: 0.1 })
@@ -482,28 +450,26 @@ export default function LandingPage({
         </section>
       )}
 
-      {/* ══ À PROPOS (white) ══════════════════════════════════════════════════ */}
-      <section id="about" className="relative py-28"
-               style={{ background: BG_WHITE }}>
-        <div className="landing-wrap info-two-col mx-auto max-w-[1160px] px-10 grid gap-20 items-start"
+      {/* ══ À PROPOS ══════════════════════════════════════════════════════════ */}
+      <section id="about" className="relative py-28">
+        <div className="info-two-col mx-auto max-w-[1200px] px-8 grid gap-20 items-start"
              style={{ gridTemplateColumns: '1fr 1fr' }}>
           <div className="reveal-up">
             <SectionLabel>Qui sommes-nous ?</SectionLabel>
-            <h2 className="font-black tracking-[-0.04em] leading-[1.1] mb-6"
-                style={{ fontSize: 'clamp(28px, 3.5vw, 42px)', color: INK }}>
+            <h2 className="font-heading leading-[1.1] tracking-[-0.025em] mb-6"
+                style={{ fontSize: 'clamp(28px, 3.5vw, 42px)', color: 'var(--text-strong)', fontWeight: 400 }}>
               MIA Formation,<br />l&apos;académie qui<br />transforme les talents
             </h2>
-            <p className="text-[15px] leading-[1.82] mb-5" style={{ color: INK_2 }}>
+            <p className="text-[15px] leading-[1.82] mb-5" style={{ color: 'var(--text-muted)' }}>
               MIA Formation est un centre de formation professionnelle certifié Qualiopi.
               Nous croyons que chaque apprenant mérite une formation de qualité, accessible
               et directement opérationnelle.
             </p>
-            <p className="text-[15px] leading-[1.82]" style={{ color: INK_2 }}>
+            <p className="text-[15px] leading-[1.82]" style={{ color: 'var(--text-muted)' }}>
               Notre mission : vous donner les compétences pour réussir dans un marché du
               travail en constante évolution.
             </p>
           </div>
-
           <div className="reveal-up grid grid-cols-2 gap-x-10 gap-y-10">
             {[
               { n: '850+', label: 'Étudiants formés'     },
@@ -512,24 +478,23 @@ export default function LandingPage({
               { n: '2019', label: 'Année de fondation'   },
             ].map(({ n, label }) => (
               <div key={label}>
-                <div className="font-black leading-none mb-2 tracking-[-0.05em]"
-                     style={{ fontSize: 'clamp(34px, 4vw, 48px)', color: MV }}>
+                <div className="font-heading leading-none mb-2 tracking-[-0.04em]"
+                     style={{ fontSize: 'clamp(34px, 4vw, 48px)', color: 'var(--text-accent)', fontWeight: 400 }}>
                   {n}
                 </div>
-                <p className="text-[13px] font-medium" style={{ color: INK_3 }}>{label}</p>
+                <p className="text-[13px] font-medium" style={{ color: 'var(--text-muted)' }}>{label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ POURQUOI MIA (white) ══════════════════════════════════════════════ */}
-      <section id="pourquoi" className="relative py-28"
-               style={{ background: BG_WHITE }}>
-        <div className="landing-wrap mx-auto max-w-[1160px] px-10">
+      {/* ══ POURQUOI MIA ═══════════════════════════════════════════════════════ */}
+      <section id="pourquoi" className="relative py-28" style={{ background: 'var(--surface-muted)' }}>
+        <div className="mx-auto max-w-[1200px] px-8">
           <SectionLabel>Pourquoi nous choisir ?</SectionLabel>
-          <h2 className="font-black tracking-[-0.04em] leading-[1.1] mb-16 max-w-[580px]"
-              style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: INK }}>
+          <h2 className="font-heading leading-[1.1] tracking-[-0.025em] mb-16 max-w-[580px]"
+              style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: 'var(--text-strong)', fontWeight: 400 }}>
             La seule académie avec double expertise Conseil &amp; Formation
           </h2>
 
@@ -537,25 +502,25 @@ export default function LandingPage({
             <div key={p.n} className="pillar-row grid items-start py-14"
                  style={{
                    gridTemplateColumns: '110px 1fr 340px',
-                   borderTop:    pidx === 0 ? `1px solid ${LINE}` : undefined,
-                   borderBottom: `1px solid ${LINE}`,
+                   borderTop:    pidx === 0 ? '1px solid var(--border-default)' : undefined,
+                   borderBottom: '1px solid var(--border-default)',
                  }}>
               <div className="ghost-n">{p.n}</div>
               <div className="pr-12">
-                <p className="text-[19px] font-black tracking-[-0.03em] mb-3"
-                   style={{ color: INK }}>{p.title}</p>
-                <p className="text-[14px] leading-[1.82]" style={{ color: INK_2 }}>{p.desc}</p>
+                <p className="text-[19px] font-semibold tracking-[-0.02em] mb-3"
+                   style={{ color: 'var(--text-strong)' }}>{p.title}</p>
+                <p className="text-[14px] leading-[1.82]" style={{ color: 'var(--text-muted)' }}>{p.desc}</p>
               </div>
               <div className="pillar-kpis grid grid-cols-2 gap-5 pl-10"
-                   style={{ borderLeft: `1px solid ${LINE}` }}>
+                   style={{ borderLeft: '1px solid var(--border-default)' }}>
                 {p.kpis.map((k) => (
                   <div key={k.label}>
-                    <div className="font-black tracking-[-0.05em] leading-none mb-1.5"
-                         style={{ fontSize: 'clamp(26px, 3vw, 36px)', color: INK }}>
+                    <div className="font-heading leading-none mb-1.5 tracking-[-0.04em]"
+                         style={{ fontSize: 'clamp(26px, 3vw, 36px)', color: 'var(--text-strong)', fontWeight: 400 }}>
                       <span className="kpi-val" data-end={k.end}>0</span>
-                      <span style={{ color: MV }}>{k.suffix}</span>
+                      <span style={{ color: 'var(--text-accent)' }}>{k.suffix}</span>
                     </div>
-                    <div className="text-[12px] leading-[1.5]" style={{ color: INK_3 }}>{k.label}</div>
+                    <div className="text-[12px] leading-[1.5]" style={{ color: 'var(--text-muted)' }}>{k.label}</div>
                   </div>
                 ))}
               </div>
@@ -564,75 +529,71 @@ export default function LandingPage({
         </div>
       </section>
 
-      {/* ══ CERTIFICATIONS (white) ════════════════════════════════════════════ */}
-      <section id="certifications" className="relative py-28"
-               style={{ background: BG_WHITE }}>
-        <div className="landing-wrap info-two-col mx-auto max-w-[1160px] px-10 grid gap-20 items-center"
+      {/* ══ CERTIFICATIONS ════════════════════════════════════════════════════ */}
+      <section id="certifications" className="relative py-28">
+        <div className="info-two-col mx-auto max-w-[1200px] px-8 grid gap-20 items-center"
              style={{ gridTemplateColumns: '1fr 1fr' }}>
           <div className="reveal-up">
             <SectionLabel>Nos certifications</SectionLabel>
-            <h2 className="font-black tracking-[-0.04em] leading-[1.1] mb-5"
-                style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: INK }}>
+            <h2 className="font-heading leading-[1.1] tracking-[-0.025em] mb-5"
+                style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: 'var(--text-strong)', fontWeight: 400 }}>
               Certifications reconnues par les professionnels
             </h2>
-            <p className="text-[15px] leading-[1.75]" style={{ color: INK_2 }}>
+            <p className="text-[15px] leading-[1.75]" style={{ color: 'var(--text-muted)' }}>
               Nos formations débouchent sur des certifications officiellement reconnues,
               éligibles au CPF et valorisées sur le marché national et international.
             </p>
           </div>
           <div className="reveal-up flex flex-wrap gap-3">
             {CERTS.map(c => (
-              <div key={c}
-                   className="flex items-center gap-2.5 px-5 py-3 rounded-full"
-                   style={{ background: MV_BG, border: `1px solid ${MV_BDR}` }}>
-                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: MV }} />
-                <span className="text-[14px] font-bold" style={{ color: INK }}>{c}</span>
+              <div key={c} className="flex items-center gap-2.5 px-5 py-3 rounded-full"
+                   style={{ background: 'var(--surface-accent)', border: '1px solid var(--mia-purple-soft)' }}>
+                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'var(--text-accent)' }} />
+                <span className="text-[14px] font-semibold" style={{ color: 'var(--text-strong)' }}>{c}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ FINANCEMENTS (white) ══════════════════════════════════════════════ */}
-      <section id="financements" className="relative py-28"
-               style={{ background: BG_WHITE }}>
-        <div className="landing-wrap info-two-col mx-auto max-w-[1160px] px-10 grid gap-20 items-start"
+      {/* ══ FINANCEMENTS ══════════════════════════════════════════════════════ */}
+      <section id="financements" className="relative py-28" style={{ background: 'var(--surface-muted)' }}>
+        <div className="info-two-col mx-auto max-w-[1200px] px-8 grid gap-20 items-start"
              style={{ gridTemplateColumns: '1fr 1fr' }}>
           <div className="reveal-up">
             <SectionLabel>Nos financements</SectionLabel>
-            <h2 className="font-black tracking-[-0.04em] leading-[1.1] mb-5"
-                style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: INK }}>
+            <h2 className="font-heading leading-[1.1] tracking-[-0.025em] mb-5"
+                style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: 'var(--text-strong)', fontWeight: 400 }}>
               Votre formation,<br />sans obstacle financier
             </h2>
-            <p className="text-[15px] leading-[1.75] mb-10" style={{ color: INK_2 }}>
+            <p className="text-[15px] leading-[1.75] mb-10" style={{ color: 'var(--text-muted)' }}>
               Plusieurs dispositifs sont disponibles pour rendre votre formation accessible
               quelle que soit votre situation professionnelle.
             </p>
             <div className="flex items-baseline gap-3 mb-2">
-              <span className="font-black leading-none tracking-[-0.05em]"
-                    style={{ fontSize: 'clamp(52px, 6vw, 72px)', color: MV }}>
+              <span className="font-heading leading-none tracking-[-0.04em]"
+                    style={{ fontSize: 'clamp(52px, 6vw, 72px)', color: 'var(--text-accent)', fontWeight: 400 }}>
                 100%
               </span>
             </div>
-            <p className="text-[16px] font-bold" style={{ color: INK }}>
+            <p className="text-[16px] font-semibold" style={{ color: 'var(--text-strong)' }}>
               De votre formation peut être prise en charge
             </p>
           </div>
-
-          <div className="reveal-up flex flex-col" style={{ borderTop: `1px solid ${LINE}` }}>
+          <div className="reveal-up flex flex-col" style={{ borderTop: '1px solid var(--border-default)' }}>
             {FINANCEMENTS.map((f) => (
               <div key={f.title} className="flex items-center gap-5 py-6"
-                   style={{ borderBottom: `1px solid ${LINE}` }}>
-                <span className="text-[11px] font-black w-8 shrink-0 tracking-[0.04em]"
-                      style={{ color: INK_3 }}>{f.n}</span>
+                   style={{ borderBottom: '1px solid var(--border-default)' }}>
+                <span className="text-[11px] font-bold w-8 shrink-0 tracking-[0.04em]"
+                      style={{ color: 'var(--text-muted)' }}>{f.n}</span>
                 <div className="flex-1">
-                  <p className="text-[15px] font-black" style={{ color: INK }}>{f.title}</p>
-                  <p className="text-[13px] mt-0.5" style={{ color: INK_2 }}>{f.detail}</p>
+                  <p className="text-[15px] font-semibold" style={{ color: 'var(--text-strong)' }}>{f.title}</p>
+                  <p className="text-[13px] mt-0.5" style={{ color: 'var(--text-muted)' }}>{f.detail}</p>
                 </div>
                 <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full shrink-0"
-                     style={{ background: MV_BG, border: `1px solid ${MV_BDR}` }}>
-                  <CheckCircle2 className="w-3.5 h-3.5" style={{ color: MV }} />
-                  <span className="text-[12px] font-bold" style={{ color: MV }}>Disponible</span>
+                     style={{ background: 'var(--surface-accent)', border: '1px solid var(--mia-purple-soft)' }}>
+                  <CheckCircle2 className="w-3.5 h-3.5" style={{ color: 'var(--text-accent)' }} />
+                  <span className="text-[12px] font-semibold" style={{ color: 'var(--text-accent)' }}>Disponible</span>
                 </div>
               </div>
             ))}
@@ -640,24 +601,23 @@ export default function LandingPage({
         </div>
       </section>
 
-      {/* ══ TÉMOIGNAGES (white) ═══════════════════════════════════════════════ */}
-      <section id="temoignages" className="relative py-28"
-               style={{ background: BG_WHITE }}>
-        <div className="landing-wrap mx-auto max-w-[1160px] px-10">
+      {/* ══ TÉMOIGNAGES ═══════════════════════════════════════════════════════ */}
+      <section id="temoignages" className="relative py-28">
+        <div className="mx-auto max-w-[1200px] px-8">
           <div className="flex items-end justify-between mb-14 flex-wrap gap-6">
             <div>
               <SectionLabel>Témoignages</SectionLabel>
-              <h2 className="font-black tracking-[-0.04em] leading-[1.1]"
-                  style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: INK }}>
+              <h2 className="font-heading leading-[1.1] tracking-[-0.025em]"
+                  style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: 'var(--text-strong)', fontWeight: 400 }}>
                 Ce que disent<br />nos étudiants
               </h2>
             </div>
             <div className="flex items-center gap-2">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-current" style={{ color: MV }} />
+                <Star key={i} className="w-4 h-4 fill-current" style={{ color: 'var(--text-accent)' }} />
               ))}
-              <span className="ml-2 text-[14px] font-bold" style={{ color: INK }}>4.9 / 5</span>
-              <span className="ml-1 text-[13px]" style={{ color: INK_3 }}>· 200+ avis</span>
+              <span className="ml-2 text-[14px] font-semibold" style={{ color: 'var(--text-strong)' }}>4.9 / 5</span>
+              <span className="ml-1 text-[13px]" style={{ color: 'var(--text-muted)' }}>· 200+ avis</span>
             </div>
           </div>
           <div className="reveal-up">
@@ -666,18 +626,17 @@ export default function LandingPage({
         </div>
       </section>
 
-      {/* ══ CONTACT (white) ═══════════════════════════════════════════════════ */}
-      <section id="contact" className="relative py-28"
-               style={{ background: BG_WHITE }}>
-        <div className="landing-wrap info-two-col mx-auto max-w-[1160px] px-10 grid items-start gap-20"
+      {/* ══ CONTACT ═══════════════════════════════════════════════════════════ */}
+      <section id="contact" className="relative py-28" style={{ background: 'var(--surface-muted)' }}>
+        <div className="info-two-col mx-auto max-w-[1200px] px-8 grid items-start gap-20"
              style={{ gridTemplateColumns: '1fr 1fr' }}>
           <div className="reveal-up">
             <SectionLabel>Contact</SectionLabel>
-            <h2 className="font-black tracking-[-0.03em] mb-5"
-                style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', color: INK }}>
+            <h2 className="font-heading leading-[1.05] tracking-[-0.02em] mb-5"
+                style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', color: 'var(--text-strong)', fontWeight: 400 }}>
               Parlons de votre<br />projet de formation
             </h2>
-            <p className="text-[15px] leading-[1.82] mb-8" style={{ color: INK_2 }}>
+            <p className="text-[15px] leading-[1.82] mb-8" style={{ color: 'var(--text-muted)' }}>
               Notre équipe pédagogique est disponible pour répondre à toutes vos questions
               et vous orienter vers la formation la plus adaptée à votre profil.
             </p>
@@ -688,44 +647,43 @@ export default function LandingPage({
                 { Icon: Mail,   text: 'contact@miaformation.ma' },
               ].map(({ Icon, text }) => (
                 <div key={text} className="flex items-start gap-3.5 text-[14px]"
-                     style={{ color: INK_2 }}>
+                     style={{ color: 'var(--text-muted)' }}>
                   <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
-                       style={{ background: MV_BG, border: `1px solid ${MV_BDR}` }}>
-                    <Icon className="w-4 h-4" style={{ color: MV }} />
+                       style={{ background: 'var(--surface-accent)', border: '1px solid var(--mia-purple-soft)' }}>
+                    <Icon className="w-4 h-4" style={{ color: 'var(--text-accent)' }} />
                   </div>
                   {text}
                 </div>
               ))}
             </div>
             <Link href="/register"
-                  className="inline-flex items-center gap-2.5 px-6 py-[13px] rounded-[10px] text-white text-[14px] font-bold hover:-translate-y-0.5 transition-all"
-                  style={{ background: MV_GRAD, boxShadow: '0 4px 20px rgba(139,40,224,0.25)' }}>
+                  className="inline-flex items-center gap-2.5 px-6 py-3 rounded-[32px] text-white text-[14px] font-semibold transition-all hover:-translate-y-px"
+                  style={{ background: 'var(--mia-near-black)' }}>
               Commencer ma formation <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-
           <div className="reveal-up">
             <SectionLabel>Horaires</SectionLabel>
-            <h2 className="font-black tracking-[-0.03em] mb-6"
-                style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', color: INK }}>
+            <h2 className="font-heading leading-[1.05] tracking-[-0.02em] mb-6"
+                style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', color: 'var(--text-strong)', fontWeight: 400 }}>
               Horaires d&apos;ouverture
             </h2>
             <div className="rounded-[16px] overflow-hidden"
-                 style={{ border: `1px solid ${LINE}` }}>
+                 style={{ border: '1px solid var(--border-default)' }}>
               {[
                 { day: 'Lun – Ven', hours: '08h30 – 19h00', closed: false },
                 { day: 'Samedi',    hours: '09h00 – 13h00', closed: false },
                 { day: 'Dimanche',  hours: 'Fermé',          closed: true  },
               ].map(({ day, hours, closed }, i, arr) => (
                 <div key={day} className="flex items-center justify-between px-6 py-4"
-                     style={{ borderBottom: i < arr.length - 1 ? `1px solid ${LINE}` : 'none' }}>
+                     style={{ borderBottom: i < arr.length - 1 ? '1px solid var(--border-default)' : 'none' }}>
                   <div className="flex items-center gap-3 text-[14px] font-semibold"
-                       style={{ color: INK }}>
-                    <Clock className="w-4 h-4" style={{ color: INK_3 }} />
+                       style={{ color: 'var(--text-strong)' }}>
+                    <Clock className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
                     {day}
                   </div>
                   <span className="text-[14px] font-medium"
-                        style={{ color: closed ? '#ef4444' : INK_2 }}>
+                        style={{ color: closed ? 'var(--mia-coral)' : 'var(--text-muted)' }}>
                     {hours}
                   </span>
                 </div>
@@ -735,87 +693,121 @@ export default function LandingPage({
         </div>
       </section>
 
-      {/* ══ CTA BAND (dark) ═══════════════════════════════════════════════════ */}
-      <section id="cta" className="relative py-32 text-center overflow-hidden"
-               style={{ background: BG_DARK }}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
-             style={{ background: 'radial-gradient(circle, rgba(139,40,224,0.28) 0%, transparent 65%)', filter: 'blur(20px)' }} />
-
-        <div id="cta-inner" className="landing-wrap relative z-10 max-w-[600px] mx-auto px-10">
-          <SectionLabel>Prêt à commencer ?</SectionLabel>
-          <h2 className="font-black tracking-[-0.045em] leading-[1.07] text-white mb-5"
-              style={{ fontSize: 'clamp(32px, 5vw, 58px)' }}>
-            Rejoignez MIA Formation<br />dès aujourd&apos;hui
-          </h2>
-          <p className="text-[16px] leading-[1.75] mb-12" style={{ color: 'rgba(255,255,255,0.4)' }}>
-            Accédez à votre espace pour consulter vos formations, suivre votre progression
-            et démarrer votre parcours vers la certification.
-          </p>
-          <div className="flex items-center justify-center gap-4 flex-wrap">
+      {/* ══ CTA — rounded dark container ══════════════════════════════════════ */}
+      <section id="cta" className="py-20 px-8">
+        <div id="cta-inner"
+             className="mx-auto max-w-[1200px] rounded-[28px] p-16 grid items-center gap-10"
+             style={{ background: 'var(--mia-near-black)', gridTemplateColumns: '1.3fr 0.7fr' }}>
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-4"
+                 style={{ color: 'var(--text-accent)' }}>
+              Prêt à commencer ?
+            </div>
+            <h2 className="font-heading leading-[1.1] tracking-[-0.02em] mb-5"
+                style={{ fontSize: 'clamp(28px, 4vw, 44px)', color: '#fff', fontWeight: 400 }}>
+              Rejoignez MIA Formation<br />dès aujourd&apos;hui
+            </h2>
+            <p className="text-[16px] leading-[1.7]" style={{ color: 'var(--mia-slate)' }}>
+              Accédez à votre espace pour consulter vos formations et démarrer votre
+              parcours vers la certification.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3">
             <Link href="/login"
-                  className="inline-flex items-center gap-2.5 px-7 py-[15px] rounded-[11px] text-white text-[14.5px] font-bold hover:-translate-y-0.5 transition-all"
-                  style={{ background: MV_GRAD, boxShadow: '0 6px 28px rgba(139,40,224,0.45)' }}>
+                  className="inline-flex items-center justify-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] text-white transition-all hover:-translate-y-px"
+                  style={{ background: 'var(--mia-purple)' }}>
               Se connecter <ArrowRight className="w-4 h-4" />
             </Link>
             <Link href="/register"
-                  className="inline-flex items-center gap-2 px-7 py-[15px] rounded-[11px] text-[14.5px] font-bold hover:-translate-y-0.5 transition-all"
-                  style={{ border: '1.5px solid rgba(255,255,255,0.13)', color: 'rgba(255,255,255,0.65)' }}>
+                  className="inline-flex items-center justify-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] transition-all hover:-translate-y-px"
+                  style={{ border: '1.5px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)' }}>
               Créer un compte étudiant
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ══ FOOTER (dark) ═════════════════════════════════════════════════════ */}
-      <footer id="footer" className="pt-16 pb-8"
-              style={{ background: BG_DARK }}>
-        <div className="landing-wrap mx-auto max-w-[1160px] px-10">
-          <div className="footer-grid grid gap-12 mb-14"
-               style={{ gridTemplateColumns: '200px 1fr 1fr 1fr' }}>
-            <div className="footer-brand flex flex-col gap-4">
-              <div className="w-[44px] h-[44px] rounded-[10px] bg-white flex items-center justify-center shrink-0">
-                <Image src={logoSrc} alt="MIA" width={36} height={36} className="object-contain" />
+      {/* ══ FOOTER — 4-col dark ════════════════════════════════════════════════ */}
+      <footer id="footer" style={{ background: 'var(--mia-near-black)', color: '#fff' }}>
+        <div className="mx-auto max-w-[1200px] px-8 pt-16 pb-10">
+          <div className="footer-grid grid gap-10 mb-14"
+               style={{ gridTemplateColumns: '1.4fr 1fr 1fr 1.4fr' }}>
+            {/* Brand */}
+            <div className="footer-brand">
+              <div className="mb-4">
+                <Image src={logoSrc} alt="MIA Formation" width={28} height={28} className="object-contain" />
               </div>
-              <p className="text-[13px] leading-[1.65]" style={{ color: 'rgba(255,255,255,0.28)' }}>
-                Centre de formation professionnelle certifié.
+              <p className="text-[14px] leading-[1.6] max-w-[200px]" style={{ color: 'var(--mia-slate)' }}>
+                Centre de formation professionnelle certifié. Building skills. Shaping futures.
               </p>
             </div>
+
+            {/* Link columns */}
             {[
               { heading: 'Formations', links: ['Développement Web', 'Data Science & IA', 'Business & Management', 'Design UX/UI'] },
               { heading: 'MIA',        links: ['Qui sommes-nous', 'Certifications', 'Financements', 'Témoignages'] },
-              { heading: 'Contact',    links: ['contact@miaformation.ma', '+212 522 456 789', 'Casablanca, Maroc'] },
             ].map(({ heading, links }) => (
               <div key={heading}>
                 <p className="text-[11px] font-bold tracking-[0.1em] uppercase mb-5"
-                   style={{ color: 'rgba(255,255,255,0.18)' }}>
-                  {heading}
-                </p>
+                   style={{ color: 'var(--mia-slate)' }}>{heading}</p>
                 <div className="flex flex-col gap-3">
                   {links.map(link => (
-                    <a key={link} href="#" className="text-[14px] transition-colors"
-                       style={{ color: 'rgba(255,255,255,0.38)' }}
-                       onMouseEnter={e => (e.currentTarget.style.color = MV_L)}
-                       onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.38)')}>
+                    <a key={link} href="#"
+                       className="text-[14px] transition-colors"
+                       style={{ color: 'rgba(255,255,255,0.45)' }}
+                       onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#fff'}
+                       onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.45)'}>
                       {link}
                     </a>
                   ))}
                 </div>
               </div>
             ))}
+
+            {/* Newsletter */}
+            <div>
+              <p className="text-[11px] font-bold tracking-[0.1em] uppercase mb-5"
+                 style={{ color: 'var(--mia-slate)' }}>Newsletter</p>
+              <p className="text-[14px] mb-4" style={{ color: 'var(--mia-slate)' }}>
+                Actualités mensuelles sur les compétences.
+              </p>
+              <div className="flex gap-2">
+                <input
+                  placeholder="Email"
+                  className="flex-1 rounded-[8px] px-3 py-2.5 text-[14px] outline-none"
+                  style={{ background: '#22222A', border: '1px solid #33333D', color: '#fff' }}
+                />
+                <button
+                  type="button"
+                  className="px-4 py-2.5 rounded-[32px] font-semibold text-[13px] text-white transition-all hover:-translate-y-px"
+                  style={{ background: 'var(--mia-purple)' }}>
+                  S&apos;abonner
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center justify-between pt-7 flex-wrap gap-4"
-               style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-            <span className="text-[12.5px]" style={{ color: 'rgba(255,255,255,0.18)' }}>
+
+          {/* Bottom bar */}
+          <div className="flex items-center justify-between pt-6 flex-wrap gap-4"
+               style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <span className="text-[12px]" style={{ color: 'rgba(255,255,255,0.25)' }}>
               © {new Date().getFullYear()} MIA Formation. Tous droits réservés.
             </span>
-            <Link href="/login"
-                  className="px-5 py-2.5 rounded-[8px] text-white text-[13px] font-bold hover:-translate-y-0.5 transition-all"
-                  style={{ background: MV_GRAD }}>
-              Accéder à mon espace
-            </Link>
+            <div className="flex gap-5">
+              {['Confidentialité', 'Conditions'].map(item => (
+                <a key={item} href="#"
+                   className="text-[12px] transition-colors"
+                   style={{ color: 'rgba(255,255,255,0.25)' }}
+                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)'}
+                   onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.25)'}>
+                  {item}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </footer>
+
     </div>
   )
-}
+} // end LandingPage
