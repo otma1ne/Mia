@@ -156,7 +156,7 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
               </Avatar>
               <div className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate text-sm font-medium leading-none">{user.name ?? 'Utilisateur'}</span>
-                <span className="truncate text-xs text-muted-foreground mt-0.5">{user.email ?? ''}</span>
+                <span className="truncate text-xs mt-0.5" style={{ color: 'var(--mia-slate)' }}>{user.email ?? ''}</span>
               </div>
               <button
                 type="button"
