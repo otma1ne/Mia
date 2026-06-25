@@ -1,78 +1,19 @@
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   LANDING PAGE — dark premium theme
-   Brand: MIA Formation purple (#8B28E0)
-   Aesthetic: mister-ia.com — dark navy + glow
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* MIA Formation — Landing page structural styles
+   Brand tokens come from globals.css — no hardcoded colors here */
 
-:root {
-  /* Brand */
-  --mv:      #8B28E0;
-  --mv-g1:   #9B30EF;
-  --mv-g2:   #6C18C0;
-  --mv-l:    #C080F0;
-  --mv-grad: linear-gradient(135deg, #9B30EF 0%, #6C18C0 100%);
-
-  /* Dark palette */
-  --bg:      #060A14;
-  --bg-2:    #0C1120;
-  --bg-3:    #101828;
-  --card:    #0D1525;
-  --card-b:  rgba(255,255,255,0.06);
-  --line:    rgba(255,255,255,0.07);
-
-  /* Typography */
-  --ink:     #FFFFFF;
-  --ink-2:   rgba(255,255,255,0.70);
-  --ink-3:   rgba(255,255,255,0.40);
+/* ─── Nav glass morphism ─────────────────── */
+.nav-glass {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-default);
+  transition: box-shadow var(--dur-base) var(--ease-out);
 }
-
-/* ─── Page wipe ──────────────────────────── */
-#page-wipe {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 9999;
-  will-change: transform;
-}
-
-/* ─── Nav ────────────────────────────────── */
-#site-nav {
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  transition: background-color 0.4s ease, border-color 0.4s ease;
-}
-
-/* Nav light mode — over white sections */
-#site-nav.nav--light {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  border-bottom-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-/* ─── Hero glow orb (signature mister-ia look) ─ */
-.hero-glow {
-  position: absolute;
-  top: -160px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 900px;
-  height: 900px;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(155, 48, 239, 0.45) 0%,
-    rgba(108, 24, 192, 0.20) 35%,
-    transparent 70%
-  );
-  pointer-events: none;
-  filter: blur(4px);
-}
-
-/* Secondary / section glows */
-.section-glow {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(60px);
+.nav-glass:has(+ #hero:hover) {
+  box-shadow: none;
 }
 
 /* ─── Hero word-split animation ──────────── */
@@ -86,119 +27,41 @@
   will-change: transform, opacity;
 }
 
-/* ─── Dark card (hero/dark sections) ────── */
-.dark-card {
-  background: var(--card);
-  border: 1px solid var(--card-b);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-.dark-card:hover {
-  border-color: rgba(139, 40, 224, 0.35);
-  transform: translateY(-3px);
-}
-
-/* ─── Light card (white sections) ───────── */
-.light-card {
-  background: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  border-radius: 16px;
-  overflow: hidden;
-  transition: border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
-}
-.light-card:hover {
-  border-color: rgba(139, 40, 224, 0.3);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(139, 40, 224, 0.09);
-}
-
-/* Formation card thumbnail — dark sections */
-.card-thumb {
-  height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-.card-thumb::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 30% 40%, rgba(155,48,239,0.22), transparent 70%);
-}
-
-/* Formation card thumbnail — light sections */
-.card-thumb-light {
-  height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #F8F0FF 0%, #EDE0FF 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-/* ─── Section border for white sections ── */
-.section-border-light {
-  border-top: 1px solid #E5E7EB;
-}
-
-/* ─── Ghost number (pillar) ──────────────── */
+/* ─── Ghost number (pillar rows) ─────────── */
 .ghost-n {
   font-size: 80px;
   font-weight: 900;
   letter-spacing: -0.08em;
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(139,40,224,0.25);
+  -webkit-text-stroke: 1.5px rgba(107, 43, 217, 0.2);
   -webkit-user-select: none;
   user-select: none;
   pointer-events: none;
 }
 
-/* ─── Stat pill row ──────────────────────── */
+/* ─── Formation card hover ───────────────── */
+.f-card {
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
+}
+
+/* ─── Stat row (hero bottom) ─────────────── */
 .stat-row {
   display: flex;
-  gap: 0;
-  border: 1px solid var(--card-b);
-  border-radius: 16px;
-  overflow: hidden;
-  background: var(--card);
-}
-.stat-cell {
-  flex: 1;
-  padding: 20px 28px;
-  border-right: 1px solid var(--card-b);
-  text-align: center;
-}
-.stat-cell:last-child { border-right: none; }
-
-/* ─── Marquee ────────────────────────────── */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.marquee-track {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  animation: marquee 32s linear infinite;
-  will-change: transform;
-}
-.marquee-track:hover {
-  animation-play-state: paused;
+  gap: 3rem;
 }
 
-/* ─── Formation list rows ────────────────── */
-.f-row {
-  border-bottom: 1px solid var(--line);
-  transition: padding-left 0.2s ease, background-color 0.2s ease;
-}
-.f-row:hover {
-  background: rgba(139, 40, 224, 0.04);
-  padding-left: 16px;
+/* ─── Section label ──────────────────────── */
+.section-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  margin-bottom: 1rem;
 }
 
 /* ─── Responsive ─────────────────────────── */
@@ -213,18 +76,18 @@
     grid-column: 1 !important;
     border-left: none !important;
     padding-left: 0 !important;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--border-default);
     padding-top: 1.5rem;
   }
 
-  .info-two-col  { grid-template-columns: 1fr !important; gap: 3rem; }
-  .footer-grid   { grid-template-columns: 1fr 1fr !important; gap: 2rem; }
-  .footer-brand  { grid-column: 1 / -1; }
-  .landing-wrap  { padding-left: 20px !important; padding-right: 20px !important; }
-  .stat-row      { flex-direction: column; }
-  .stat-cell     { border-right: none; border-bottom: 1px solid var(--card-b); }
-  .stat-cell:last-child { border-bottom: none; }
-  .hero-glow     { width: 500px; height: 500px; }
+  .info-two-col { grid-template-columns: 1fr !important; gap: 3rem; }
+  .footer-grid  { grid-template-columns: 1fr 1fr !important; gap: 2rem; }
+  .footer-brand { grid-column: 1 / -1; }
+  .landing-wrap { padding-left: 20px !important; padding-right: 20px !important; }
+
+  #hero { grid-template-columns: 1fr !important; }
+  #hero-visual { display: none; }
+  .stat-row { gap: 1.5rem; }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -234,10 +97,12 @@
     grid-column: 2 !important;
     border-left: none !important;
     padding-left: 0 !important;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--border-default);
     padding-top: 1.5rem;
   }
   .info-two-col { grid-template-columns: 1fr !important; gap: 3rem; }
   .footer-grid  { grid-template-columns: 1fr 1fr !important; }
   .footer-brand { grid-column: 1 / -1; }
+  #hero { grid-template-columns: 1fr !important; }
+  #hero-visual { display: none; }
 }
