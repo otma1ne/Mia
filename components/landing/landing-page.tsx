@@ -22,29 +22,43 @@ export interface LandingCategory {
   count: number
 }
 
-// ─── Brand ────────────────────────────────────────────────────────────────────
+export interface LandingFormation {
+  id: string
+  title: string
+  description: string
+  categoryName: string
+  type: 'PRESENTIAL' | 'REMOTE_LIVE' | 'REMOTE_ASYNC'
+  price: number | null
+  duration: number | null
+  thumbnail: string | null
+  enrollmentCount: number
+  moduleCount: number
+}
+
+const FORMATION_TYPE_LABELS: Record<string, string> = {
+  PRESENTIAL:   'Présentiel',
+  REMOTE_LIVE:  'En ligne (Live)',
+  REMOTE_ASYNC: 'En ligne (Async)',
+}
+
+// ─── Legacy color constants — kept until Task 7 rewrites the bottom sections ──
+// TODO(task-7): remove these once about/pourquoi/certs/financements/témoignages/contact/CTA/footer are rewritten
 const MV      = '#8B28E0'
-const MV_L    = '#C080F0'   // light purple — for dark backgrounds
-const MV_BG   = '#F8F0FF'   // very light purple — for white backgrounds
-const MV_BDR  = '#E0C0FF'   // light purple border
+const MV_L    = '#C080F0'
+const MV_BG   = '#F8F0FF'
+const MV_BDR  = '#E0C0FF'
 const MV_GRAD = 'linear-gradient(135deg, #9B30EF 0%, #6C18C0 100%)'
-
-// Section backgrounds
-const BG_DARK  = '#060A14'  // nav, hero, CTA band, footer
-const BG_WHITE = '#FFFFFF'  // all content sections
-
-// Text for white sections
+const BG_DARK  = '#060A14'
+const BG_WHITE = '#FFFFFF'
 const INK   = '#111827'
 const INK_2 = '#6B7280'
 const INK_3 = '#9CA3AF'
 const LINE  = '#E5E7EB'
 
-// ─── Static content ───────────────────────────────────────────────────────────
 const STATS = [
   { n: '850+',  label: 'Étudiants formés'    },
   { n: '94 %',  label: "Taux d'insertion"    },
   { n: '28+',   label: 'Formateurs certifiés' },
-  { n: '4.9/5', label: 'Satisfaction moyenne' },
 ]
 
 const PILLARS = [
@@ -89,11 +103,11 @@ const FINANCEMENTS = [
 const TESTIMONIALS = [
   {
     name: 'Yasmine B.', role: 'Développeuse Web · Promo 2025', stars: 5,
-    quote: "MIA Formation a transformé mon parcours. En 6 mois j'ai acquis les compétences pour décrocher mon premier emploi de développeuse. Les formateurs sont disponibles et les projets vraiment concrets.",
+    quote: "MIA Formation a transformé mon parcours. En 6 mois j'ai acquis les compétences pour décrocher mon premier emploi de développeuse.",
   },
   {
     name: 'Karim L.', role: 'Data Analyst · Promo 2024', stars: 5,
-    quote: "Formation de très haute qualité. L'approche pratique et les certifications reconnues m'ont permis de trouver un poste chez une scale-up parisienne 2 mois après l'obtention de mon diplôme.",
+    quote: "Formation de très haute qualité. L'approche pratique et les certifications reconnues m'ont permis de trouver un poste chez une scale-up parisienne 2 mois après.",
   },
   {
     name: 'Sara M.', role: 'UX Designer · Promo 2025', stars: 5,
@@ -108,7 +122,6 @@ const FALLBACK_CATS: LandingCategory[] = [
   { name: 'Design UX/UI',               description: 'Figma, design systems, prototypage produit.',                     count: 2 },
 ]
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 type LucideIcon = React.ComponentType<{ className?: string; style?: React.CSSProperties }>
 
 function catIcon(name: string): LucideIcon {
@@ -120,16 +133,8 @@ function catIcon(name: string): LucideIcon {
   return BookOpen
 }
 
-// SectionLabel — variant='dark' for hero/CTA, default for white sections
-function SectionLabel({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
-  const color = dark ? MV_L : MV
-  return (
-    <p className="inline-flex items-center gap-2.5 text-[11px] font-bold tracking-[0.1em] uppercase mb-4"
-       style={{ color }}>
-      <span className="w-5 h-[1.5px] rounded-sm inline-block" style={{ background: color }} />
-      {children}
-    </p>
-  )
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <span className="section-label">{children}</span>
 }
 
 // ─── Testimonial carousel ─────────────────────────────────────────────────────
@@ -138,44 +143,41 @@ function TestimonialBlock() {
   const t = TESTIMONIALS[idx]
   return (
     <div className="grid items-start gap-14" style={{ gridTemplateColumns: '1fr 280px' }}>
-      {/* Quote */}
       <div>
         <div className="flex gap-1 mb-8">
           {Array.from({ length: t.stars }).map((_, i) => (
-            <Star key={i} className="w-4 h-4 fill-current" style={{ color: MV }} />
+            <Star key={i} className="w-4 h-4 fill-current" style={{ color: 'var(--text-accent)' }} />
           ))}
         </div>
         <blockquote
-          className="font-black tracking-[-0.03em] leading-[1.35] mb-10"
-          style={{ fontSize: 'clamp(20px, 2.2vw, 26px)', color: INK }}
+          className="font-heading leading-[1.35] mb-10 tracking-[-0.02em]"
+          style={{ fontSize: 'clamp(20px, 2.2vw, 26px)', color: 'var(--text-strong)', fontWeight: 400 }}
         >
           &ldquo;{t.quote}&rdquo;
         </blockquote>
         <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-full flex items-center justify-center text-[15px] font-black text-white shrink-0"
-               style={{ background: MV_GRAD }}>
+          <div className="w-11 h-11 rounded-full flex items-center justify-center text-[15px] font-bold text-white shrink-0"
+               style={{ background: 'linear-gradient(135deg, var(--mia-violet), var(--mia-purple))' }}>
             {t.name[0]}
           </div>
           <div>
-            <p className="font-black text-[14px]" style={{ color: INK }}>{t.name}</p>
-            <p className="text-[13px]" style={{ color: INK_3 }}>{t.role}</p>
+            <p className="font-semibold text-[14px]" style={{ color: 'var(--text-strong)' }}>{t.name}</p>
+            <p className="text-[13px]" style={{ color: 'var(--text-muted)' }}>{t.role}</p>
           </div>
         </div>
       </div>
-
-      {/* Navigation list */}
       <div className="flex flex-col justify-between h-full min-h-[200px] pl-10"
-           style={{ borderLeft: `1px solid ${LINE}` }}>
+           style={{ borderLeft: '1px solid var(--border-default)' }}>
         <div className="flex flex-col">
           {TESTIMONIALS.map((ti, i) => (
             <button key={ti.name} type="button" onClick={() => setIdx(i)}
                     className="text-left py-4 transition-colors"
-                    style={{ borderBottom: `1px solid ${LINE}` }}>
-              <p className="text-[14px] font-bold transition-colors"
-                 style={{ color: i === idx ? MV : INK_3 }}>
+                    style={{ borderBottom: '1px solid var(--border-default)' }}>
+              <p className="text-[14px] font-semibold transition-colors"
+                 style={{ color: i === idx ? 'var(--text-accent)' : 'var(--text-muted)' }}>
                 {ti.name}
               </p>
-              <p className="text-[12px] mt-0.5" style={{ color: INK_3 }}>
+              <p className="text-[12px] mt-0.5" style={{ color: 'var(--text-muted)' }}>
                 {ti.role.split('·')[1]?.trim()}
               </p>
             </button>
@@ -185,14 +187,14 @@ function TestimonialBlock() {
           <button type="button" aria-label="Précédent"
                   onClick={() => setIdx((idx - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)}
                   className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-                  style={{ border: `1px solid ${LINE}` }}>
-            <ChevronLeft className="w-4 h-4" style={{ color: INK_2 }} />
+                  style={{ border: '1px solid var(--border-default)' }}>
+            <ChevronLeft className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
           </button>
           <button type="button" aria-label="Suivant"
                   onClick={() => setIdx((idx + 1) % TESTIMONIALS.length)}
                   className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
-                  style={{ border: `1px solid ${LINE}` }}>
-            <ChevronRight className="w-4 h-4" style={{ color: INK_2 }} />
+                  style={{ border: '1px solid var(--border-default)' }}>
+            <ChevronRight className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
           </button>
         </div>
       </div>
@@ -201,7 +203,13 @@ function TestimonialBlock() {
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function LandingPage({ categories }: { categories: LandingCategory[] }) {
+export default function LandingPage({
+  formations,
+  categories,
+}: {
+  formations: LandingFormation[]
+  categories: LandingCategory[]
+}) {
   const rafRef = useRef<((time: number) => void) | null>(null)
   const cats   = categories.length > 0 ? categories : FALLBACK_CATS
 
@@ -213,121 +221,75 @@ export default function LandingPage({ categories }: { categories: LandingCategor
     gsap.ticker.add(rafFn)
     gsap.ticker.lagSmoothing(0)
 
-    // Entry curtain
-    const entry = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.7 } })
-    entry
-      .to('#page-wipe',       { scaleX: 0, duration: 1.1, ease: 'expo.inOut', transformOrigin: 'right' })
-      .set('#page-wipe',      { display: 'none' })
-      .from('#site-nav',      { y: -64, opacity: 0, duration: 0.5 }, '-=0.1')
-      .from('#hero-tag',      { y: 18,  opacity: 0, duration: 0.5 }, '-=0.15')
-      .from('.hero-word',     { y: 72,  opacity: 0, stagger: 0.08, duration: 0.8 }, '-=0.3')
-      .from('#hero-sub',      { y: 22,  opacity: 0, duration: 0.55 }, '<0.2')
-      .from('#hero-ctas > *', { y: 14,  opacity: 0, stagger: 0.1,  duration: 0.45 }, '<0.2')
-      .from('#hero-stats',    { y: 30,  opacity: 0, duration: 0.6  }, '<0.15')
-      .from('.hero-glow',     { opacity: 0, scale: 0.7, duration: 1.4, ease: 'power2.out' }, 0.2)
+    const ctx = gsap.context(() => {
+      const isBackNav = window.scrollY > 50
 
-    // Formation cards
-    ScrollTrigger.batch('.f-card', {
-      start: 'top 88%', once: true, interval: 0.08,
-      onEnter: (els) => gsap.from(els, { opacity: 0, y: 40, stagger: 0.08, duration: 0.7, ease: 'power3.out' }),
-    })
-
-    // Pillar rows
-    document.querySelectorAll<HTMLElement>('.pillar-row').forEach((el, i) => {
-      gsap.from(el, {
-        opacity: 0, y: 40, duration: 0.7, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 82%', once: true, refreshPriority: -i },
-      })
-    })
-
-    // KPI counters
-    document.querySelectorAll<HTMLElement>('.kpi-val').forEach((el) => {
-      const end     = parseFloat(el.dataset.end ?? '0')
-      const isFloat = !Number.isInteger(end)
-      gsap.to({ v: 0 }, {
-        v: end, duration: 2, ease: 'power2.out',
-        scrollTrigger: { trigger: '#pourquoi', start: 'top 72%', once: true },
-        onUpdate(this: gsap.core.Tween) {
-          const v = (this.targets()[0] as { v: number }).v
-          el.textContent = isFloat ? v.toFixed(1) : String(Math.floor(v))
-        },
-      })
-    })
-
-    // Generic reveal
-    document.querySelectorAll<HTMLElement>('.reveal-up').forEach((el, i) => {
-      gsap.from(el, {
-        opacity: 0, y: 40, duration: 0.75, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 84%', once: true, refreshPriority: -i },
-      })
-    })
-
-    // CTA reveal
-    gsap.from('#cta-inner', {
-      opacity: 0, y: 56, scale: 0.97, duration: 0.9, ease: 'power3.out',
-      scrollTrigger: { trigger: '#cta', start: 'top 78%', once: true },
-    })
-
-    // Nav: transparent over hero, white+dark when over white sections
-    const nav = document.getElementById('site-nav')
-
-    function setNavLight(light: boolean) {
-      if (!nav) return
-      if (light) {
-        nav.classList.add('nav--light')
-        // update link colours
-        nav.querySelectorAll<HTMLElement>('.nav-link').forEach(el => {
-          el.style.color = 'rgba(55,65,81,0.75)'
-        })
-      } else {
-        nav.classList.remove('nav--light')
-        nav.style.backgroundColor   = 'transparent'
-        nav.style.borderBottomColor = 'transparent'
-        nav.querySelectorAll<HTMLElement>('.nav-link').forEach(el => {
-          el.style.color = 'rgba(255,255,255,0.55)'
-        })
+      if (!isBackNav) {
+        gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.7 } })
+          .from('#site-nav',       { y: -64, opacity: 0, duration: 0.5 })
+          .from('#hero-badge',     { y: 18,  opacity: 0, duration: 0.5 }, '-=0.15')
+          .from('.hero-word',      { y: 72,  opacity: 0, stagger: 0.08, duration: 0.8 }, '-=0.3')
+          .from('#hero-sub',       { y: 22,  opacity: 0, duration: 0.55 }, '<0.2')
+          .from('#hero-ctas > *',  { y: 14,  opacity: 0, stagger: 0.1,  duration: 0.45 }, '<0.2')
+          .from('#hero-stats > *', { y: 30,  opacity: 0, stagger: 0.08, duration: 0.6 }, '<0.15')
+          .from('#hero-visual',    { opacity: 0, scale: 0.95, duration: 1.0, ease: 'power2.out' }, 0.4)
       }
-    }
 
-    // Enter white sections
-    ScrollTrigger.create({
-      trigger: '#formations',
-      start: 'top top',
-      onEnter:     () => setNavLight(true),
-      onLeaveBack: () => setNavLight(false),
-    })
+      ScrollTrigger.batch('.f-card', {
+        start: 'top 88%', once: true, interval: 0.08,
+        onEnter: (els) => gsap.from(els, { opacity: 0, y: 40, stagger: 0.08, duration: 0.7, ease: 'power3.out' }),
+      })
 
-    // Return to dark (CTA band)
-    ScrollTrigger.create({
-      trigger: '#cta',
-      start: 'top top',
-      onEnter:     () => setNavLight(false),
-      onLeaveBack: () => setNavLight(true),
+      document.querySelectorAll<HTMLElement>('.pillar-row').forEach((el, i) => {
+        gsap.from(el, {
+          opacity: 0, y: 40, duration: 0.7, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 82%', once: true, refreshPriority: -i },
+        })
+      })
+
+      document.querySelectorAll<HTMLElement>('.kpi-val').forEach((el) => {
+        const end     = parseFloat(el.dataset.end ?? '0')
+        const isFloat = !Number.isInteger(end)
+        gsap.to({ v: 0 }, {
+          v: end, duration: 2, ease: 'power2.out',
+          scrollTrigger: { trigger: '#pourquoi', start: 'top 72%', once: true },
+          onUpdate(this: gsap.core.Tween) {
+            const v = (this.targets()[0] as { v: number }).v
+            el.textContent = isFloat ? v.toFixed(1) : String(Math.floor(v))
+          },
+        })
+      })
+
+      document.querySelectorAll<HTMLElement>('.reveal-up').forEach((el, i) => {
+        gsap.from(el, {
+          opacity: 0, y: 40, duration: 0.75, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 84%', once: true, refreshPriority: -i },
+        })
+      })
+
+      gsap.from('#cta-inner', {
+        opacity: 0, y: 56, scale: 0.97, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: '#cta', start: 'top 78%', once: true },
+      })
     })
 
     return () => {
       if (rafRef.current) gsap.ticker.remove(rafRef.current)
       lenis.destroy()
-      ScrollTrigger.getAll().forEach(st => st.kill())
+      ctx.revert()
     }
-  }, [])
+  }, [formations.length])
 
   return (
-    <div className="relative overflow-x-hidden" style={{ background: BG_DARK, color: INK }}>
-      <div id="page-wipe" />
+    <div className="relative overflow-x-hidden" style={{ background: 'var(--surface)', color: 'var(--text-body)' }}>
 
-      {/* ══ NAV (dark) ═══════════════════════════════════════════════════════ */}
-      <nav id="site-nav" className="fixed top-0 left-0 right-0 z-50"
-           style={{ borderBottom: '1px solid transparent' }}>
-        <div className="landing-wrap mx-auto max-w-[1160px] px-10 py-5 flex items-center justify-between">
-
-          <Link href="/" className="flex items-center">
-            <div className="w-[44px] h-[44px] rounded-[10px] bg-white flex items-center justify-center shrink-0">
-              <Image src={logoSrc} alt="MIA Formation" width={36} height={36} className="object-contain" priority />
-            </div>
+      {/* ══ NAV — glass morphism sticky ══════════════════════════════════════ */}
+      <nav id="site-nav" className="nav-glass">
+        <div className="mx-auto max-w-[1200px] px-8 py-4 flex items-center gap-8">
+          <Link href="/" className="flex items-center shrink-0">
+            <Image src={logoSrc} alt="MIA Formation" width={28} height={28} className="object-contain" priority />
           </Link>
-
-          <div className="hidden md:flex items-center gap-0.5">
+          <div className="hidden md:flex items-center gap-7">
             {[
               ['#formations',   'Formations'   ],
               ['#pourquoi',     'Pourquoi MIA' ],
@@ -336,138 +298,189 @@ export default function LandingPage({ categories }: { categories: LandingCategor
               ['#contact',      'Contact'      ],
             ].map(([href, label]) => (
               <a key={href} href={href}
-                 className="nav-link px-4 py-2 rounded-lg text-[13.5px] font-medium"
-                 style={{ color: 'rgba(255,255,255,0.55)', transition: 'color 0.2s ease' }}
-                 onMouseEnter={e => {
-                   const light = document.getElementById('site-nav')?.classList.contains('nav--light')
-                   e.currentTarget.style.color = light ? '#111827' : '#FFFFFF'
-                 }}
-                 onMouseLeave={e => {
-                   const light = document.getElementById('site-nav')?.classList.contains('nav--light')
-                   e.currentTarget.style.color = light ? 'rgba(55,65,81,0.75)' : 'rgba(255,255,255,0.55)'
-                 }}>
+                 className="text-[14px] font-medium transition-colors"
+                 style={{ color: 'var(--text-muted)' }}
+                 onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-strong)'}
+                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'}>
                 {label}
               </a>
             ))}
           </div>
-
-          <Link href="/login"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[9px] text-white text-[13px] font-bold hover:-translate-y-0.5 transition-all"
-                style={{ background: MV_GRAD, boxShadow: '0 4px 20px rgba(139,40,224,0.35)' }}>
-            Mon espace <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="ml-auto flex items-center gap-3">
+            <Link href="/login"
+                  className="text-[14px] font-semibold px-4 py-2 rounded-[32px] transition-all hover:-translate-y-px"
+                  style={{ color: 'var(--text-strong)' }}>
+              Se connecter
+            </Link>
+            <Link href="/register"
+                  className="inline-flex items-center gap-2 text-[14px] font-semibold px-5 py-2.5 rounded-[32px] text-white transition-all hover:-translate-y-px"
+                  style={{ background: 'var(--mia-near-black)' }}>
+              Mon espace <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </nav>
 
-      {/* ══ HERO (dark + glow orb) ════════════════════════════════════════════ */}
+      {/* ══ HERO — 2-column, light background ════════════════════════════════ */}
       <section id="hero"
-               className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden"
-               style={{ paddingTop: 88 }}>
-        <div className="hero-glow" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none"
-             style={{ background: `linear-gradient(to bottom, transparent, ${BG_DARK})` }} />
-
-        <div className="landing-wrap relative z-10 mx-auto max-w-[1160px] px-10 py-32">
-          {/* Badge */}
-          <div id="hero-tag"
-               className="inline-flex items-center gap-2.5 px-4 py-2 mb-10 rounded-full"
-               style={{ background: 'rgba(139,40,224,0.15)', border: '1px solid rgba(139,40,224,0.3)' }}>
-            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: MV_L }} />
-            <span className="text-[11.5px] font-bold tracking-[0.09em] uppercase" style={{ color: MV_L }}>
-              Centre de formation certifié Qualiopi
-            </span>
+               className="mx-auto max-w-[1200px] px-8 pt-20 pb-16 grid items-center gap-14"
+               style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
+        {/* Left column */}
+        <div>
+          <div id="hero-badge"
+               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-6 text-[12px] font-semibold"
+               style={{ background: 'var(--mia-purple-soft)', color: 'var(--mia-purple-700)' }}>
+            Centre de formation certifié Qualiopi
           </div>
 
-          {/* Headline */}
-          <h1 className="font-black leading-[1.06] tracking-[-0.045em] text-white mb-8 max-w-[820px] mx-auto"
-              style={{ fontSize: 'clamp(42px, 6.5vw, 78px)' }}>
+          <h1 className="font-heading leading-[1.04] tracking-[-0.03em] mb-6"
+              style={{ fontSize: 'clamp(42px, 5.5vw, 76px)', color: 'var(--text-strong)', fontWeight: 400 }}>
             <span className="hero-word-wrap"><span className="hero-word">Devenez&nbsp;</span></span>
             <span className="hero-word-wrap">
-              <span className="hero-word" style={{ color: MV_L }}>expert&nbsp;</span>
+              <span className="hero-word" style={{ color: 'var(--text-accent)' }}>expert&nbsp;</span>
             </span>
-            <span className="hero-word-wrap"><span className="hero-word">dans&nbsp;</span></span>
+            <span className="hero-word-wrap"><span className="hero-word">dans</span></span>
             <br />
             <span className="hero-word-wrap"><span className="hero-word">votre&nbsp;</span></span>
             <span className="hero-word-wrap"><span className="hero-word">domaine</span></span>
           </h1>
 
-          <p id="hero-sub" className="max-w-[540px] mx-auto text-[17px] leading-[1.78] mb-12"
-             style={{ color: 'rgba(255,255,255,0.55)' }}>
+          <p id="hero-sub"
+             className="text-[17px] leading-[1.75] mb-8 max-w-[460px]"
+             style={{ color: 'var(--text-muted)' }}>
             MIA Formation vous accompagne dans votre montée en compétences grâce à des
             programmes certifiés et des formateurs experts du terrain.
           </p>
 
-          <div id="hero-ctas" className="flex items-center justify-center gap-4 flex-wrap mb-20">
+          <div id="hero-ctas" className="flex items-center gap-3 flex-wrap mb-12">
             <Link href="/register"
-                  className="inline-flex items-center gap-2.5 px-7 py-[15px] rounded-[11px] text-white text-[14.5px] font-bold hover:-translate-y-0.5 transition-all"
-                  style={{ background: MV_GRAD, boxShadow: '0 6px 28px rgba(139,40,224,0.45)' }}>
+                  className="inline-flex items-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] text-white transition-all hover:-translate-y-px"
+                  style={{ background: 'var(--mia-near-black)' }}>
               Réserver ma formation <ArrowRight className="w-4 h-4" />
             </Link>
             <a href="#contact"
-               className="inline-flex items-center gap-2 px-7 py-[15px] rounded-[11px] text-white text-[14.5px] font-bold hover:-translate-y-0.5 transition-all"
-               style={{ border: '1.5px solid rgba(255,255,255,0.14)' }}>
-              Planifier un échange découverte
+               className="inline-flex items-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] transition-all hover:-translate-y-px"
+               style={{ border: '1px solid var(--border-default)', color: 'var(--text-strong)' }}>
+              Planifier un échange
             </a>
           </div>
 
-          <div id="hero-stats" className="stat-row max-w-[680px] mx-auto">
+          <div id="hero-stats" className="stat-row">
             {STATS.map(({ n, label }) => (
-              <div key={label} className="stat-cell">
-                <div className="font-black text-[26px] tracking-[-0.04em] text-white mb-0.5">{n}</div>
-                <div className="text-[12px]" style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</div>
+              <div key={label}>
+                <div className="font-heading text-[38px] leading-none tracking-[-0.02em] mb-1"
+                     style={{ color: 'var(--text-strong)', fontWeight: 400 }}>{n}</div>
+                <div className="text-[13px]" style={{ color: 'var(--text-muted)' }}>{label}</div>
               </div>
             ))}
           </div>
         </div>
-      </section>
 
-      {/* ══ FORMATIONS (white) ════════════════════════════════════════════════ */}
-      <section id="formations" className="relative py-28 hidden"
-               style={{ background: BG_WHITE }}>
-        <div className="landing-wrap mx-auto max-w-[1160px] px-10">
-          <div className="flex items-end justify-between mb-14 flex-wrap gap-6">
+        {/* Right column — abstract visual */}
+        <div id="hero-visual"
+             className="relative rounded-[24px] overflow-hidden"
+             style={{ height: 460, background: 'radial-gradient(120% 120% at 20% 10%, var(--mia-violet) 0%, var(--mia-purple) 45%, var(--mia-near-black) 100%)' }}>
+          <div className="absolute rounded-full pointer-events-none"
+               style={{ width: 200, height: 200, background: 'rgba(255,255,255,0.1)', top: 60, right: -40 }} />
+          <div className="absolute rounded-[28px] pointer-events-none"
+               style={{ width: 120, height: 120, background: 'rgba(255,173,155,0.85)', bottom: 70, left: 48, transform: 'rotate(18deg)' }} />
+          {/* Floating card */}
+          <div className="absolute left-5 top-5 rounded-[14px] px-4 py-3 flex items-center gap-3"
+               style={{ background: 'rgba(255,255,255,0.95)', boxShadow: 'var(--shadow-md)' }}>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                 style={{ background: 'linear-gradient(135deg, var(--mia-violet), var(--mia-purple))' }}>SO</div>
             <div>
-              <SectionLabel>Catalogue</SectionLabel>
-              <h2 className="font-black tracking-[-0.04em] leading-[1.1]"
-                  style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', color: INK }}>
-                Nos domaines<br />de formation
-              </h2>
+              <div className="text-[13px] font-semibold" style={{ color: 'var(--text-strong)' }}>Sofia · promue</div>
+              <div className="text-[12px]" style={{ color: 'var(--text-muted)' }}>Ingénieure Senior chez Nova</div>
             </div>
-            <Link href="/courses"
-                  className="inline-flex items-center gap-1.5 text-[14px] font-bold transition-all hover:gap-3"
-                  style={{ color: MV }}>
-              Toutes les formations <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
-            {cats.slice(0, 4).map((cat) => {
-              const Icon = catIcon(cat.name)
-              return (
-                <Link key={cat.name} href="/courses" className="f-card light-card block">
-                  <div className="card-thumb-light">
-                    <Icon className="w-9 h-9" style={{ color: MV }} />
-                  </div>
-                  <div className="p-5">
-                    <p className="text-[16px] font-black mb-1.5 tracking-[-0.02em]"
-                       style={{ color: INK }}>{cat.name}</p>
-                    <p className="text-[13px] leading-[1.65] mb-4" style={{ color: INK_2 }}>
-                      {cat.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[12px] font-bold px-3 py-1 rounded-full"
-                            style={{ background: MV_BG, color: MV, border: `1px solid ${MV_BDR}` }}>
-                        {cat.count} formation{cat.count !== 1 ? 's' : ''}
-                      </span>
-                      <ArrowRight className="w-4 h-4" style={{ color: INK_3 }} />
-                    </div>
-                  </div>
-                </Link>
-              )
-            })}
           </div>
         </div>
       </section>
+
+      {/* ══ FORMATIONS — 3-col card grid ══════════════════════════════════════ */}
+      {formations.length > 0 && (
+        <section id="formations" className="py-24" style={{ background: 'var(--surface)' }}>
+          <div className="mx-auto max-w-[1200px] px-8">
+            <div className="flex items-end justify-between mb-12 flex-wrap gap-6">
+              <div>
+                <SectionLabel>Catalogue</SectionLabel>
+                <h2 className="font-heading leading-[1.1] tracking-[-0.025em]"
+                    style={{ fontSize: 'clamp(28px, 3.5vw, 48px)', color: 'var(--text-strong)', fontWeight: 400 }}>
+                  Nos formations
+                </h2>
+              </div>
+              <span className="text-[13px]" style={{ color: 'var(--text-muted)' }}>
+                {formations.length} formation{formations.length !== 1 ? 's' : ''} disponible{formations.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {formations.map((f) => (
+                <div key={f.id}
+                     className="f-card rounded-[16px] overflow-hidden border"
+                     style={{ borderColor: 'var(--border-default)', background: 'var(--surface-card)' }}
+                     onMouseEnter={e => {
+                       const el = e.currentTarget as HTMLElement
+                       el.style.transform = 'translateY(-3px)'
+                       el.style.borderColor = 'var(--mia-purple)'
+                       el.style.boxShadow = 'var(--shadow-md)'
+                     }}
+                     onMouseLeave={e => {
+                       const el = e.currentTarget as HTMLElement
+                       el.style.transform = 'none'
+                       el.style.borderColor = 'var(--border-default)'
+                       el.style.boxShadow = 'none'
+                     }}>
+                  {/* Media */}
+                  <div className="h-32 relative flex items-center justify-center"
+                       style={{ background: 'radial-gradient(120% 120% at 80% 0%, var(--mia-violet) 0%, var(--mia-near-black) 100%)' }}>
+                    {f.thumbnail
+                      ? <img src={f.thumbnail} alt={f.title} className="w-full h-full object-cover absolute inset-0" />  // eslint-disable-line @next/next/no-img-element
+                      : <BookOpen className="w-10 h-10 text-white/30" />
+                    }
+                    <div className="absolute top-3 left-3">
+                      <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                            style={{ background: 'rgba(255,255,255,0.15)', color: '#fff' }}>
+                        {FORMATION_TYPE_LABELS[f.type]}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Content */}
+                  <div className="p-6">
+                    <div className="text-[11px] font-bold uppercase tracking-[0.08em] mb-2"
+                         style={{ color: 'var(--text-accent)' }}>{f.categoryName}</div>
+                    <h3 className="font-heading text-[18px] leading-[1.2] mb-2"
+                        style={{ color: 'var(--text-strong)', fontWeight: 400 }}>{f.title}</h3>
+                    <p className="text-[14px] leading-[1.65] mb-4 overflow-hidden"
+                       style={{ color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as React.CSSProperties['WebkitBoxOrient'] }}>
+                      {f.description}
+                    </p>
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <div className="flex gap-2 flex-wrap">
+                        <span className="text-[12px] font-medium px-3 py-1 rounded-[8px]"
+                              style={{ background: 'var(--mia-purple-soft)', color: 'var(--mia-purple-700)' }}>
+                          {f.type === 'PRESENTIAL' ? 'Présentiel' : 'En ligne'}
+                        </span>
+                        {f.duration && (
+                          <span className="text-[12px] font-medium px-3 py-1 rounded-[8px] border"
+                                style={{ color: 'var(--text-muted)', borderColor: 'var(--border-default)' }}>
+                            {f.duration}h
+                          </span>
+                        )}
+                      </div>
+                      <Link href={`/formations/${f.id}`}
+                            className="text-[13px] font-semibold flex items-center gap-1 transition-all hover:-translate-y-px"
+                            style={{ color: 'var(--text-accent)' }}>
+                        Plus d&apos;infos <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ══ À PROPOS (white) ══════════════════════════════════════════════════ */}
       <section id="about" className="relative py-28"
@@ -729,7 +742,7 @@ export default function LandingPage({ categories }: { categories: LandingCategor
              style={{ background: 'radial-gradient(circle, rgba(139,40,224,0.28) 0%, transparent 65%)', filter: 'blur(20px)' }} />
 
         <div id="cta-inner" className="landing-wrap relative z-10 max-w-[600px] mx-auto px-10">
-          <SectionLabel dark>Prêt à commencer ?</SectionLabel>
+          <SectionLabel>Prêt à commencer ?</SectionLabel>
           <h2 className="font-black tracking-[-0.045em] leading-[1.07] text-white mb-5"
               style={{ fontSize: 'clamp(32px, 5vw, 58px)' }}>
             Rejoignez MIA Formation<br />dès aujourd&apos;hui
