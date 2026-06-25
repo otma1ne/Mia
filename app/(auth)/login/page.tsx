@@ -4,6 +4,7 @@ import Image from 'next/image'
 import logoSrc from '@/public/logo.png'
 import AuthPanel from '../_components/auth-panel'
 import LoginForm from './_components/login-form'
+import '../_components/auth.css'
 
 export const metadata: Metadata = {
   title: 'Connexion — MIA Formation',
@@ -18,14 +19,11 @@ export default function LoginPage() {
           {/* Logo + title grouped */}
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2 w-fit">
-              <div className="w-8 h-8 rounded-lg bg-white border flex items-center justify-center">
-                <Image src={logoSrc} alt="MIA Formation" width={22} height={22} className="object-contain" />
-              </div>
-              <span className="font-bold text-lg tracking-tight">MIA Formation</span>
+              <Image src={logoSrc} alt="MIA Formation" width={60} height={60} className="object-contain" />
             </Link>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Bon retour</h1>
-              <p className="text-muted-foreground mt-1">Connectez-vous à votre compte pour continuer</p>
+              <h1 className="auth-heading font-heading mt-1">Bon retour</h1>
+              <p className="auth-subtitle text-[15px] mt-2">Connectez-vous à votre compte pour continuer</p>
             </div>
           </div>
 

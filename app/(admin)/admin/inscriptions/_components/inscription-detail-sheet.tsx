@@ -103,7 +103,7 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
               </div>
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Date de naissance</dt>
-                <dd className="font-medium">{format(new Date(inscription.dateOfBirth), 'dd MMMM yyyy', { locale: fr })}</dd>
+                <dd className="font-medium">{inscription.dateOfBirth ? format(new Date(inscription.dateOfBirth), 'dd MMMM yyyy', { locale: fr }) : '—'}</dd>
               </div>
               {inscription.postalAddress && (
                 <div className="flex justify-between">
@@ -131,7 +131,7 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Documents</h3>
             <div className="flex flex-col gap-2">
               <a
-                href={inscription.cvUrl}
+                href={inscription.cvUrl ?? undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"

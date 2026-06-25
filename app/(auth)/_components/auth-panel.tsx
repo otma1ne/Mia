@@ -1,40 +1,34 @@
-﻿import { Check } from 'lucide-react'
+﻿import './auth.css'
+import { Check } from 'lucide-react'
 import Image from 'next/image'
-import logoSrc from '@/public/logo.png'
+import logoLightSrc from '@/public/logo-light.png'
 
 const features = [
-  'Accédez aux formations permis (B, A, C, BE)',
+  'Accédez à vos formations certifiantes',
   'Suivez votre progression et vos résultats',
   'Consultez votre planning et réservez vos séances',
-  'Gérez vos documents et certificats',
+  'Téléchargez vos attestations et certificats',
 ]
 
 export default function AuthPanel() {
   return (
-    <div className="hidden lg:flex lg:flex-col relative w-full h-full overflow-hidden bg-[#1e2128]">
-      {/* Subtle grain overlay */}
-      <div className="absolute inset-0 opacity-[0.04]"
-        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
-      />
-      {/* Blobs */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 bg-slate-600/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 -left-24 w-80 h-80 bg-slate-700/20 rounded-full blur-3xl" />
+    <div className="auth-panel hidden lg:flex lg:flex-col relative w-full h-full overflow-hidden">
+      <div className="auth-panel-glow-top" />
+      <div className="auth-panel-glow-bottom" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col justify-center h-full px-12 py-16 gap-10">
 
-        {/* Icon */}
-        <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
-          <Image src={logoSrc} alt="MIA Formation" width={32} height={32} className="object-contain" />
-        </div>
+        {/* Logo */}
+        <Image src={logoLightSrc} alt="MIA Formation" width={44} height={44} className="object-contain" />
 
         {/* Headline */}
         <div className="flex flex-col gap-4">
-          <h2 className="text-4xl font-bold text-white leading-tight tracking-tight">
-            Votre permis de conduire<br />en toute confiance
+          <h2 className="auth-panel-heading font-heading text-4xl text-white leading-tight tracking-tight">
+            Développez vos compétences.<br />Façonnez votre avenir.
           </h2>
           <p className="text-white/70 text-base leading-relaxed max-w-xs">
-            Rejoignez MIA Formation, l&apos;auto-école moderne qui vous accompagne à chaque étape de votre formation permis.
+            MIA Formation accompagne les professionnels dans leur montée en compétences grâce à des programmes certifiés et des formateurs experts du terrain.
           </p>
         </div>
 
@@ -53,15 +47,15 @@ export default function AuthPanel() {
         {/* Testimonial */}
         <div className="bg-white/10 border border-white/15 rounded-2xl p-5">
           <p className="text-white/90 text-sm leading-relaxed">
-            &ldquo;Grâce à MIA Formation, j&apos;ai réussi mon permis au premier coup ! Les cours en ligne, le suivi avec mon moniteur et la gestion du planning tout en un seul endroit, c&apos;est vraiment efficace.&rdquo;
+            &ldquo;MIA Formation a transformé mon parcours. En 6 mois j&apos;ai acquis les compétences pour décrocher mon premier emploi de développeuse.&rdquo;
           </p>
           <div className="flex items-center gap-3 mt-4">
             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-semibold text-xs shrink-0">
-              MK
+              YB
             </div>
             <div>
-              <p className="text-white text-sm font-medium">Mahdi Khoury</p>
-              <p className="text-white/50 text-xs">Permis B réussi, 2026</p>
+              <p className="text-white text-sm font-medium">Yasmine B.</p>
+              <p className="text-white/50 text-xs">Développeuse Web · Promo 2025</p>
             </div>
           </div>
         </div>

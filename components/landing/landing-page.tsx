@@ -4,7 +4,8 @@ import './landing.css'
 import { useLayoutEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import logoSrc from '@/public/logo.png'
+import logoSrc      from '@/public/logo.png'
+import logoLightSrc from '@/public/logo-light.png'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
@@ -179,13 +180,19 @@ export default function LandingPage({
   formations: LandingFormation[]
   categories: LandingCategory[]
 }) {
-  const rafRef = useRef<((time: number) => void) | null>(null)
+  const rafRef   = useRef<((time: number) => void) | null>(null)
+  const lenisRef = useRef<Lenis | null>(null)
 
   useLayoutEffect(() => {
     const lenis = new Lenis({ autoRaf: false, lerp: 0.1 })
+    lenisRef.current = lenis
     const rafFn = (time: number) => lenis.raf(time * 1000)
     rafRef.current = rafFn
-    lenis.on('scroll', ScrollTrigger.update)
+    lenis.on('scroll', (e: { scroll: number }) => {
+      ScrollTrigger.update()
+      const nav = document.getElementById('site-nav')
+      if (nav) nav.classList.toggle('nav--visible', e.scroll > 80)
+    })
     gsap.ticker.add(rafFn)
     gsap.ticker.lagSmoothing(0)
 
@@ -194,13 +201,11 @@ export default function LandingPage({
 
       if (!isBackNav) {
         gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.7 } })
-          .from('#site-nav',       { y: -64, opacity: 0, duration: 0.5 })
-          .from('#hero-badge',     { y: 18,  opacity: 0, duration: 0.5 }, '-=0.15')
+          .from('#hero-badge',     { y: 18,  opacity: 0, duration: 0.5 })
           .from('.hero-word',      { y: 72,  opacity: 0, stagger: 0.08, duration: 0.8 }, '-=0.3')
           .from('#hero-sub',       { y: 22,  opacity: 0, duration: 0.55 }, '<0.2')
           .from('#hero-ctas > *',  { y: 14,  opacity: 0, stagger: 0.1,  duration: 0.45 }, '<0.2')
           .from('#hero-stats > *', { y: 30,  opacity: 0, stagger: 0.08, duration: 0.6 }, '<0.15')
-          .from('#hero-visual',    { opacity: 0, scale: 0.95, duration: 1.0, ease: 'power2.out' }, 0.4)
       }
 
       ScrollTrigger.batch('.f-card', {
@@ -248,15 +253,29 @@ export default function LandingPage({
     }
   }, [])
 
-  return (
-    <div className="relative overflow-x-hidden" style={{ background: 'var(--surface)', color: 'var(--text-body)' }}>
+  const scrollTo = (href: string) => (e: React.MouseEvent) => {
+    e.preventDefault()
+    lenisRef.current?.scrollTo(href)
+  }
 
-      {/* ══ NAV — glass morphism sticky ══════════════════════════════════════ */}
+  return (
+    <div className="relative overflow-x-clip" style={{ background: 'var(--surface)', color: 'var(--text-body)' }}>
+
+      {/* ══ NAV — transparent over hero, white glass slides in on scroll ════ */}
       <nav id="site-nav" className="nav-glass">
-        <div className="mx-auto max-w-[1200px] px-8 py-4 flex items-center gap-8">
-          <Link href="/" className="flex items-center shrink-0">
-            <Image src={logoSrc} alt="MIA Formation" width={28} height={28} className="object-contain" priority />
+        <div className="nav-bg" aria-hidden="true" />
+        <div className="nav-content mx-auto max-w-[1200px] px-8 py-5 grid items-center">
+
+          {/* Logo — light version shown over dark hero, dark on scroll */}
+          <Link href="/" className="shrink-0 justify-self-start">
+            <div className="logo-wrap">
+              <Image src={logoLightSrc} alt="MIA Formation" fill sizes="40px"
+                     className="object-contain logo-light" priority />
+              <Image src={logoSrc} alt="" fill sizes="40px"
+                     className="object-contain logo-dark" aria-hidden />
+            </div>
           </Link>
+
           <div className="hidden md:flex items-center gap-7">
             {[
               ['#formations',   'Formations'   ],
@@ -266,101 +285,110 @@ export default function LandingPage({
               ['#contact',      'Contact'      ],
             ].map(([href, label]) => (
               <a key={href} href={href}
-                 className="text-[14px] font-medium transition-colors"
-                 style={{ color: 'var(--text-muted)' }}
-                 onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-strong)'}
-                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'}>
+                 onClick={scrollTo(href)}
+                 className="nav-link text-[14px] font-medium">
                 {label}
               </a>
             ))}
           </div>
-          <div className="ml-auto flex items-center gap-3">
+
+          <div className="flex items-center justify-self-end">
             <Link href="/login"
-                  className="text-[14px] font-semibold px-4 py-2 rounded-[32px] transition-all hover:-translate-y-px"
-                  style={{ color: 'var(--text-strong)' }}>
-              Se connecter
-            </Link>
-            <Link href="/register"
-                  className="inline-flex items-center gap-2 text-[14px] font-semibold px-5 py-2.5 rounded-[32px] text-white transition-all hover:-translate-y-px"
-                  style={{ background: 'var(--mia-near-black)' }}>
+                  className="nav-btn-primary inline-flex items-center gap-2 text-[14px] font-semibold px-5 py-2.5 rounded-[32px] hover:-translate-y-px transition-transform">
               Mon espace <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* ══ HERO — 2-column, light background ════════════════════════════════ */}
+      {/* ══ HERO — dark centered, full-width ════════════════════════════════ */}
       <section id="hero"
-               className="mx-auto max-w-[1200px] px-8 pt-20 pb-16 grid items-center gap-14"
-               style={{ gridTemplateColumns: '1.1fr 0.9fr' }}>
-        {/* Left column */}
-        <div>
-          <div id="hero-badge"
-               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-6 text-[12px] font-semibold"
-               style={{ background: 'var(--mia-purple-soft)', color: 'var(--mia-purple-700)' }}>
-            Centre de formation certifié Qualiopi
+               className="relative overflow-hidden text-center px-8 pt-44 pb-28"
+               style={{ background: 'var(--mia-near-black)', color: '#fff' }}>
+        {/* Purple radial glow — top center */}
+        <div className="absolute pointer-events-none"
+             style={{
+               top: -240, left: '50%', transform: 'translateX(-50%)',
+               width: 900, height: 780,
+               background: 'radial-gradient(ellipse at 50% 20%, rgba(107,43,217,0.6) 0%, rgba(107,43,217,0.18) 45%, transparent 70%)',
+             }} />
+        {/* Warm glow — bottom right */}
+        <div className="absolute pointer-events-none"
+             style={{
+               bottom: -100, right: -60,
+               width: 340, height: 340,
+               background: 'radial-gradient(ellipse at center, rgba(255,119,89,0.22) 0%, transparent 70%)',
+             }} />
+
+        <div className="relative mx-auto max-w-[820px]">
+          {/* Badge */}
+          <div id="hero-badge" className="inline-flex items-center gap-2 px-1.5 py-1.5 rounded-full mb-8"
+               style={{ border: '1px solid rgba(255,255,255,0.14)', background: 'rgba(255,255,255,0.06)' }}>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white"
+                  style={{ background: 'var(--mia-purple)' }}>
+              EXPERT
+            </span>
+            <span className="text-[13px] pr-1.5" style={{ color: 'rgba(255,255,255,0.65)' }}>
+              Formateurs actifs en entreprise, certifiés RNCP
+            </span>
           </div>
 
-          <h1 className="font-heading leading-[1.04] tracking-[-0.03em] mb-6"
-              style={{ fontSize: 'clamp(42px, 5.5vw, 76px)', color: 'var(--text-strong)', fontWeight: 400 }}>
-            <span className="hero-word-wrap"><span className="hero-word">Devenez&nbsp;</span></span>
-            <span className="hero-word-wrap">
-              <span className="hero-word" style={{ color: 'var(--text-accent)' }}>expert&nbsp;</span>
-            </span>
-            <span className="hero-word-wrap"><span className="hero-word">dans</span></span>
+          {/* H1 */}
+          <h1 className="font-heading leading-[1.06] tracking-[-0.03em] mb-6"
+              style={{ fontSize: 'clamp(44px, 6.5vw, 92px)', fontWeight: 400 }}>
+            <span className="hero-word-wrap"><span className="hero-word text-white">Développez&nbsp;</span></span>
+            <span className="hero-word-wrap"><span className="hero-word text-white">vos&nbsp;</span></span>
+            <span className="hero-word-wrap"><span className="hero-word text-white">compétences.</span></span>
             <br />
-            <span className="hero-word-wrap"><span className="hero-word">votre&nbsp;</span></span>
-            <span className="hero-word-wrap"><span className="hero-word">domaine</span></span>
+            <span className="hero-word-wrap">
+              <span className="hero-word" style={{ color: 'var(--mia-violet)' }}>Façonnez&nbsp;</span>
+            </span>
+            <span className="hero-word-wrap">
+              <span className="hero-word" style={{ color: 'var(--mia-violet)' }}>votre&nbsp;</span>
+            </span>
+            <span className="hero-word-wrap">
+              <span className="hero-word" style={{ color: 'var(--mia-violet)' }}>avenir.</span>
+            </span>
           </h1>
 
+          {/* Subtitle */}
           <p id="hero-sub"
-             className="text-[17px] leading-[1.75] mb-8 max-w-[460px]"
-             style={{ color: 'var(--text-muted)' }}>
-            MIA Formation vous accompagne dans votre montée en compétences grâce à des
-            programmes certifiés et des formateurs experts du terrain.
+             className="text-[17px] leading-[1.75] mb-10 mx-auto max-w-[520px]"
+             style={{ color: 'rgba(255,255,255,0.55)' }}>
+            MIA Formation accompagne les professionnels dans leur montée en compétences
+            grâce à des programmes certifiés et des formateurs experts du terrain.
           </p>
 
-          <div id="hero-ctas" className="flex items-center gap-3 flex-wrap mb-12">
+          {/* CTAs */}
+          <div id="hero-ctas" className="flex items-center justify-center gap-3 flex-wrap mb-16">
             <Link href="/register"
-                  className="inline-flex items-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] text-white transition-all hover:-translate-y-px"
-                  style={{ background: 'var(--mia-near-black)' }}>
-              Réserver ma formation <ArrowRight className="w-4 h-4" />
+                  className="inline-flex items-center gap-2 font-semibold text-[15px] px-8 py-3.5 rounded-[32px] text-white transition-all hover:-translate-y-px active:scale-[0.97]"
+                  style={{ background: 'var(--mia-purple)' }}>
+              Explorer les formations
             </Link>
             <a href="#contact"
-               className="inline-flex items-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] transition-all hover:-translate-y-px"
-               style={{ border: '1px solid var(--border-default)', color: 'var(--text-strong)' }}>
+               className="inline-flex items-center gap-2 font-semibold text-[14px] px-6 py-3.5 rounded-[32px] transition-all hover:-translate-y-px"
+               style={{ border: '1px solid rgba(255,255,255,0.18)', color: 'rgba(255,255,255,0.8)' }}>
               Planifier un échange
             </a>
           </div>
 
-          <div id="hero-stats" className="stat-row">
-            {STATS.map(({ n, label }) => (
-              <div key={label}>
-                <div className="font-heading text-[38px] leading-none tracking-[-0.02em] mb-1"
-                     style={{ color: 'var(--text-strong)', fontWeight: 400 }}>{n}</div>
-                <div className="text-[13px]" style={{ color: 'var(--text-muted)' }}>{label}</div>
+          {/* Stats with vertical dividers */}
+          <div id="hero-stats" className="flex items-center justify-center">
+            {STATS.map(({ n, label }, i) => (
+              <div key={label} className="flex items-center">
+                {i > 0 && (
+                  <div className="mx-10 shrink-0" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.14)' }} />
+                )}
+                <div className="text-center">
+                  <div className="font-heading text-[42px] leading-none tracking-[-0.025em] mb-1.5 text-white"
+                       style={{ fontWeight: 400 }}>
+                    {n}
+                  </div>
+                  <div className="text-[13px]" style={{ color: 'rgba(255,255,255,0.45)' }}>{label}</div>
+                </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Right column — abstract visual */}
-        <div id="hero-visual"
-             className="relative rounded-[24px] overflow-hidden"
-             style={{ height: 460, background: 'radial-gradient(120% 120% at 20% 10%, var(--mia-violet) 0%, var(--mia-purple) 45%, var(--mia-near-black) 100%)' }}>
-          <div className="absolute rounded-full pointer-events-none"
-               style={{ width: 200, height: 200, background: 'rgba(255,255,255,0.1)', top: 60, right: -40 }} />
-          <div className="absolute rounded-[28px] pointer-events-none"
-               style={{ width: 120, height: 120, background: 'rgba(255,173,155,0.85)', bottom: 70, left: 48, transform: 'rotate(18deg)' }} />
-          {/* Floating card */}
-          <div className="absolute left-5 top-5 rounded-[14px] px-4 py-3 flex items-center gap-3"
-               style={{ background: 'rgba(255,255,255,0.95)', boxShadow: 'var(--shadow-md)' }}>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                 style={{ background: 'linear-gradient(135deg, var(--mia-violet), var(--mia-purple))' }}>SO</div>
-            <div>
-              <div className="text-[13px] font-semibold" style={{ color: 'var(--text-strong)' }}>Sofia · promue</div>
-              <div className="text-[12px]" style={{ color: 'var(--text-muted)' }}>Ingénieure Senior chez Nova</div>
-            </div>
           </div>
         </div>
       </section>
@@ -634,6 +662,43 @@ export default function LandingPage({
         </div>
       </section>
 
+      {/* ══ CTA — rounded dark container ══════════════════════════════════════ */}
+      <section id="cta" className="py-20 px-8">
+        <div id="cta-inner"
+             className="mx-auto max-w-[1200px] rounded-[28px] p-16 grid items-center gap-10"
+             style={{ background: 'var(--mia-near-black)', gridTemplateColumns: '1.3fr 0.7fr' }}>
+          <div>
+            <div className="mb-6">
+              <Image src={logoLightSrc} alt="MIA Formation" width={60} height={60} className="object-contain" />
+            </div>
+            <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-4"
+                 style={{ color: 'var(--text-accent)' }}>
+              Prêt à commencer ?
+            </div>
+            <h2 className="font-heading leading-[1.1] tracking-[-0.02em] mb-5"
+                style={{ fontSize: 'clamp(28px, 4vw, 44px)', color: '#fff', fontWeight: 400 }}>
+              Rejoignez MIA Formation<br />dès aujourd&apos;hui
+            </h2>
+            <p className="text-[16px] leading-[1.7]" style={{ color: 'var(--mia-slate)' }}>
+              Accédez à votre espace pour consulter vos formations et démarrer votre
+              parcours vers la certification.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3">
+            <Link href="/login"
+                  className="inline-flex items-center justify-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] text-white transition-all hover:-translate-y-px"
+                  style={{ background: 'var(--mia-purple)' }}>
+              Se connecter <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link href="/register"
+                  className="inline-flex items-center justify-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] transition-all hover:-translate-y-px"
+                  style={{ border: '1.5px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)' }}>
+              Créer un compte étudiant
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ══ CONTACT ═══════════════════════════════════════════════════════════ */}
       <section id="contact" className="relative py-28" style={{ background: 'var(--surface-muted)' }}>
         <div className="info-two-col mx-auto max-w-[1200px] px-8 grid items-start gap-20"
@@ -701,40 +766,6 @@ export default function LandingPage({
         </div>
       </section>
 
-      {/* ══ CTA — rounded dark container ══════════════════════════════════════ */}
-      <section id="cta" className="py-20 px-8">
-        <div id="cta-inner"
-             className="mx-auto max-w-[1200px] rounded-[28px] p-16 grid items-center gap-10"
-             style={{ background: 'var(--mia-near-black)', gridTemplateColumns: '1.3fr 0.7fr' }}>
-          <div>
-            <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-4"
-                 style={{ color: 'var(--text-accent)' }}>
-              Prêt à commencer ?
-            </div>
-            <h2 className="font-heading leading-[1.1] tracking-[-0.02em] mb-5"
-                style={{ fontSize: 'clamp(28px, 4vw, 44px)', color: '#fff', fontWeight: 400 }}>
-              Rejoignez MIA Formation<br />dès aujourd&apos;hui
-            </h2>
-            <p className="text-[16px] leading-[1.7]" style={{ color: 'var(--mia-slate)' }}>
-              Accédez à votre espace pour consulter vos formations et démarrer votre
-              parcours vers la certification.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            <Link href="/login"
-                  className="inline-flex items-center justify-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] text-white transition-all hover:-translate-y-px"
-                  style={{ background: 'var(--mia-purple)' }}>
-              Se connecter <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link href="/register"
-                  className="inline-flex items-center justify-center gap-2 font-semibold text-[14px] px-6 py-3 rounded-[32px] transition-all hover:-translate-y-px"
-                  style={{ border: '1.5px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)' }}>
-              Créer un compte étudiant
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* ══ FOOTER — 4-col dark ════════════════════════════════════════════════ */}
       <footer id="footer" style={{ background: 'var(--mia-near-black)', color: '#fff' }}>
         <div className="mx-auto max-w-[1200px] px-8 pt-16 pb-10">
@@ -743,7 +774,7 @@ export default function LandingPage({
             {/* Brand */}
             <div className="footer-brand">
               <div className="mb-4">
-                <Image src={logoSrc} alt="MIA Formation" width={28} height={28} className="object-contain" />
+                <Image src={logoLightSrc} alt="MIA Formation" width={60} height={60} className="object-contain" />
               </div>
               <p className="text-[14px] leading-[1.6] max-w-[200px]" style={{ color: 'var(--mia-slate)' }}>
                 Centre de formation professionnelle certifié. Building skills. Shaping futures.

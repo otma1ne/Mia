@@ -1,0 +1,36 @@
+/* ─── Auth page — form side ─── */
+.auth-brand-text { color: var(--text-strong); }
+.auth-heading {
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+}
+.auth-subtitle { color: var(--text-muted); }
+
+/* ─── Auth panel — right side ─── */
+.auth-panel-heading { font-weight: 400; }
+.auth-panel {
+  background: var(--mia-near-black);
+}
+.auth-panel-glow-top {
+  position: absolute;
+  pointer-events: none;
+  top: -120px;
+  right: -80px;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(107,43,217,0.35) 0%, rgba(107,43,217,0.08) 55%, transparent 75%);
+}
+.auth-panel-glow-bottom {
+  position: absolute;
+  pointer-events: none;
+  bottom: -60px;
+  left: -60px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(124,58,237,0.2) 0%, transparent 70%);
+}

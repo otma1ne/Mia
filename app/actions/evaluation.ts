@@ -78,7 +78,7 @@ export async function submitFormationEvaluation(
       token: randomUUID(),
       expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       usedAt: new Date(),
-      answers: answers as unknown as Record<string, unknown>,
+      answers: JSON.parse(JSON.stringify(answers)),
     },
   })
 
