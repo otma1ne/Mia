@@ -66,11 +66,11 @@ export default function AppSidebar({ user }: AppSidebarProps) {
 
   return (
     <>
-      <aside className="hidden lg:flex lg:flex-col w-60 shrink-0 border-r bg-background">
+      <aside className="hidden lg:flex lg:flex-col w-60 shrink-0 border-r border-sidebar-border bg-sidebar">
         {/* Logo */}
-        <div className="flex h-14 items-center gap-2.5 px-4 border-b">
-          <Link href="/" className="flex items-center gap-2.5 font-semibold text-sm">
-            <div className="w-7 h-7 rounded-md bg-white border flex items-center justify-center shrink-0">
+        <div className="flex h-14 items-center gap-2.5 px-4 border-b border-sidebar-border">
+          <Link href="/" className="flex items-center gap-2.5 font-semibold text-sm text-sidebar-foreground">
+            <div className="w-7 h-7 rounded-md bg-white/10 flex items-center justify-center shrink-0">
               <Image src={logoSrc} alt="MIA Formation" width={20} height={20} className="object-contain" />
             </div>
             MIA Formation
@@ -83,7 +83,7 @@ export default function AppSidebar({ user }: AppSidebarProps) {
         </div>
 
         {/* Secondary navigation */}
-        <div className="border-t py-3 px-3">
+        <div className="border-t border-sidebar-border py-3 px-3">
           {secondaryNav(user.role).map(({ label, href, icon: Icon }) => {
             const active = pathname === href
             return (
@@ -93,8 +93,8 @@ export default function AppSidebar({ user }: AppSidebarProps) {
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   active
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )}
               >
                 <Icon className="h-4 w-4 shrink-0" />
@@ -105,28 +105,28 @@ export default function AppSidebar({ user }: AppSidebarProps) {
         </div>
 
         {/* User footer */}
-        <div className="border-t p-3">
+        <div className="border-t border-sidebar-border p-3">
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
                 <button
                   type="button"
                   aria-label="Menu utilisateur"
-                  className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 outline-none transition-colors hover:bg-muted"
+                  className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 outline-none transition-colors hover:bg-sidebar-accent"
                 />
               }
             >
               <Avatar className="h-7 w-7 shrink-0">
                 <AvatarImage src={user.image ?? undefined} alt={user.name ?? ''} />
-                <AvatarFallback className="bg-indigo-100 text-indigo-700 text-[11px] font-semibold">
+                <AvatarFallback className="text-[11px] font-semibold">
                   {getInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex min-w-0 flex-1 flex-col items-start">
-                <span className="truncate text-sm font-medium leading-none">{user.name ?? 'Utilisateur'}</span>
-                <span className="truncate text-xs text-muted-foreground mt-0.5">{user.email ?? ''}</span>
+                <span className="truncate text-sm font-medium leading-none text-sidebar-foreground">{user.name ?? 'Utilisateur'}</span>
+                <span className="truncate text-xs mt-0.5" style={{ color: 'var(--mia-slate)' }}>{user.email ?? ''}</span>
               </div>
-              <MoreVertical className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <MoreVertical className="h-4 w-4 shrink-0 text-sidebar-foreground/40" />
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" sticky collisionPadding={0} className="w-56">
               <DropdownMenuGroup>

@@ -99,7 +99,7 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
 
   return (
     <>
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-border bg-background/95 backdrop-blur-sm px-4 lg:px-6">
       {/* Mobile hamburger */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger
@@ -108,15 +108,15 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
           <Menu className="h-5 w-5" />
           <span className="sr-only">Ouvrir le menu</span>
         </SheetTrigger>
-        <SheetContent side="left" className="flex w-64 flex-col p-0">
+        <SheetContent side="left" className="flex w-64 flex-col p-0 bg-sidebar border-sidebar-border">
           {/* Mobile logo */}
-          <div className="flex h-14 items-center gap-2.5 border-b px-4">
+          <div className="flex h-14 items-center gap-2.5 border-b border-sidebar-border px-4">
             <Link
               href="/"
-              className="flex items-center gap-2.5 font-semibold text-sm"
+              className="flex items-center gap-2.5 font-semibold text-sm text-sidebar-foreground"
               onClick={() => setOpen(false)}
             >
-              <div className="w-7 h-7 rounded-md bg-white border flex items-center justify-center">
+              <div className="w-7 h-7 rounded-md bg-white/10 flex items-center justify-center">
                 <Image src={logoSrc} alt="MIA Formation" width={20} height={20} className="object-contain" />
               </div>
               MIA Formation
@@ -127,7 +127,7 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
             <SidebarNav role={user.role} onNavigate={() => setOpen(false)} />
           </div>
           {/* Mobile secondary nav */}
-          <div className="border-t py-3 px-3">
+          <div className="border-t border-sidebar-border py-3 px-3">
             {getSecondaryNav(user.role).map(({ label, href, icon: Icon }) => (
               <Link
                 key={href}
@@ -136,8 +136,8 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   pathname === href
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )}
               >
                 <Icon className="h-4 w-4 shrink-0" />
@@ -146,11 +146,11 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
             ))}
           </div>
           {/* Mobile user footer */}
-          <div className="border-t p-3">
+          <div className="border-t border-sidebar-border p-3">
             <div className="flex items-center gap-3 rounded-lg px-2 py-2">
               <Avatar className="h-7 w-7 shrink-0">
                 <AvatarImage src={user.image ?? undefined} alt={user.name ?? ''} />
-                <AvatarFallback className="bg-indigo-100 text-indigo-700 text-[11px] font-semibold">
+                <AvatarFallback className="text-[11px] font-semibold">
                   {getInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
@@ -185,7 +185,7 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
           >
             <Avatar className="h-7 w-7">
               <AvatarImage src={user.image ?? undefined} alt={user.name ?? ''} />
-              <AvatarFallback className="bg-indigo-100 text-indigo-700 text-[11px] font-semibold">
+              <AvatarFallback className="text-[11px] font-semibold">
                 {getInitials(user.name)}
               </AvatarFallback>
             </Avatar>
