@@ -246,7 +246,7 @@ export default function LandingPage({
       lenis.destroy()
       ctx.revert()
     }
-  }, [formations.length])
+  }, [])
 
   return (
     <div className="relative overflow-x-hidden" style={{ background: 'var(--surface)', color: 'var(--text-body)' }}>
@@ -403,7 +403,15 @@ export default function LandingPage({
                   <div className="h-32 relative flex items-center justify-center"
                        style={{ background: 'radial-gradient(120% 120% at 80% 0%, var(--mia-violet) 0%, var(--mia-near-black) 100%)' }}>
                     {f.thumbnail
-                      ? <img src={f.thumbnail} alt={f.title} className="w-full h-full object-cover absolute inset-0" />  // eslint-disable-line @next/next/no-img-element
+                      ? (
+                        <Image
+                          src={f.thumbnail}
+                          alt={f.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover"
+                        />
+                      )
                       : <BookOpen className="w-10 h-10 text-white/30" />
                     }
                     <div className="absolute top-3 left-3">
