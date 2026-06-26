@@ -1,3 +1,4 @@
+import '../evaluation.css'
 import { db } from '@/lib/db'
 import { EVALUATION_FIELDS } from '@/lib/evaluation-config'
 import EvaluationForm from './_components/evaluation-form'
@@ -22,42 +23,54 @@ export default async function EvaluationPage({ params }: Props) {
     },
   })
 
-  // Invalid token
   if (!evalToken) {
-    return <ErrorScreen message="Lien invalide ou introuvable." />
+    return <ErrorScreen message="Lien invalide ou introuvable. Vérifiez le lien reçu par email." />
   }
 
-  // Already used
   if (evalToken.usedAt) {
-    return <ErrorScreen message="Ce lien a déjà été utilisé. L'évaluation a bien été soumise." />
+    return <ErrorScreen message="Ce lien a déjà été utilisé. Votre évaluation a bien été soumise." />
   }
 
-  // Expired
   if (evalToken.expiresAt < new Date()) {
-    return <ErrorScreen message="Ce lien a expiré (validité 24h). Veuillez soumettre une nouvelle demande d'inscription." />
+    return <ErrorScreen message="Ce lien a expiré (validité 24 h). Veuillez soumettre une nouvelle demande d'inscription." />
   }
 
   const { inscription } = evalToken
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-2xl">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-white border flex items-center justify-center">
-              <Image src={logoSrc} alt="MIA Formation" width={22} height={22} className="object-contain" />
-            </div>
-            <span className="font-bold text-lg">MIA Formation</span>
+    <div>
+      <header className="ev-topbar">
+        <div className="ev-topbar-inner">
+          <Link href="/" className="ev-topbar-logo">
+            <Image src={logoSrc} alt="MIA Digital" width={32} height={32} className="object-contain" />
           </Link>
-          <h1 className="text-2xl font-bold">Évaluation de besoins</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Bonjour <strong>{inscription.firstName}</strong>, merci de remplir ce formulaire pour la formation{' '}
-            <strong>{inscription.formation.title}</strong>.
+        </div>
+      </header>
+
+      <div className="ev-hero">
+        <div className="ev-hero-glow" />
+        <div className="ev-hero-fade" />
+        <div className="ev-hero-content">
+          <span className="ev-hero-badge">Évaluation de besoins</span>
+          <h1 className="ev-hero-title font-heading">
+            {inscription.formation.title}
+          </h1>
+          <p className="ev-hero-sub">
+            Bonjour <strong>{inscription.firstName}</strong>, merci de remplir ce
+            formulaire avant le début de votre formation. Vos réponses nous permettent
+            d&apos;adapter le contenu à vos besoins.
           </p>
         </div>
+      </div>
 
-        <EvaluationForm token={token} fields={EVALUATION_FIELDS} />
+      <div className="ev-body">
+        <div className="ev-card">
+          <div className="ev-card-header">
+            <p className="ev-card-header-label">Formulaire</p>
+            <p className="ev-card-header-title">Vos informations et attentes</p>
+          </div>
+          <EvaluationForm token={token} fields={EVALUATION_FIELDS} />
+        </div>
       </div>
     </div>
   )
@@ -65,13 +78,24 @@ export default async function EvaluationPage({ params }: Props) {
 
 function ErrorScreen({ message }: { message: string }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-      <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-      <h1 className="text-xl font-semibold mb-2">Lien invalide</h1>
-      <p className="text-muted-foreground max-w-sm">{message}</p>
-      <Link href="/register" className="mt-6 text-primary text-sm font-medium hover:underline">
-        Nouvelle demande d&apos;inscription
-      </Link>
+    <div>
+      <header className="ev-topbar">
+        <div className="ev-topbar-inner">
+          <Link href="/" className="ev-topbar-logo">
+            <Image src={logoSrc} alt="MIA Digital" width={32} height={32} className="object-contain" />
+          </Link>
+        </div>
+      </header>
+      <div className="ev-screen">
+        <div className="ev-screen-icon ev-screen-icon-err">
+          <AlertCircle size={28} color="#DC2626" />
+        </div>
+        <h1 className="ev-screen-title">Lien invalide</h1>
+        <p className="ev-screen-sub">{message}</p>
+        <Link href="/register" className="ev-screen-link">
+          Nouvelle demande d&apos;inscription
+        </Link>
+      </div>
     </div>
   )
 }

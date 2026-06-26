@@ -3,8 +3,6 @@
 import { useRef, useState, useTransition } from 'react'
 import SignatureCanvas from 'react-signature-canvas'
 import { submitSignature } from '@/app/actions/inscriptions'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, ExternalLink, Eraser, Loader2 } from 'lucide-react'
 
 interface SignatureFormProps {
@@ -45,83 +43,89 @@ export default function SignatureForm({ token, documents }: SignatureFormProps) 
   }
 
   return (
-    <div className="bg-white rounded-xl border shadow-sm p-6 space-y-6">
+    <div className="ev-form">
       {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+        <div className="ev-error">
+          <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 1 }} />
+          <span>{error}</span>
+        </div>
       )}
 
-      {/* Document links */}
-      <div className="space-y-2">
-        <p className="text-sm font-medium">Documents à consulter</p>
-        <div className="flex flex-col gap-2">
-          {documents.map(doc => (
+      {/* Documents */}
+      <div className="ev-section">
+        <span className="ev-section-label">Documents à consulter</span>
+      </div>
+      <div className="sg-docs">
+        {documents.map(doc => (
+          doc.url ? (
             <a
-              key={doc.url}
+              key={doc.label}
               href={doc.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
+              className="sg-doc-link"
             >
-              <ExternalLink className="h-4 w-4" />
+              <ExternalLink size={15} />
               {doc.label}
             </a>
-          ))}
-        </div>
+          ) : null
+        ))}
       </div>
 
-      {/* Consent checkbox */}
-      <label className="flex items-start gap-3 cursor-pointer rounded-lg border px-4 py-3 text-sm">
+      {/* Consent */}
+      <div className="ev-section">
+        <span className="ev-section-label">Consentement</span>
+      </div>
+      <label className={`ev-option sg-consent${accepted ? ' ev-option-active' : ''}`}>
         <input
           type="checkbox"
           checked={accepted}
           onChange={e => setAccepted(e.target.checked)}
-          className="mt-0.5 accent-primary"
         />
-        J&apos;ai lu et j&apos;accepte le contrat, le règlement intérieur, les CGV et le programme de formation.
+        J&apos;ai lu et j&apos;accepte le contrat de formation, le règlement intérieur,
+        les conditions générales de vente et le programme de formation.
       </label>
 
       {/* Signature canvas */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium">Votre signature</p>
-          <button
-            type="button"
-            onClick={handleClear}
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-          >
-            <Eraser className="h-3.5 w-3.5" />
+      <div className="ev-section">
+        <span className="ev-section-label">Votre signature</span>
+      </div>
+      <div>
+        <div className="sg-canvas-header">
+          <span className="ev-label">Dessinez ci-dessous</span>
+          <button type="button" onClick={handleClear} className="sg-clear-btn">
+            <Eraser size={13} />
             Effacer
           </button>
         </div>
-        <div className="rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/20">
+        <div className="sg-canvas-wrap">
           <SignatureCanvas
             ref={sigRef}
-            penColor="#1e2128"
+            penColor="#17171c"
             canvasProps={{ className: 'w-full h-40' }}
             onEnd={() => setIsEmpty(sigRef.current?.isEmpty() ?? true)}
           />
         </div>
-        <p className="text-xs text-muted-foreground">
-          Dessinez votre signature ci-dessus avec la souris ou le doigt.
+        <p className="sg-canvas-hint">
+          Utilisez la souris ou le doigt pour dessiner votre signature.
         </p>
       </div>
 
-      <Button
+      <button
         type="button"
         onClick={handleSubmit}
         disabled={isPending || !accepted || isEmpty}
-        className="w-full"
-        size="lg"
+        className="ev-submit"
       >
         {isPending ? (
-          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signature en cours…</>
+          <>
+            <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+            Signature en cours…
+          </>
         ) : (
           'Signer mes documents'
         )}
-      </Button>
+      </button>
     </div>
   )
 }

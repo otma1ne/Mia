@@ -41,7 +41,7 @@ export async function generateMetadata({
   })
   if (!f) return { title: 'Formation introuvable' }
   return {
-    title: `${f.title} — MIA Formation`,
+    title: `${f.title} — MIA Digital`,
     description: f.description.slice(0, 160),
   }
 }
@@ -133,10 +133,32 @@ export default async function PublicFormationPage({
       <div className="fd-body">
         <div className="fd-grid">
 
-          {/* Left: description + programme */}
+          {/* Left: description + programme + modules */}
           <div>
             <h2 className="fd-section-title font-heading">À propos de cette formation</h2>
             <p className="fd-desc">{formation.description}</p>
+
+            {formation.programme && (
+              <>
+                <h2 className="fd-section-title font-heading">Programme détaillé</h2>
+                <div className="fd-programme">
+                  {formation.programme.split(/\n\n+/).map((block, i) => {
+                    const lines = block.trim().split('\n')
+                    const title = lines[0]
+                    const body  = lines.slice(1).join('\n').trim()
+                    return (
+                      <div key={i} className="fd-programme-item">
+                        <div className="fd-programme-bullet" />
+                        <div className="fd-programme-text">
+                          <span className="fd-programme-title">{title}</span>
+                          {body && body}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            )}
 
             {formation.modules.length > 0 && (
               <>
