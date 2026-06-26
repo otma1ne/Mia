@@ -1,0 +1,201 @@
+/* ─── Evaluation de besoins — MIA Digital design system ─────────────────── */
+
+/* ── Top bar — logo only, no nav links ───────────────────────────────────── */
+.ev-topbar {
+  height: 56px; background: #fff;
+  border-bottom: 1px solid var(--border-default);
+  padding: 0 32px;
+}
+.ev-topbar-inner {
+  max-width: 1200px; margin: 0 auto;
+  height: 100%; display: flex; align-items: center;
+}
+.ev-topbar-logo {
+  display: flex; align-items: center;
+  text-decoration: none;
+}
+
+/* ── Hero — identical structure to pl-hero / fd-hero ────────────────────── */
+.ev-hero {
+  position: relative; height: 380px;
+  background: var(--mia-near-black); overflow: hidden;
+}
+.ev-hero-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 65%, rgba(107,43,217,0.48) 0%, transparent 58%);
+}
+.ev-hero-fade {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 20%, rgba(23,23,28,0.92) 100%);
+}
+.ev-hero-content {
+  position: relative; z-index: 10;
+  max-width: 1160px; margin: 0 auto;
+  padding: 0 40px 52px;
+  height: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.ev-hero-badge {
+  display: inline-block;
+  width: max-content;
+  background: var(--mia-purple-tint); color: var(--mia-purple);
+  border: 1px solid rgba(107,43,217,0.22);
+  border-radius: 999px; padding: 4px 14px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.ev-hero-title {
+  color: #fff; font-weight: 400;
+  font-size: clamp(24px, 3.6vw, 44px);
+  line-height: 1.1; letter-spacing: -0.03em;
+  margin: 0 0 18px; max-width: 680px;
+}
+.ev-hero-sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 15px; line-height: 1.75;
+  max-width: 560px; margin: 0;
+}
+.ev-hero-sub strong { color: rgba(255,255,255,0.8); }
+
+/* ── Body ────────────────────────────────────────────────────────────────── */
+.ev-body {
+  max-width: 720px; margin: 0 auto;
+  padding: 56px 40px 80px;
+}
+
+/* ── Form card — mirrors pl-card ─────────────────────────────────────────── */
+.ev-card {
+  background: #fff;
+  border: 1px solid var(--border-default);
+  border-radius: 18px; overflow: hidden;
+}
+.ev-card-header {
+  padding: 22px 28px;
+  background: var(--mia-purple-tint);
+  border-bottom: 1px solid rgba(107,43,217,0.18);
+}
+.ev-card-header-label {
+  font-size: 11px; font-weight: 700; color: var(--mia-purple);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;
+}
+.ev-card-header-title { font-size: 17px; font-weight: 700; color: var(--text-strong); margin: 0; }
+
+.ev-form { padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Section divider ─────────────────────────────────────────────────────── */
+.ev-section { padding-top: 12px; margin-top: 4px; }
+.ev-section-label {
+  display: block;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--mia-purple);
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(107,43,217,0.15);
+}
+
+/* ── Fields ──────────────────────────────────────────────────────────────── */
+.ev-field { display: flex; flex-direction: column; gap: 7px; }
+.ev-label {
+  font-size: 13px; font-weight: 600; color: var(--text-strong); line-height: 1.5;
+}
+.ev-required { color: #ef4444; margin-left: 2px; }
+.ev-input {
+  height: 40px; padding: 0 14px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px; font-size: 14px;
+  color: var(--text-strong); background: #fff;
+  outline: none; width: 100%;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.ev-input::placeholder { color: var(--text-muted); }
+.ev-input:focus { border-color: var(--mia-purple); box-shadow: 0 0 0 3px rgba(107,43,217,0.1); }
+.ev-textarea {
+  padding: 10px 14px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px; font-size: 14px;
+  color: var(--text-strong); background: #fff;
+  outline: none; resize: none; width: 100%; font-family: inherit;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.ev-textarea::placeholder { color: var(--text-muted); }
+.ev-textarea:focus { border-color: var(--mia-purple); box-shadow: 0 0 0 3px rgba(107,43,217,0.1); }
+
+/* ── Radio / checkbox options ────────────────────────────────────────────── */
+.ev-options { display: flex; flex-direction: column; gap: 8px; }
+.ev-option {
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer;
+  border: 1px solid var(--border-default);
+  border-radius: 10px; padding: 11px 16px;
+  font-size: 13.5px; color: var(--text-muted);
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.ev-option:hover { border-color: var(--mia-purple); color: var(--text-strong); }
+.ev-option-active {
+  border-color: var(--mia-purple) !important;
+  background: var(--mia-purple-tint); color: var(--text-strong);
+}
+.ev-option input[type="radio"],
+.ev-option input[type="checkbox"] { accent-color: var(--mia-purple); flex-shrink: 0; }
+
+/* ── Error ───────────────────────────────────────────────────────────────── */
+.ev-error {
+  background: #FEF2F2; border: 1px solid #FCA5A5;
+  border-radius: 10px; padding: 12px 16px;
+  font-size: 13px; color: #DC2626;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+
+/* ── Submit button — mirrors pl-btn-primary ──────────────────────────────── */
+.ev-submit {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 24px; border-radius: 32px;
+  background: var(--mia-purple); color: #fff;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; border: none; width: 100%;
+  transition: background 0.2s, transform 0.15s;
+  margin-top: 4px;
+}
+.ev-submit:hover:not(:disabled) { background: var(--mia-violet); transform: translateY(-1px); }
+.ev-submit:active:not(:disabled) { transform: scale(0.97); }
+.ev-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Error / Success full screens ────────────────────────────────────────── */
+.ev-screen {
+  min-height: 60vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 24px; text-align: center;
+}
+.ev-screen-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+}
+.ev-screen-icon-err { background: #FEF2F2; border: 1px solid #FCA5A5; }
+.ev-screen-icon-ok  { background: #F0FDF4; border: 1px solid #BBF7D0; }
+.ev-screen-title { font-size: 24px; font-weight: 700; color: var(--text-strong); margin: 0 0 12px; }
+.ev-screen-sub   { font-size: 15px; color: var(--text-muted); max-width: 400px; line-height: 1.75; margin: 0; }
+.ev-screen-sub strong { color: var(--text-strong); }
+.ev-screen-link {
+  margin-top: 32px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; border-radius: 32px;
+  background: var(--mia-purple); color: #fff;
+  font-size: 14px; font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.ev-screen-link:hover { background: var(--mia-violet); transform: translateY(-1px); }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .ev-topbar       { padding: 0 20px; }
+  .ev-hero         { height: 300px; }
+  .ev-hero-content { padding: 0 20px 32px; }
+  .ev-body         { padding: 32px 20px 60px; }
+  .ev-form         { padding: 20px; }
+  .ev-card-header  { padding: 18px 20px; }
+}

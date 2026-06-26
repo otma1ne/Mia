@@ -1,21 +1,34 @@
-﻿import Link from 'next/link'
+import '../evaluation.css'
+import Link from 'next/link'
+import Image from 'next/image'
+import logoSrc from '@/public/logo.png'
 import { CheckCircle2 } from 'lucide-react'
 
 export default function MerciPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-      <CheckCircle2 className="h-16 w-16 text-green-500 mb-6" />
-      <h1 className="text-2xl font-bold mb-2">Merci pour votre évaluation !</h1>
-      <p className="text-muted-foreground max-w-sm">
-        L&apos;équipe <strong>MIA Digital</strong> va examiner votre dossier et vous contactera
-        prochainement pour vous informer de la suite de votre candidature.
-      </p>
-      <Link
-        href="/"
-        className="mt-8 inline-flex items-center gap-2 text-sm text-primary font-medium hover:underline"
-      >
-        Retour à l&apos;accueil
-      </Link>
+    <div>
+      <header className="ev-topbar">
+        <div className="ev-topbar-inner">
+          <Link href="/" className="ev-topbar-logo">
+            <Image src={logoSrc} alt="MIA Digital" width={32} height={32} className="object-contain" />
+          </Link>
+        </div>
+      </header>
+
+      <div className="ev-screen">
+        <div className="ev-screen-icon ev-screen-icon-ok">
+          <CheckCircle2 size={28} color="#16A34A" />
+        </div>
+        <h1 className="ev-screen-title">Évaluation soumise !</h1>
+        <p className="ev-screen-sub">
+          Merci pour vos réponses. L&apos;équipe{' '}
+          <strong>MIA Digital</strong> va examiner votre dossier et vous
+          contactera prochainement pour la suite de votre candidature.
+        </p>
+        <Link href="/" className="ev-screen-link">
+          Retour à l&apos;accueil
+        </Link>
+      </div>
     </div>
   )
 }
