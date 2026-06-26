@@ -1,8 +1,8 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { getCenters } from '@/app/actions/center'
 import CentersListClient from './_components/centers-list-client'
 
-export const metadata: Metadata = { title: 'Centres — MIA Formation' }
+export const metadata: Metadata = { title: 'Centres — MIA Digital' }
 
 export default async function CentersPage() {
   const centers = await getCenters()

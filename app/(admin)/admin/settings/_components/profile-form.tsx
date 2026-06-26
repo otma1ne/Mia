@@ -58,7 +58,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       <div className="flex items-center gap-4">
         <Avatar className="h-16 w-16 shrink-0">
           <AvatarImage src={user.avatar ?? undefined} alt={user.name} />
-          <AvatarFallback className="bg-indigo-100 text-indigo-700 text-lg font-semibold">
+          <AvatarFallback className="bg-(--mia-purple) text-white text-lg font-semibold">
             {getInitials(user.name)}
           </AvatarFallback>
         </Avatar>

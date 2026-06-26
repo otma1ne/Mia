@@ -1,4 +1,4 @@
-import './site-footer.css'
+﻿import './site-footer.css'
 import Image from 'next/image'
 import Link from 'next/link'
 import logoLightSrc from '@/public/logo-light.png'
@@ -31,9 +31,9 @@ export default function SiteFooter() {
         <div className="sf-grid">
 
           {/* Brand */}
-          <div>
+          <div className="sf-brand">
             <Link href="/">
-              <Image src={logoLightSrc} alt="MIA Formation" width={44} height={44} className="object-contain" />
+              <Image src={logoLightSrc} alt="MIA Digital" width={60} height={60} className="object-contain" />
             </Link>
             <p className="sf-tagline">
               Centre de formation professionnelle certifié.<br />Building skills. Shaping futures.
@@ -65,7 +65,7 @@ export default function SiteFooter() {
 
         {/* Bottom bar */}
         <div className="sf-bottom">
-          <span className="sf-copy">© {new Date().getFullYear()} MIA Formation. Tous droits réservés.</span>
+          <span className="sf-copy">© {new Date().getFullYear()} MIA Digital. Tous droits réservés.</span>
           <div className="sf-legal">
             <Link href="#" className="sf-legal-link">Confidentialité</Link>
             <Link href="#" className="sf-legal-link">Conditions</Link>

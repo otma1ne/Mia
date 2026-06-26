@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import './landing.css'
 import { useLayoutEffect, useRef, useState } from 'react'
@@ -12,6 +12,7 @@ import Lenis from 'lenis'
 import {
   ArrowRight, MapPin, Phone, Mail, Clock, Star,
   ChevronLeft, ChevronRight, CheckCircle2, BookOpen,
+  Menu, X,
 } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -90,7 +91,7 @@ const FINANCEMENTS = [
 const TESTIMONIALS = [
   {
     name: 'Yasmine B.', role: 'Développeuse Web · Promo 2025', stars: 5,
-    quote: "MIA Formation a transformé mon parcours. En 6 mois j'ai acquis les compétences pour décrocher mon premier emploi de développeuse.",
+    quote: "MIA Digital a transformé mon parcours. En 6 mois j'ai acquis les compétences pour décrocher mon premier emploi de développeuse.",
   },
   {
     name: 'Karim L.', role: 'Data Analyst · Promo 2024', stars: 5,
@@ -182,6 +183,7 @@ export default function LandingPage({
 }) {
   const rafRef   = useRef<((time: number) => void) | null>(null)
   const lenisRef = useRef<Lenis | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useLayoutEffect(() => {
     const lenis = new Lenis({ autoRaf: false, lerp: 0.1 })
@@ -200,24 +202,32 @@ export default function LandingPage({
       const isBackNav = window.scrollY > 50
 
       if (!isBackNav) {
+        const show = { opacity: 1, y: 0 }
         gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.7 } })
-          .from('#hero-badge',     { y: 18,  opacity: 0, duration: 0.5 })
-          .from('.hero-word',      { y: 72,  opacity: 0, stagger: 0.08, duration: 0.8 }, '-=0.3')
-          .from('#hero-sub',       { y: 22,  opacity: 0, duration: 0.55 }, '<0.2')
-          .from('#hero-ctas > *',  { y: 14,  opacity: 0, stagger: 0.1,  duration: 0.45 }, '<0.2')
-          .from('#hero-stats > *', { y: 30,  opacity: 0, stagger: 0.08, duration: 0.6 }, '<0.15')
+          .fromTo('#hero-badge',     { y: 18,  opacity: 0 }, { ...show, duration: 0.5 })
+          .fromTo('.hero-word',      { y: 72,  opacity: 0 }, { ...show, stagger: 0.08, duration: 0.8 }, '-=0.3')
+          .fromTo('#hero-sub',       { y: 22,  opacity: 0 }, { ...show, duration: 0.55 }, '<0.2')
+          .fromTo('#hero-ctas > *',  { y: 14,  opacity: 0 }, { ...show, stagger: 0.1,  duration: 0.45 }, '<0.2')
+          .fromTo('#hero-stats > *', { y: 30,  opacity: 0 }, { ...show, stagger: 0.08, duration: 0.6 }, '<0.15')
+      } else {
+        // Back-navigation: hero already scrolled past — reveal everything immediately
+        gsap.set('#hero-badge, .hero-word, #hero-sub, #hero-ctas > *, #hero-stats > *', { opacity: 1, y: 0 })
       }
 
       ScrollTrigger.batch('.f-card', {
         start: 'top 88%', once: true, interval: 0.08,
-        onEnter: (els) => gsap.from(els, { opacity: 0, y: 40, stagger: 0.08, duration: 0.7, ease: 'power3.out' }),
+        onEnter: (els) => gsap.fromTo(els,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, stagger: 0.08, duration: 0.7, ease: 'power3.out' },
+        ),
       })
 
       document.querySelectorAll<HTMLElement>('.pillar-row').forEach((el, i) => {
-        gsap.from(el, {
-          opacity: 0, y: 40, duration: 0.7, ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 82%', once: true, refreshPriority: -i },
-        })
+        gsap.fromTo(el,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 82%', once: true, refreshPriority: -i } },
+        )
       })
 
       document.querySelectorAll<HTMLElement>('.kpi-val').forEach((el) => {
@@ -234,16 +244,18 @@ export default function LandingPage({
       })
 
       document.querySelectorAll<HTMLElement>('.reveal-up').forEach((el, i) => {
-        gsap.from(el, {
-          opacity: 0, y: 40, duration: 0.75, ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 84%', once: true, refreshPriority: -i },
-        })
+        gsap.fromTo(el,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 84%', once: true, refreshPriority: -i } },
+        )
       })
 
-      gsap.from('#cta-inner', {
-        opacity: 0, y: 56, scale: 0.97, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: '#cta', start: 'top 78%', once: true },
-      })
+      gsap.fromTo('#cta-inner',
+        { opacity: 0, y: 56, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: '#cta', start: 'top 78%', once: true } },
+      )
     })
 
     return () => {
@@ -269,7 +281,7 @@ export default function LandingPage({
           {/* Logo — light version shown over dark hero, dark on scroll */}
           <Link href="/" className="shrink-0 justify-self-start">
             <div className="logo-wrap">
-              <Image src={logoLightSrc} alt="MIA Formation" fill sizes="40px"
+              <Image src={logoLightSrc} alt="MIA Digital" fill sizes="40px"
                      className="object-contain logo-light" priority />
               <Image src={logoSrc} alt="" fill sizes="40px"
                      className="object-contain logo-dark" aria-hidden />
@@ -292,18 +304,70 @@ export default function LandingPage({
             ))}
           </div>
 
+          {/* Col 3 — CTA on desktop, hamburger on mobile (single grid cell) */}
           <div className="flex items-center justify-self-end">
             <Link href="/login"
-                  className="nav-btn-primary inline-flex items-center gap-2 text-[14px] font-semibold px-5 py-2.5 rounded-[32px] hover:-translate-y-px transition-transform">
+                  className="nav-btn-primary hidden md:inline-flex items-center gap-2 text-[14px] font-semibold px-5 py-2.5 rounded-[32px] hover:-translate-y-px transition-transform">
               Mon espace <ArrowRight className="w-3.5 h-3.5" />
             </Link>
+            <button
+              type="button"
+              className="md:hidden nav-hamburger p-2 rounded-lg"
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+              aria-expanded={menuOpen}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </nav>
 
+      {/* ── Mobile side-menu ────────────────────────────────────────────── */}
+      {/* Dim overlay */}
+      <div
+        className={`nav-side-overlay${menuOpen ? ' open' : ''}`}
+        onClick={() => setMenuOpen(false)}
+        aria-hidden="true"
+      />
+      {/* Slide-in panel */}
+      <div
+        className={`nav-side-panel${menuOpen ? ' open' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu de navigation"
+      >
+        <div className="nav-side-header">
+          <Image src={logoSrc} alt="MIA Digital" width={36} height={36} className="object-contain" />
+          <button type="button" className="nav-side-close" onClick={() => setMenuOpen(false)} aria-label="Fermer">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <nav className="nav-side-links">
+          {[
+            ['#formations',   'Formations'   ],
+            ['#pourquoi',     'Pourquoi MIA' ],
+            ['#financements', 'Financements' ],
+            ['#temoignages',  'Témoignages'  ],
+            ['#contact',      'Contact'      ],
+          ].map(([href, label]) => (
+            <a key={href} href={href}
+               onClick={(e) => { scrollTo(href)(e); setMenuOpen(false) }}
+               className="nav-side-link">
+              {label}
+            </a>
+          ))}
+        </nav>
+        <div className="nav-side-cta-wrap">
+          <Link href="/login" className="nav-side-cta" onClick={() => setMenuOpen(false)}>
+            Mon espace <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+
       {/* ══ HERO — dark centered, full-width ════════════════════════════════ */}
       <section id="hero"
-               className="relative overflow-hidden text-center px-8 pt-44 pb-28"
+               className="relative overflow-hidden text-center px-6 sm:px-8 pt-32 sm:pt-44 pb-16 sm:pb-28"
                style={{ background: 'var(--mia-near-black)', color: '#fff' }}>
         {/* Purple radial glow — top center */}
         <div className="absolute pointer-events-none"
@@ -329,7 +393,8 @@ export default function LandingPage({
               EXPERT
             </span>
             <span className="text-[13px] pr-1.5" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              Formateurs actifs en entreprise, certifiés RNCP
+              <span className="sm:hidden">Certifiés RNCP</span>
+              <span className="hidden sm:inline">Formateurs actifs en entreprise, certifiés RNCP</span>
             </span>
           </div>
 
@@ -355,7 +420,7 @@ export default function LandingPage({
           <p id="hero-sub"
              className="text-[17px] leading-[1.75] mb-10 mx-auto max-w-[520px]"
              style={{ color: 'rgba(255,255,255,0.55)' }}>
-            MIA Formation accompagne les professionnels dans leur montée en compétences
+            MIA Digital accompagne les professionnels dans leur montée en compétences
             grâce à des programmes certifiés et des formateurs experts du terrain.
           </p>
 
@@ -366,11 +431,11 @@ export default function LandingPage({
                   style={{ background: 'var(--mia-purple)' }}>
               Explorer les formations
             </Link>
-            <a href="#contact"
+            <Link href="/planifier"
                className="inline-flex items-center gap-2 font-semibold text-[14px] px-6 py-3.5 rounded-[32px] transition-all hover:-translate-y-px"
                style={{ border: '1px solid rgba(255,255,255,0.18)', color: 'rgba(255,255,255,0.8)' }}>
               Planifier un échange
-            </a>
+            </Link>
           </div>
 
           {/* Stats with vertical dividers */}
@@ -378,7 +443,7 @@ export default function LandingPage({
             {STATS.map(({ n, label }, i) => (
               <div key={label} className="flex items-center">
                 {i > 0 && (
-                  <div className="mx-10 shrink-0" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.14)' }} />
+                  <div className="stat-divider mx-10 shrink-0" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.14)' }} />
                 )}
                 <div className="text-center">
                   <div className="font-heading text-[42px] leading-none tracking-[-0.025em] mb-1.5 text-white"
@@ -494,10 +559,10 @@ export default function LandingPage({
             <SectionLabel>Qui sommes-nous ?</SectionLabel>
             <h2 className="font-heading leading-[1.1] tracking-[-0.025em] mb-6"
                 style={{ fontSize: 'clamp(28px, 3.5vw, 42px)', color: 'var(--text-strong)', fontWeight: 400 }}>
-              MIA Formation,<br />l&apos;académie qui<br />transforme les talents
+              MIA Digital,<br />l&apos;académie qui<br />transforme les talents
             </h2>
             <p className="text-[15px] leading-[1.82] mb-5" style={{ color: 'var(--text-muted)' }}>
-              MIA Formation est un centre de formation professionnelle certifié Qualiopi.
+              MIA Digital est un centre de formation professionnelle certifié Qualiopi.
               Nous croyons que chaque apprenant mérite une formation de qualité, accessible
               et directement opérationnelle.
             </p>
@@ -663,13 +728,13 @@ export default function LandingPage({
       </section>
 
       {/* ══ CTA — rounded dark container ══════════════════════════════════════ */}
-      <section id="cta" className="py-20 px-8">
+      <section id="cta" className="py-12 sm:py-20 px-4 sm:px-8">
         <div id="cta-inner"
              className="mx-auto max-w-[1200px] rounded-[28px] p-16 grid items-center gap-10"
              style={{ background: 'var(--mia-near-black)', gridTemplateColumns: '1.3fr 0.7fr' }}>
           <div>
             <div className="mb-6">
-              <Image src={logoLightSrc} alt="MIA Formation" width={60} height={60} className="object-contain" />
+              <Image src={logoLightSrc} alt="MIA Digital" width={60} height={60} className="object-contain" />
             </div>
             <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-4"
                  style={{ color: 'var(--text-accent)' }}>
@@ -677,7 +742,7 @@ export default function LandingPage({
             </div>
             <h2 className="font-heading leading-[1.1] tracking-[-0.02em] mb-5"
                 style={{ fontSize: 'clamp(28px, 4vw, 44px)', color: '#fff', fontWeight: 400 }}>
-              Rejoignez MIA Formation<br />dès aujourd&apos;hui
+              Rejoignez MIA Digital<br />dès aujourd&apos;hui
             </h2>
             <p className="text-[16px] leading-[1.7]" style={{ color: 'var(--mia-slate)' }}>
               Accédez à votre espace pour consulter vos formations et démarrer votre
@@ -729,10 +794,10 @@ export default function LandingPage({
                 </div>
               ))}
             </div>
-            <Link href="/register"
+            <Link href="/planifier"
                   className="inline-flex items-center gap-2.5 px-6 py-3 rounded-[32px] text-white text-[14px] font-semibold transition-all hover:-translate-y-px"
                   style={{ background: 'var(--mia-near-black)' }}>
-              Commencer ma formation <ArrowRight className="w-4 h-4" />
+              Planifier un échange <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
           <div className="reveal-up">
@@ -774,7 +839,7 @@ export default function LandingPage({
             {/* Brand */}
             <div className="footer-brand">
               <div className="mb-4">
-                <Image src={logoLightSrc} alt="MIA Formation" width={60} height={60} className="object-contain" />
+                <Image src={logoLightSrc} alt="MIA Digital" width={60} height={60} className="object-contain" />
               </div>
               <p className="text-[14px] leading-[1.6] max-w-[200px]" style={{ color: 'var(--mia-slate)' }}>
                 Centre de formation professionnelle certifié. Building skills. Shaping futures.
@@ -810,7 +875,7 @@ export default function LandingPage({
               <p className="text-[14px] mb-4" style={{ color: 'var(--mia-slate)' }}>
                 Actualités mensuelles sur les compétences.
               </p>
-              <div className="flex gap-2">
+              <div className="footer-newsletter-row flex gap-2">
                 <input
                   placeholder="Email"
                   className="flex-1 rounded-[8px] px-3 py-2.5 text-[14px] outline-none"
@@ -830,7 +895,7 @@ export default function LandingPage({
           <div className="flex items-center justify-between pt-6 flex-wrap gap-4"
                style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
             <span className="text-[12px]" style={{ color: 'rgba(255,255,255,0.25)' }}>
-              © {new Date().getFullYear()} MIA Formation. Tous droits réservés.
+              © {new Date().getFullYear()} MIA Digital. Tous droits réservés.
             </span>
             <div className="flex gap-5">
               {['Confidentialité', 'Conditions'].map(item => (

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { BookOpen, Users, CalendarDays, TrendingUp } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { getTrainerDashboardStats } from '@/app/actions/trainer-dashboard'
@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import type { ModuleStatus } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Dashboard — MIA Formation' }
+export const metadata: Metadata = { title: 'Dashboard — MIA Digital' }
 
 const statusConfig: Record<ModuleStatus, { dot: string; label: string }> = {
   DRAFT:     { dot: 'bg-amber-400',        label: 'Brouillon' },

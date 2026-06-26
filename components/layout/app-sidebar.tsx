@@ -23,7 +23,7 @@ import {
 import { Settings, HelpCircle, LogOut, User, MoreVertical } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import logoSrc from '@/public/logo.png'
+import logoLightSrc from '@/public/logo-light.png'
 import SidebarNav from './sidebar-nav'
 import type { UserRole } from '@prisma/client'
 import { usePathname, useRouter } from 'next/navigation'
@@ -69,11 +69,8 @@ export default function AppSidebar({ user }: AppSidebarProps) {
       <aside className="hidden lg:flex lg:flex-col w-60 shrink-0 border-r border-sidebar-border bg-sidebar">
         {/* Logo */}
         <div className="flex h-14 items-center gap-2.5 px-4 border-b border-sidebar-border">
-          <Link href="/" className="flex items-center gap-2.5 font-semibold text-sm text-sidebar-foreground">
-            <div className="w-7 h-7 rounded-md bg-white/10 flex items-center justify-center shrink-0">
-              <Image src={logoSrc} alt="MIA Formation" width={20} height={20} className="object-contain" />
-            </div>
-            MIA Formation
+          <Link href="/" aria-label="MIA Digital — Accueil">
+            <Image src={logoLightSrc} alt="MIA Digital" width={50} height={50} className="object-contain" />
           </Link>
         </div>
 

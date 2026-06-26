@@ -207,7 +207,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                 <div className="flex flex-col gap-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-2">
-                      <label className="text-xs text-muted-foreground">Tarif (MAD)</label>
+                      <label className="text-xs text-muted-foreground">Tarif (€)</label>
                       <Input
                         type="number"
                         min="0"
@@ -248,7 +248,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                 <div className="flex flex-col gap-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tarif</span>
-                    <span>{formation.price != null ? `${formation.price.toLocaleString('fr-FR')} MAD` : <span className="text-muted-foreground italic">Non renseigné</span>}</span>
+                    <span>{formation.price != null ? `${formation.price.toLocaleString('fr-FR')} €` : <span className="text-muted-foreground italic">Non renseigné</span>}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Durée</span>

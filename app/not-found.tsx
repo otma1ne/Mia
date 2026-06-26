@@ -16,9 +16,9 @@ export default function NotFound() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-semibold text-sm">
             <div className="w-7 h-7 rounded-md bg-white border flex items-center justify-center shrink-0">
-              <Image src={logoSrc} alt="MIA Formation" width={20} height={20} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Digital" width={20} height={20} className="object-contain" />
             </div>
-            MIA Formation
+            MIA Digital
           </Link>
           <Link
             href="/login"
@@ -40,7 +40,7 @@ export default function NotFound() {
             </span>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-16 h-16 bg-white border rounded-2xl flex items-center justify-center shadow-lg">
-                <Image src={logoSrc} alt="MIA Formation" width={44} height={44} className="object-contain" />
+                <Image src={logoSrc} alt="MIA Digital" width={44} height={44} className="object-contain" />
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@ export default function NotFound() {
       <footer className="border-t px-6 py-6">
         <div className="mx-auto max-w-6xl flex items-center justify-center">
           <p className="text-xs text-zinc-400">
-            © {new Date().getFullYear()} Académie MIA Formation · contact@miaformation.ma
+            © {new Date().getFullYear()} Académie MIA Digital · contact@miaformation.ma
           </p>
         </div>
       </footer>

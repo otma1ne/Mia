@@ -1,33 +1,5 @@
 /* ─── Formation detail page ───────────────────────────────────────────────── */
 
-/* Nav */
-.fd-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-  background: var(--mia-near-black);
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-}
-.fd-nav-inner {
-  max-width: 1160px; margin: 0 auto;
-  padding: 0 40px; height: 72px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.fd-nav-back {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 600;
-  text-decoration: none; transition: color 0.2s;
-}
-.fd-nav-back:hover { color: #fff; }
-.fd-nav-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 9px 20px; border-radius: 32px;
-  background: var(--mia-purple); color: #fff;
-  font-size: 13px; font-weight: 700; text-decoration: none;
-  transition: background 0.2s;
-}
-.fd-nav-cta:hover { background: var(--mia-violet); }
-
-/* Hero */
-.fd-hero-wrap { padding-top: 72px; }
 .fd-hero {
   position: relative; height: 420px;
   background: var(--mia-near-black); overflow: hidden;
@@ -112,7 +84,7 @@
 
 /* Sidebar */
 .fd-sidebar { position: sticky; top: 96px; }
-.fd-card { border: 1px solid var(--border-default); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+.fd-card { border: 1px solid var(--border-default); border-radius: 18px; overflow: hidden; }
 .fd-card-price { padding: 26px 28px; background: var(--mia-purple-tint); border-bottom: 1px solid rgba(107,43,217,0.18); }
 .fd-price-label { font-size: 11px; font-weight: 700; color: var(--mia-purple); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
 .fd-price-amount { display: flex; align-items: baseline; gap: 6px; }
@@ -144,6 +116,21 @@
   transition: border-color 0.2s, color 0.2s;
 }
 .fd-btn-secondary:hover { border-color: var(--mia-purple); color: var(--mia-purple); }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+/* Tablet — stack sidebar below content */
+@media (max-width: 1023px) {
+  .fd-grid    { grid-template-columns: 1fr; }
+  .fd-sidebar { position: static; margin-top: 48px; max-width: 560px; }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .fd-hero        { height: 300px; }
+  .fd-hero-content { padding: 0 20px 32px; }
+  .fd-body        { padding: 40px 20px 60px; }
+}
 
 /* Trust */
 .fd-trust { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }

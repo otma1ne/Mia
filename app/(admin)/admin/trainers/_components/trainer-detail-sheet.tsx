@@ -69,7 +69,7 @@ export default function TrainerDetailSheet({ trainerId, onClose }: TrainerDetail
               <div className="flex items-center gap-4">
                 <Avatar className="h-14 w-14 shrink-0">
                   <AvatarImage src={trainer.user.avatar ?? undefined} alt={trainer.user.name} />
-                  <AvatarFallback className="bg-indigo-100 text-indigo-700 text-base font-semibold">
+                  <AvatarFallback className="bg-(--mia-purple) text-white text-base font-semibold">
                     {getInitials(trainer.user.name)}
                   </AvatarFallback>
                 </Avatar>

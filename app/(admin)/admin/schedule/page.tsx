@@ -4,7 +4,7 @@ import { getSessions, getScheduleFormData } from '@/app/actions/schedule'
 import { getWeekRange } from '@/lib/schedule-utils'
 import ScheduleClient from './_components/schedule-client'
 
-export const metadata: Metadata = { title: 'Planification — MIA Formation' }
+export const metadata: Metadata = { title: 'Planification — MIA Digital' }
 
 interface PageProps {
   searchParams: Promise<{ ref?: string; view?: string }>

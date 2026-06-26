@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardAction, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -6,7 +6,7 @@ import { getDashboardStats, getRecentModules, getRevenueDashboard } from '@/app/
 import ModulesTable from './_components/modules-table'
 import RevenueChart from './_components/revenue-chart'
 
-export const metadata: Metadata = { title: 'Tableau de bord — MIA Formation' }
+export const metadata: Metadata = { title: 'Tableau de bord — MIA Digital' }
 
 function pctChange(current: number, prev: number) {
   if (prev === 0) return current > 0 ? '+100%' : '0%'
@@ -16,9 +16,9 @@ function pctChange(current: number, prev: number) {
 }
 
 function formatMAD(n: number) {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M MAD`
-  if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}k MAD`
-  return `${n.toLocaleString('fr-FR')} MAD`
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M €`
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}k €`
+  return `${n.toLocaleString('fr-FR')} €`
 }
 
 export default async function AdminDashboardPage() {

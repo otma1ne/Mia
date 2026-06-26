@@ -1,4 +1,4 @@
-/* MIA Formation — Landing page structural styles
+﻿/* MIA Digital — Landing page structural styles
    Brand tokens come from globals.css — no hardcoded colors here */
 
 /* ─── Nav — subtle dark glass at top, white glass slides in on scroll ── */
@@ -46,7 +46,7 @@
   grid-template-columns: 1fr auto 1fr;
 }
 
-/* Nav links — color driven by CSS var set above */
+/* Nav links */
 .nav-glass .nav-link {
   color: var(--nav-link-color);
   transition: color 0.25s ease;
@@ -55,7 +55,7 @@
   color: var(--nav-link-hover);
 }
 
-/* Primary button — white pill on dark glass, near-black pill on white glass */
+/* Primary button */
 .nav-glass .nav-btn-primary {
   background: rgba(255, 255, 255, 0.92);
   color: var(--mia-near-black);
@@ -68,6 +68,25 @@
   color: #fff;
 }
 
+/* ─── Hide animated elements before GSAP runs (prevents SSR flash & jump) ── */
+#hero-badge,
+.hero-word,
+#hero-sub,
+#hero-ctas > *,
+#hero-stats > *,
+.f-card,
+.pillar-row,
+.reveal-up,
+#cta-inner {
+  opacity: 0;
+}
+
+/* Hamburger — color follows nav state */
+.nav-hamburger {
+  color: var(--nav-link-color);
+  transition: color 0.25s ease;
+}
+
 /* Logo wrapper */
 .logo-wrap { width: 40px; height: 40px; position: relative; }
 
@@ -76,6 +95,119 @@
 .nav-glass .logo-light { opacity: 1; transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
 .nav-glass.nav--visible .logo-dark  { opacity: 1; }
 .nav-glass.nav--visible .logo-light { opacity: 0; }
+
+/* ─── Side-menu (mobile) ──────────────────────────────────────────────── */
+
+/* Dim overlay — click to close */
+.nav-side-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.42);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.nav-side-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Slide-in panel from right */
+.nav-side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  width: min(300px, 82vw);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-side-panel.open {
+  transform: translateX(0);
+}
+
+/* Panel header — logo + close button */
+.nav-side-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+.nav-side-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  transition: background 0.15s, color 0.15s;
+}
+.nav-side-close:hover {
+  background: var(--surface-muted);
+  color: var(--text-strong);
+}
+
+/* Nav links list */
+.nav-side-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+.nav-side-link {
+  display: flex;
+  align-items: center;
+  padding: 15px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-strong);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-default);
+  transition: background 0.15s, color 0.15s;
+}
+.nav-side-link:last-child { border-bottom: none; }
+.nav-side-link:hover {
+  background: var(--surface-muted);
+  color: var(--mia-purple);
+}
+
+/* CTA button at bottom of panel */
+.nav-side-cta-wrap {
+  padding: 20px 24px;
+  border-top: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+.nav-side-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 24px;
+  border-radius: 32px;
+  background: var(--mia-purple);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.nav-side-cta:hover { background: var(--mia-violet); }
+
+/* Hide side-menu on desktop */
+@media (min-width: 768px) {
+  .nav-side-overlay,
+  .nav-side-panel { display: none; }
+}
 
 /* ─── Hero word-split animation ──────────── */
 .hero-word-wrap {
@@ -147,6 +279,26 @@
   .landing-wrap { padding-left: 20px !important; padding-right: 20px !important; }
 
   .stat-row { gap: 1.5rem; }
+
+  /* Hero stats — stack vertically, hide dividers */
+  #hero-stats { flex-direction: column; gap: 20px; }
+  .stat-divider { display: none; }
+
+  /* Nav — switch to flex on mobile so hidden grid items don't collapse columns */
+  .nav-content {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* CTA section — stack grid + reduce inner padding */
+  #cta-inner { grid-template-columns: 1fr !important; padding: 32px 24px !important; }
+
+  /* Footer newsletter — stack input above button */
+  .footer-newsletter-row { flex-direction: column; }
+  .footer-newsletter-row button { width: 100%; }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -162,4 +314,7 @@
   .info-two-col { grid-template-columns: 1fr !important; gap: 3rem; }
   .footer-grid  { grid-template-columns: 1fr 1fr !important; }
   .footer-brand { grid-column: 1 / -1; }
+
+  /* CTA — stack on tablet */
+  #cta-inner { grid-template-columns: 1fr !important; padding: 48px 40px !important; }
 }

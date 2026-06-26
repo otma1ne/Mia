@@ -152,7 +152,7 @@ export default function TrainersClient({ data, search: initialSearch, categories
                     <div className="flex items-center gap-3">
                       <Avatar className="h-7 w-7 shrink-0">
                         <AvatarImage src={trainer.avatar ?? undefined} alt={trainer.name} />
-                        <AvatarFallback className="bg-indigo-100 text-indigo-700 text-[11px] font-semibold">
+                        <AvatarFallback className="bg-(--mia-purple) text-white text-[11px] font-semibold">
                           {getInitials(trainer.name)}
                         </AvatarFallback>
                       </Avatar>

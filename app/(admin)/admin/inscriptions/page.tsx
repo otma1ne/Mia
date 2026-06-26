@@ -2,7 +2,7 @@
 import { getInscriptions } from '@/app/actions/inscriptions'
 import InscriptionsClient from './_components/inscriptions-client'
 
-export const metadata: Metadata = { title: 'Inscriptions — MIA Formation' }
+export const metadata: Metadata = { title: 'Inscriptions — MIA Digital' }
 
 export default async function InscriptionsPage() {
   const inscriptions = await getInscriptions()

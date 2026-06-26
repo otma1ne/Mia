@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const url = await new Promise<string>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: 'MIA Formation/cvs',
+          folder: 'MIA Digital/cvs',
           resource_type: 'raw',
           format: 'pdf',
         },

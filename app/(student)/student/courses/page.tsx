@@ -3,7 +3,7 @@ import { getStudentBrowsableFormations } from '@/app/actions/student-dashboard'
 import StudentCoursesClient from './_components/student-courses-client'
 import type { FormationType } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Formations — MIA Formation' }
+export const metadata: Metadata = { title: 'Formations — MIA Digital' }
 
 const VALID_TYPES: FormationType[] = ['PRESENTIAL', 'REMOTE_LIVE', 'REMOTE_ASYNC']
 

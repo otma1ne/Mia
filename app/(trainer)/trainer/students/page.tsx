@@ -2,7 +2,7 @@
 import { getTrainerStudents } from '@/app/actions/trainer-dashboard'
 import TrainerStudentsClient from './_components/trainer-students-client'
 
-export const metadata: Metadata = { title: 'Étudiants — MIA Formation' }
+export const metadata: Metadata = { title: 'Étudiants — MIA Digital' }
 
 export default async function TrainerStudentsPage({
   searchParams,

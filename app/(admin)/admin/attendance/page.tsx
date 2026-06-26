@@ -4,7 +4,7 @@ import AdminAttendanceClient from './_components/admin-attendance-client'
 import { addDays } from 'date-fns'
 
 export const metadata: Metadata = {
-  title: 'Présences — MIA Formation',
+  title: 'Présences — MIA Digital',
 }
 
 export default async function AdminAttendancePage({
