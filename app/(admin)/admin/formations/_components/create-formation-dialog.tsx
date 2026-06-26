@@ -119,7 +119,7 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
           {/* Price + Duration */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="price">Tarif (MAD)</Label>
+              <Label htmlFor="price">Tarif (€)</Label>
               <Input id="price" name="price" type="number" min="0" step="0.01" placeholder="5000" />
             </div>
             <div className="flex flex-col gap-2">

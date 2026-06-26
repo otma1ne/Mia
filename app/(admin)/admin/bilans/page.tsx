@@ -1,9 +1,9 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { db } from '@/lib/db'
 import { getBilanStats } from '@/app/actions/bilans'
 import { BarChart3, Users, ArrowRight, Thermometer, Snowflake } from 'lucide-react'
 
-export const metadata = { title: 'Bilans — MIA Formation' }
+export const metadata = { title: 'Bilans — MIA Digital' }
 
 export default async function BilansPage() {
   const formations = await db.formation.findMany({

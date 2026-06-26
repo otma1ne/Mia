@@ -8,7 +8,7 @@ import { db } from '@/lib/db'
 import '../_components/auth.css'
 
 export const metadata: Metadata = {
-  title: "Demande d'inscription — MIA Formation",
+  title: "Demande d'inscription — MIA Digital",
 }
 
 export default async function RegisterPage() {
@@ -25,7 +25,7 @@ export default async function RegisterPage() {
         <div className="w-full max-w-sm mx-auto space-y-8">
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2 w-fit">
-              <Image src={logoSrc} alt="MIA Formation" width={60} height={60} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Digital" width={60} height={60} className="object-contain" />
             </Link>
             <div>
               <h1 className="auth-heading font-heading mt-1">Demande d&apos;inscription</h1>

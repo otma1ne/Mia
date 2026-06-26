@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { db } from '@/lib/db'
-import { ArrowRight, ChevronLeft, Clock, Users, Layers } from 'lucide-react'
+import { ArrowRight, Clock, Users, Layers } from 'lucide-react'
 import SiteFooter from '@/components/layout/site-footer'
+import SiteNav from '@/components/layout/site-nav'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -82,18 +83,7 @@ export default async function PublicFormationPage({
   return (
     <div className="fd-page">
 
-      {/* ── Nav ─────────────────────────────────────────────────────────── */}
-      <nav className="fd-nav">
-        <div className="fd-nav-inner">
-          <Link href="/#formations" className="fd-nav-back">
-            <ChevronLeft size={16} />
-            Retour aux formations
-          </Link>
-          <Link href="/login" className="fd-nav-cta">
-            Mon espace <ArrowRight size={14} />
-          </Link>
-        </div>
-      </nav>
+      <SiteNav />
 
       {/* ── Hero banner ──────────────────────────────────────────────────── */}
       <div className="fd-hero-wrap">
@@ -195,7 +185,7 @@ export default async function PublicFormationPage({
                     <p className="fd-price-label">Tarif de la formation</p>
                     <div className="fd-price-amount">
                       <span className="fd-price-n">{formation.price.toLocaleString('fr-FR')}</span>
-                      <span className="fd-price-unit">MAD</span>
+                      <span className="fd-price-unit">€</span>
                     </div>
                     <p className="fd-price-note">Financement CPF / OPCO disponible</p>
                   </>

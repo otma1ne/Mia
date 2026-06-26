@@ -258,7 +258,7 @@ export default function ContratPDF({
         {formationPrice != null && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Coût total</Text>
-            <Text style={styles.infoValue}>{formationPrice.toLocaleString('fr-FR')} MAD</Text>
+            <Text style={styles.infoValue}>{formationPrice.toLocaleString('fr-FR')} €</Text>
           </View>
         )}
 

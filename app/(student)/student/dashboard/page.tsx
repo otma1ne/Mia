@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import type { EnrollmentStatus } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Dashboard — MIA Formation' }
+export const metadata: Metadata = { title: 'Dashboard — MIA Digital' }
 
 const enrollmentStatusConfig: Record<EnrollmentStatus, { label: string; className: string }> = {
   ACTIVE:    { label: 'Actif',     className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },

@@ -2,7 +2,7 @@
 import { getStudents } from '@/app/actions/students'
 import StudentsClient from './_components/students-client'
 
-export const metadata: Metadata = { title: 'Étudiants — MIA Formation' }
+export const metadata: Metadata = { title: 'Étudiants — MIA Digital' }
 
 interface PageProps {
   searchParams: Promise<{ page?: string; search?: string }>

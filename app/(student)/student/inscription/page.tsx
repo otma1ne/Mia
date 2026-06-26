@@ -3,7 +3,7 @@ import { requireAuth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import InscriptionForm from './_components/inscription-form'
 
-export const metadata: Metadata = { title: "Demande d'inscription — MIA Formation" }
+export const metadata: Metadata = { title: "Demande d'inscription — MIA Digital" }
 
 export default async function StudentInscriptionPage({
   searchParams,

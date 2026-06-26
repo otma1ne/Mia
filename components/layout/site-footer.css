@@ -86,5 +86,13 @@
 .sf-legal-link:hover { color: rgba(255,255,255,0.6); }
 
 @media (max-width: 767px) {
-  .sf-grid { grid-template-columns: 1fr 1fr; }
+  .sf-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .sf-brand { grid-column: 1 / -1; }
+  .sf-newsletter-row { flex-direction: column; }
+  .sf-newsletter-btn { width: 100%; display: flex; justify-content: center; }
+}
+
+@media (max-width: 479px) {
+  .sf-grid { grid-template-columns: 1fr; }
+  .sf-inner { padding: 48px 20px 32px; }
 }

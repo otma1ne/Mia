@@ -2,7 +2,7 @@
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Unauthorized — MIA Formation',
+  title: 'Unauthorized — MIA Digital',
 }
 
 export default function UnauthorizedPage() {

@@ -5,7 +5,7 @@ import {
 } from '@/app/actions/trainer-dashboard'
 import AttendanceClient from './_components/attendance-client'
 
-export const metadata: Metadata = { title: 'Présences — MIA Formation' }
+export const metadata: Metadata = { title: 'Présences — MIA Digital' }
 
 export default async function AttendancePage({
   searchParams,

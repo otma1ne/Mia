@@ -3,7 +3,7 @@ import { startOfWeek, endOfWeek } from 'date-fns'
 import { getStudentSessions } from '@/app/actions/student-dashboard'
 import StudentScheduleClient from './_components/student-schedule-client'
 
-export const metadata: Metadata = { title: 'Planning — MIA Formation' }
+export const metadata: Metadata = { title: 'Planning — MIA Digital' }
 
 export default async function StudentSchedulePage({
   searchParams,

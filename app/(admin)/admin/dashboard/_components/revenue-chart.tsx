@@ -26,7 +26,7 @@ function CustomTooltip({ active, payload, label }: {
   return (
     <div className="rounded-lg border bg-background px-3 py-2 shadow-md text-xs">
       <p className="font-semibold mb-1">{label}</p>
-      <p className="text-foreground">{revenue.toLocaleString('fr-FR')} MAD</p>
+      <p className="text-foreground">{revenue.toLocaleString('fr-FR')} €</p>
       <p className="text-muted-foreground">{count} inscription{count !== 1 ? 's' : ''}</p>
     </div>
   )

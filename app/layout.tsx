@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Space_Grotesk, Inter } from 'next/font/google'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Analytics } from "@vercel/analytics/next"
@@ -18,7 +18,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'MIA Formation',
+  title: 'MIA Digital',
   description: 'Centre de formation MIA — Programmes certifiés et formateurs experts.',
 }
 

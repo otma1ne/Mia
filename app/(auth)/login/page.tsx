@@ -7,7 +7,7 @@ import LoginForm from './_components/login-form'
 import '../_components/auth.css'
 
 export const metadata: Metadata = {
-  title: 'Connexion — MIA Formation',
+  title: 'Connexion — MIA Digital',
 }
 
 export default function LoginPage() {
@@ -19,7 +19,7 @@ export default function LoginPage() {
           {/* Logo + title grouped */}
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2 w-fit">
-              <Image src={logoSrc} alt="MIA Formation" width={60} height={60} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Digital" width={60} height={60} className="object-contain" />
             </Link>
             <div>
               <h1 className="auth-heading font-heading mt-1">Bon retour</h1>
@@ -30,7 +30,7 @@ export default function LoginPage() {
           <LoginForm />
 
           <p className="text-xs text-muted-foreground text-center">
-            &copy; {new Date().getFullYear()} MIA Formation. Tous droits réservés.
+            &copy; {new Date().getFullYear()} MIA Digital. Tous droits réservés.
           </p>
         </div>
       </div>
