@@ -1,44 +1,39 @@
-import { db } from '@/lib/db'
-import LandingPage from '@/components/landing/landing-page'
-import type { FormationType } from '@prisma/client'
+export default function ComingSoonPage() {
+  return (
+    <main className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-6 text-white">
+      <div className="max-w-xl w-full text-center space-y-8">
+        {/* Logo / Brand */}
+        <div className="space-y-2">
+          <p className="text-sm font-semibold tracking-[0.3em] text-[#f0a500] uppercase">
+            MIA Digital
+          </p>
+          <h1 className="text-5xl font-bold tracking-tight">Bientôt disponible</h1>
+        </div>
 
-export const dynamic = 'force-dynamic'
+        {/* Description */}
+        <p className="text-gray-400 text-lg leading-relaxed">
+          Notre plateforme de formation est en cours de finalisation.
+          Revenez très bientôt pour découvrir nos programmes certifiés.
+        </p>
 
-export default async function HomePage() {
-  const [rawCategories, rawFormations] = await Promise.all([
-    db.category.findMany({
-      orderBy: { name: 'asc' },
-      include: { _count: { select: { formations: true } } },
-    }),
-    db.formation.findMany({
-      where: { status: 'PUBLISHED' },
-      orderBy: { createdAt: 'desc' },
-      take: 8,
-      include: {
-        category: { select: { name: true } },
-        _count: { select: { enrollments: true, modules: true } },
-      },
-    }),
-  ])
+        {/* Divider */}
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="text-white/20 text-xs">●</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
 
-  const categories = rawCategories.map(c => ({
-    name:        c.name,
-    description: c.description ?? '',
-    count:       c._count.formations,
-  }))
-
-  const formations = rawFormations.map(f => ({
-    id:              f.id,
-    title:           f.title,
-    description:     f.description,
-    categoryName:    f.category.name,
-    type:            f.type as FormationType,
-    price:           f.price,
-    duration:        f.duration,
-    thumbnail:       f.thumbnail,
-    enrollmentCount: f._count.enrollments,
-    moduleCount:     f._count.modules,
-  }))
-
-  return <LandingPage categories={categories} formations={formations} />
+        {/* Contact */}
+        <p className="text-sm text-gray-500">
+          Une question ?{' '}
+          <a
+            href="mailto:contact@miadigital.ma"
+            className="text-[#f0a500] hover:underline transition-colors"
+          >
+            contact@miadigital.ma
+          </a>
+        </p>
+      </div>
+    </main>
+  )
 }
