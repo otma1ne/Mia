@@ -1,39 +1,76 @@
+import Image from 'next/image'
+import logoLightSrc from '@/public/logo-light.png'
+import { Mail } from 'lucide-react'
+import './coming-soon.css'
+
 export default function ComingSoonPage() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-6 text-white">
-      <div className="max-w-xl w-full text-center space-y-8">
-        {/* Logo / Brand */}
-        <div className="space-y-2">
-          <p className="text-sm font-semibold tracking-[0.3em] text-[#f0a500] uppercase">
-            MIA Digital
-          </p>
-          <h1 className="text-5xl font-bold tracking-tight">Bientôt disponible</h1>
+    <div className="cs-root relative min-h-screen overflow-hidden flex flex-col items-center justify-center px-6 text-center">
+      {/* Purple radial glow — top center */}
+      <div className="cs-glow-top absolute pointer-events-none" />
+
+      {/* Warm glow — bottom right */}
+      <div className="cs-glow-bottom absolute pointer-events-none" />
+
+      <div className="relative z-10 flex flex-col items-center max-w-160 w-full">
+
+        {/* Logo */}
+        <div className="mb-12">
+          <Image
+            src={logoLightSrc}
+            alt="MIA Digital"
+            width={72}
+            height={72}
+            className="object-contain"
+            priority
+          />
         </div>
 
-        {/* Description */}
-        <p className="text-gray-400 text-lg leading-relaxed">
-          Notre plateforme de formation est en cours de finalisation.
-          Revenez très bientôt pour découvrir nos programmes certifiés.
+        {/* Badge */}
+        <div className="cs-badge inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-8">
+          <span className="cs-badge-pill px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white">
+            BIENTÔT
+          </span>
+          <span className="cs-badge-text text-[13px] pr-1">
+            La plateforme est en cours de finalisation
+          </span>
+        </div>
+
+        {/* Headline */}
+        <h1 className="cs-headline font-heading mb-6">
+          Quelque chose{' '}
+          <span className="cs-headline-accent">de grand</span>
+          <br />
+          arrive bientôt.
+        </h1>
+
+        {/* Subtitle */}
+        <p className="cs-subtitle text-[16px] leading-[1.8] mb-10 max-w-115">
+          MIA Digital finalise sa plateforme de formation professionnelle.
+          Des programmes certifiés, des formateurs experts — disponibles très prochainement.
         </p>
 
         {/* Divider */}
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-white/20 text-xs">●</span>
-          <div className="flex-1 h-px bg-white/10" />
+        <div className="flex items-center gap-4 w-full max-w-60 mb-10">
+          <div className="cs-divider-line flex-1 h-px" />
+          <span className="cs-divider-dot">●</span>
+          <div className="cs-divider-line flex-1 h-px" />
         </div>
 
         {/* Contact */}
-        <p className="text-sm text-gray-500">
-          Une question ?{' '}
-          <a
-            href="mailto:contact@miadigital.ma"
-            className="text-[#f0a500] hover:underline transition-colors"
-          >
-            contact@miadigital.ma
-          </a>
-        </p>
+        <a
+          href="mailto:contact@miadigital.ma"
+          className="cs-contact-btn inline-flex items-center gap-2.5 px-5 py-3 rounded-full text-[14px] font-semibold transition-all hover:-translate-y-px"
+        >
+          <Mail className="cs-contact-icon w-4 h-4" />
+          contact@miadigital.ma
+        </a>
       </div>
-    </main>
+
+      {/* Footer note */}
+      <p className="cs-footer-note absolute bottom-8 text-[12px]">
+        © {new Date().getFullYear()} MIA Digital. Tous droits réservés.
+      </p>
+    </div>
   )
 }

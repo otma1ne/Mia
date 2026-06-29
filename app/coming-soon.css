@@ -1,0 +1,81 @@
+.cs-root {
+  background: var(--mia-near-black);
+  color: #fff;
+}
+
+.cs-glow-top {
+  top: -260px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 780px;
+  background: radial-gradient(
+    ellipse at 50% 20%,
+    rgba(107, 43, 217, 0.55) 0%,
+    rgba(107, 43, 217, 0.15) 45%,
+    transparent 70%
+  );
+}
+
+.cs-glow-bottom {
+  bottom: -80px;
+  right: -60px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 119, 89, 0.18) 0%,
+    transparent 70%
+  );
+}
+
+.cs-badge {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.cs-badge-pill {
+  background: var(--mia-purple);
+}
+
+.cs-badge-text {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.cs-headline {
+  font-size: clamp(40px, 6vw, 80px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.cs-headline-accent {
+  color: var(--mia-violet);
+}
+
+.cs-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cs-divider-line {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.cs-divider-dot {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 10px;
+}
+
+.cs-contact-btn {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.cs-contact-icon {
+  color: var(--mia-violet);
+}
+
+.cs-footer-note {
+  color: rgba(255, 255, 255, 0.2);
+}
