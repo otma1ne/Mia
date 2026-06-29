@@ -63,6 +63,12 @@ const securityHeaders = {
 // ────────────────────────────────────────
 export default auth((req: NextRequest & { auth: any }) => {
   const { nextUrl } = req
+
+  // ── Coming Soon: redirect everything to home ──────────
+  if (nextUrl.pathname !== '/') {
+    return NextResponse.redirect(new URL('/', nextUrl))
+  }
+
   const isLoggedIn = !!req.auth
   const isAuthRoute = authRoutes.some(r => nextUrl.pathname.startsWith(r))
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname) || publicPrefixes.some(p => nextUrl.pathname.startsWith(p))
