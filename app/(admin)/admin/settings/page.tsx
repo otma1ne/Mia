@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import ProfileForm from './_components/profile-form'
 import PasswordForm from './_components/password-form'
 
-export const metadata: Metadata = { title: 'Paramètres — MIA Digital' }
+export const metadata: Metadata = { title: 'Paramètres — MIA Académie' }
 
 export default async function SettingsPage() {
   const user = await getProfile()

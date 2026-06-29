@@ -1,4 +1,4 @@
-import '../signature.css'
+﻿import '../signature.css'
 import Link from 'next/link'
 import Image from 'next/image'
 import logoSrc from '@/public/logo.png'
@@ -10,7 +10,7 @@ export default function SignatureMerciPage() {
       <header className="ev-topbar">
         <div className="ev-topbar-inner">
           <Link href="/" className="ev-topbar-logo">
-            <Image src={logoSrc} alt="MIA Digital" width={32} height={32} className="object-contain" />
+            <Image src={logoSrc} alt="MIA Académie" width={32} height={32} className="object-contain" />
           </Link>
         </div>
       </header>
@@ -23,7 +23,7 @@ export default function SignatureMerciPage() {
         <p className="ev-screen-sub">
           Votre inscription est confirmée. Vous allez recevoir un email avec vos
           identifiants de connexion à votre espace{' '}
-          <strong>MIA Digital</strong>.
+          <strong>MIA Académie</strong>.
         </p>
         <Link href="/login" className="ev-screen-link">
           Accéder à mon espace

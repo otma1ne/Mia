@@ -80,7 +80,7 @@ export default function HelpContent() {
       <div>
         <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Aide et support</h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          Trouvez des réponses aux questions fréquentes et apprenez à utiliser MIA Digital.
+          Trouvez des réponses aux questions fréquentes et apprenez à utiliser MIA Académie.
         </p>
       </div>
 
@@ -140,10 +140,10 @@ export default function HelpContent() {
                   Envoyez-nous un message et nous vous répondrons dans les 24 heures.
                 </p>
                 <a
-                  href="mailto:support@miaformation.ma"
+                  href="mailto:support@mia-academie.com"
                   className="mt-2 inline-block text-xs font-medium text-zinc-900 underline underline-offset-2 hover:text-zinc-600"
                 >
-                  support@miaformation.ma
+                  support@mia-academie.com
                 </a>
               </div>
             </CardContent>
@@ -156,7 +156,7 @@ export default function HelpContent() {
               <div>
                 <p className="text-sm font-semibold text-zinc-900">Documentation</p>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                  Guides détaillés et références pour chaque fonctionnalité d&apos;MIA Digital.
+                  Guides détaillés et références pour chaque fonctionnalité d&apos;MIA Académie.
                 </p>
                 <span className="mt-2 inline-block text-xs text-muted-foreground">
                   Bientôt disponible

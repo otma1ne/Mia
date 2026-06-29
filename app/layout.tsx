@@ -18,7 +18,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'MIA Digital',
+  title: 'MIA Académie',
   description: 'Centre de formation MIA — Programmes certifiés et formateurs experts.',
 }
 

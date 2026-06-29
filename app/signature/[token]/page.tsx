@@ -48,7 +48,7 @@ export default async function SignaturePage({ params }: Props) {
       <header className="ev-topbar">
         <div className="ev-topbar-inner">
           <Link href="/" className="ev-topbar-logo">
-            <Image src={logoSrc} alt="MIA Digital" width={32} height={32} className="object-contain" />
+            <Image src={logoSrc} alt="MIA Académie" width={32} height={32} className="object-contain" />
           </Link>
         </div>
       </header>
@@ -87,7 +87,7 @@ function ErrorScreen({ message }: { message: string }) {
       <header className="ev-topbar">
         <div className="ev-topbar-inner">
           <Link href="/" className="ev-topbar-logo">
-            <Image src={logoSrc} alt="MIA Digital" width={32} height={32} className="object-contain" />
+            <Image src={logoSrc} alt="MIA Académie" width={32} height={32} className="object-contain" />
           </Link>
         </div>
       </header>

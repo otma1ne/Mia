@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { getExamForStudent } from '@/app/actions/exams'
 import StartExamButton from './_components/start-exam-button'
 
-export const metadata: Metadata = { title: 'Examen — MIA Formation' }
+export const metadata: Metadata = { title: 'Examen — MIA Académie' }
 
 interface Props {
   params: Promise<{ id: string; moduleId: string }>

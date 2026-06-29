@@ -215,7 +215,7 @@ export async function submitEvaluation(
   const evaluationPdfUrl = await new Promise<string>((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:        'MIA Digital/evaluations',
+        folder:        'MIA Academie/evaluations',
         resource_type: 'raw',
         format:        'pdf',
         public_id:     `evaluation-${inscription.id}`,

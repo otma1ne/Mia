@@ -3,7 +3,7 @@ import { getFormations, getFormationFormData } from '@/app/actions/formations'
 import FormationsClient from './_components/formations-client'
 import type { FormationStatus } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Formations — MIA Digital' }
+export const metadata: Metadata = { title: 'Formations — MIA Académie' }
 
 const VALID_STATUSES = new Set<FormationStatus>(['DRAFT', 'PUBLISHED', 'ARCHIVED', 'COMPLETED'])
 

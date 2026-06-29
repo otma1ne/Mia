@@ -1,4 +1,4 @@
-'use server'
+﻿'use server'
 
 import { sendPlanifierNotification } from '@/lib/email'
 import { createCalendarEvent }       from '@/lib/google-calendar'
@@ -24,7 +24,7 @@ function buildCalendarUrl(input: PlanifierInput): string {
 
   const title   = encodeURIComponent(`Échange conseil — ${input.firstName} ${input.lastName}`)
   const details = encodeURIComponent(
-    `Rendez-vous conseil MIA Digital\n\n` +
+    `Rendez-vous conseil MIA Académie\n\n` +
     `Nom : ${input.firstName} ${input.lastName}\n` +
     `Email : ${input.email}\n` +
     `Téléphone : ${input.phone || '—'}\n\n` +
@@ -57,7 +57,7 @@ export async function submitPlanifier(input: PlanifierInput) {
 
   const eventTitle = `Échange conseil — ${input.firstName} ${input.lastName}`
   const eventDesc  =
-    `Rendez-vous conseil MIA Digital\n\n` +
+    `Rendez-vous conseil MIA Académie\n\n` +
     `Nom : ${input.firstName} ${input.lastName}\n` +
     `Email : ${input.email}\n` +
     `Téléphone : ${input.phone || '—'}\n\n` +

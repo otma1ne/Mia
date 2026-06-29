@@ -6,8 +6,8 @@ import SiteFooter from '@/components/layout/site-footer'
 import PlanifierForm from './_components/planifier-form'
 
 export const metadata: Metadata = {
-  title: 'Planifier un échange — MIA Digital',
-  description: 'Réservez un créneau avec un conseiller MIA Digital pour discuter de votre projet de formation professionnelle.',
+  title: 'Planifier un échange — MIA Académie',
+  description: 'Réservez un créneau avec un conseiller MIA Académie pour discuter de votre projet de formation professionnelle.',
 }
 
 const BENEFITS = [
