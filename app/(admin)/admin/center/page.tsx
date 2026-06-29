@@ -2,7 +2,7 @@
 import { getCenters } from '@/app/actions/center'
 import CentersListClient from './_components/centers-list-client'
 
-export const metadata: Metadata = { title: 'Centres — MIA Digital' }
+export const metadata: Metadata = { title: 'Centres — MIA Académie' }
 
 export default async function CentersPage() {
   const centers = await getCenters()

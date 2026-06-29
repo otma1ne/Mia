@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { Award, Download, ExternalLink, FileText } from 'lucide-react'
 
-export const metadata: Metadata = { title: 'Mes documents — MIA Digital' }
+export const metadata: Metadata = { title: 'Mes documents — MIA Académie' }
 
 export default async function DocumentsPage() {
   const session = await requireAuth()

@@ -14,7 +14,7 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Seeding MIA Digital database...')
+  console.log('🌱 Seeding MIA Académie database...')
 
   // ── 1. Clear everything (dependency order) ──────────────────────────────
   await prisma.answerSubmission.deleteMany()
@@ -48,10 +48,10 @@ async function main() {
   // ── 2. Center ────────────────────────────────────────────────────────────
   const center = await prisma.center.create({
     data: {
-      name: 'MIA Digital',
+      name: 'MIA Académie',
       address: '45 Avenue de la Formation, Casablanca 20250, Maroc',
       phone: '+212 522 456 789',
-      email: 'contact@miaformation.ma',
+      email: 'contact@mia-academie.com',
       description:
         "Centre de formation professionnelle certifié Qualiopi, spécialisé dans les métiers du numérique, du management et du design. Nos formateurs sont des experts actifs en entreprise.",
       operatingHours: {
@@ -92,13 +92,13 @@ async function main() {
   const pwd = await bcrypt.hash('TestPassword123!', 12)
 
   const admin = await prisma.user.create({
-    data: { email: 'admin@miaformation.ma', password: pwd, name: 'Karim Bennani', role: UserRole.ADMIN, phone: '+212 661 000 001' },
+    data: { email: 'admin@mia-academie.com', password: pwd, name: 'Karim Bennani', role: UserRole.ADMIN, phone: '+212 661 000 001' },
   })
 
   const [tuWeb, tuData, tuDesign] = await Promise.all([
-    prisma.user.create({ data: { email: 'youssef.trainer@miaformation.ma', password: pwd, name: 'Youssef Alami',   role: UserRole.TRAINER, phone: '+212 661 100 001' } }),
-    prisma.user.create({ data: { email: 'nadia.trainer@miaformation.ma',   password: pwd, name: 'Nadia Chraibi',   role: UserRole.TRAINER, phone: '+212 661 100 002' } }),
-    prisma.user.create({ data: { email: 'mehdi.trainer@miaformation.ma',   password: pwd, name: 'Mehdi Fassi',     role: UserRole.TRAINER, phone: '+212 661 100 003' } }),
+    prisma.user.create({ data: { email: 'youssef.trainer@mia-academie.com', password: pwd, name: 'Youssef Alami',   role: UserRole.TRAINER, phone: '+212 661 100 001' } }),
+    prisma.user.create({ data: { email: 'nadia.trainer@mia-academie.com',   password: pwd, name: 'Nadia Chraibi',   role: UserRole.TRAINER, phone: '+212 661 100 002' } }),
+    prisma.user.create({ data: { email: 'mehdi.trainer@mia-academie.com',   password: pwd, name: 'Mehdi Fassi',     role: UserRole.TRAINER, phone: '+212 661 100 003' } }),
   ])
 
   const students = await Promise.all([
@@ -206,9 +206,9 @@ async function main() {
   // Add materials to Web module 1
   await prisma.moduleMaterial.createMany({
     data: [
-      { moduleId: mWeb1.id, title: 'Guide HTML5 sémantique',        url: 'https://miaformation.ma/resources/html5-guide.pdf',   type: 'pdf'   },
-      { moduleId: mWeb1.id, title: 'CSS Grid & Flexbox — Cheatsheet', url: 'https://miaformation.ma/resources/css-cheatsheet.pdf', type: 'pdf'   },
-      { moduleId: mWeb1.id, title: 'Exercices JavaScript interactifs', url: 'https://miaformation.ma/resources/js-exercises',       type: 'link'  },
+      { moduleId: mWeb1.id, title: 'Guide HTML5 sémantique',        url: 'https://mia-academie.com/resources/html5-guide.pdf',   type: 'pdf'   },
+      { moduleId: mWeb1.id, title: 'CSS Grid & Flexbox — Cheatsheet', url: 'https://mia-academie.com/resources/css-cheatsheet.pdf', type: 'pdf'   },
+      { moduleId: mWeb1.id, title: 'Exercices JavaScript interactifs', url: 'https://mia-academie.com/resources/js-exercises',       type: 'link'  },
     ],
   })
 
@@ -393,7 +393,7 @@ async function main() {
   console.log('✅ 5 inscriptions créées')
 
   // ── 10. Summary ──────────────────────────────────────────────────────────
-  console.log('\n🎉 Base de données MIA Digital initialisée !\n')
+  console.log('\n🎉 Base de données MIA Académie initialisée !\n')
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   console.log('📋 Comptes de test  |  Mot de passe : TestPassword123!')
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')

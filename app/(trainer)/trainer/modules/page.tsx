@@ -3,7 +3,7 @@ import { getTrainerModules } from '@/app/actions/trainer-dashboard'
 import TrainerModulesClient from './_components/trainer-modules-client'
 import type { ModuleStatus } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Mes modules — MIA Digital' }
+export const metadata: Metadata = { title: 'Mes modules — MIA Académie' }
 
 const VALID_STATUSES: ModuleStatus[] = ['PUBLISHED', 'DRAFT', 'COMPLETED', 'ARCHIVED']
 

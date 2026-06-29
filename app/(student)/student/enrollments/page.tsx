@@ -3,7 +3,7 @@ import { getStudentEnrollments } from '@/app/actions/student-dashboard'
 import StudentEnrollmentsClient from './_components/student-enrollments-client'
 import type { EnrollmentStatus } from '@prisma/client'
 
-export const metadata: Metadata = { title: 'Mes inscriptions — MIA Digital' }
+export const metadata: Metadata = { title: 'Mes inscriptions — MIA Académie' }
 
 const VALID_STATUSES: EnrollmentStatus[] = ['ACTIVE', 'COMPLETED', 'DROPPED', 'SUSPENDED']
 

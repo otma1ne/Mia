@@ -1,4 +1,4 @@
-import '../evaluation.css'
+﻿import '../evaluation.css'
 import Link from 'next/link'
 import Image from 'next/image'
 import logoSrc from '@/public/logo.png'
@@ -10,7 +10,7 @@ export default function MerciPage() {
       <header className="ev-topbar">
         <div className="ev-topbar-inner">
           <Link href="/" className="ev-topbar-logo">
-            <Image src={logoSrc} alt="MIA Digital" width={32} height={32} className="object-contain" />
+            <Image src={logoSrc} alt="MIA Académie" width={32} height={32} className="object-contain" />
           </Link>
         </div>
       </header>
@@ -22,7 +22,7 @@ export default function MerciPage() {
         <h1 className="ev-screen-title">Évaluation soumise !</h1>
         <p className="ev-screen-sub">
           Merci pour vos réponses. L&apos;équipe{' '}
-          <strong>MIA Digital</strong> va examiner votre dossier et vous
+          <strong>MIA Académie</strong> va examiner votre dossier et vous
           contactera prochainement pour la suite de votre candidature.
         </p>
         <Link href="/" className="ev-screen-link">

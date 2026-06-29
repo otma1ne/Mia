@@ -91,7 +91,7 @@ const FINANCEMENTS = [
 const TESTIMONIALS = [
   {
     name: 'Yasmine B.', role: 'Développeuse Web · Promo 2025', stars: 5,
-    quote: "MIA Digital a transformé mon parcours. En 6 mois j'ai acquis les compétences pour décrocher mon premier emploi de développeuse.",
+    quote: "MIA Académie a transformé mon parcours. En 6 mois j'ai acquis les compétences pour décrocher mon premier emploi de développeuse.",
   },
   {
     name: 'Karim L.', role: 'Data Analyst · Promo 2024', stars: 5,
@@ -281,7 +281,7 @@ export default function LandingPage({
           {/* Logo — light version shown over dark hero, dark on scroll */}
           <Link href="/" className="shrink-0 justify-self-start">
             <div className="logo-wrap">
-              <Image src={logoLightSrc} alt="MIA Digital" fill sizes="40px"
+              <Image src={logoLightSrc} alt="MIA Académie" fill sizes="40px"
                      className="object-contain logo-light" priority />
               <Image src={logoSrc} alt="" fill sizes="40px"
                      className="object-contain logo-dark" aria-hidden />
@@ -338,7 +338,7 @@ export default function LandingPage({
         aria-label="Menu de navigation"
       >
         <div className="nav-side-header">
-          <Image src={logoSrc} alt="MIA Digital" width={36} height={36} className="object-contain" />
+          <Image src={logoSrc} alt="MIA Académie" width={36} height={36} className="object-contain" />
           <button type="button" className="nav-side-close" onClick={() => setMenuOpen(false)} aria-label="Fermer">
             <X className="w-5 h-5" />
           </button>
@@ -420,7 +420,7 @@ export default function LandingPage({
           <p id="hero-sub"
              className="text-[17px] leading-[1.75] mb-10 mx-auto max-w-[520px]"
              style={{ color: 'rgba(255,255,255,0.55)' }}>
-            MIA Digital accompagne les professionnels dans leur montée en compétences
+            MIA Académie accompagne les professionnels dans leur montée en compétences
             grâce à des programmes certifiés et des formateurs experts du terrain.
           </p>
 
@@ -559,10 +559,10 @@ export default function LandingPage({
             <SectionLabel>Qui sommes-nous ?</SectionLabel>
             <h2 className="font-heading leading-[1.1] tracking-[-0.025em] mb-6"
                 style={{ fontSize: 'clamp(28px, 3.5vw, 42px)', color: 'var(--text-strong)', fontWeight: 400 }}>
-              MIA Digital,<br />l&apos;académie qui<br />transforme les talents
+              MIA Académie,<br />l&apos;académie qui<br />transforme les talents
             </h2>
             <p className="text-[15px] leading-[1.82] mb-5" style={{ color: 'var(--text-muted)' }}>
-              MIA Digital est un centre de formation professionnelle certifié Qualiopi.
+              MIA Académie est un centre de formation professionnelle certifié Qualiopi.
               Nous croyons que chaque apprenant mérite une formation de qualité, accessible
               et directement opérationnelle.
             </p>
@@ -734,7 +734,7 @@ export default function LandingPage({
              style={{ background: 'var(--mia-near-black)', gridTemplateColumns: '1.3fr 0.7fr' }}>
           <div>
             <div className="mb-6">
-              <Image src={logoLightSrc} alt="MIA Digital" width={60} height={60} className="object-contain" />
+              <Image src={logoLightSrc} alt="MIA Académie" width={60} height={60} className="object-contain" />
             </div>
             <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-4"
                  style={{ color: 'var(--text-accent)' }}>
@@ -742,7 +742,7 @@ export default function LandingPage({
             </div>
             <h2 className="font-heading leading-[1.1] tracking-[-0.02em] mb-5"
                 style={{ fontSize: 'clamp(28px, 4vw, 44px)', color: '#fff', fontWeight: 400 }}>
-              Rejoignez MIA Digital<br />dès aujourd&apos;hui
+              Rejoignez MIA Académie<br />dès aujourd&apos;hui
             </h2>
             <p className="text-[16px] leading-[1.7]" style={{ color: 'var(--mia-slate)' }}>
               Accédez à votre espace pour consulter vos formations et démarrer votre
@@ -782,7 +782,7 @@ export default function LandingPage({
               {[
                 { Icon: MapPin, text: '45 Avenue de la Formation, Casablanca 20250, Maroc' },
                 { Icon: Phone,  text: '+212 522 456 789'        },
-                { Icon: Mail,   text: 'contact@miaformation.ma' },
+                { Icon: Mail,   text: 'contact@mia-academie.com' },
               ].map(({ Icon, text }) => (
                 <div key={text} className="flex items-start gap-3.5 text-[14px]"
                      style={{ color: 'var(--text-muted)' }}>
@@ -839,7 +839,7 @@ export default function LandingPage({
             {/* Brand */}
             <div className="footer-brand">
               <div className="mb-4">
-                <Image src={logoLightSrc} alt="MIA Digital" width={60} height={60} className="object-contain" />
+                <Image src={logoLightSrc} alt="MIA Académie" width={60} height={60} className="object-contain" />
               </div>
               <p className="text-[14px] leading-[1.6] max-w-[200px]" style={{ color: 'var(--mia-slate)' }}>
                 Centre de formation professionnelle certifié. Building skills. Shaping futures.
@@ -895,7 +895,7 @@ export default function LandingPage({
           <div className="flex items-center justify-between pt-6 flex-wrap gap-4"
                style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
             <span className="text-[12px]" style={{ color: 'rgba(255,255,255,0.25)' }}>
-              © {new Date().getFullYear()} MIA Digital. Tous droits réservés.
+              © {new Date().getFullYear()} MIA Académie. Tous droits réservés.
             </span>
             <div className="flex gap-5">
               {['Confidentialité', 'Conditions'].map(item => (

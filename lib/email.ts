@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+﻿import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
   host:   process.env.SMTP_HOST,
@@ -10,8 +10,8 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-const FROM       = process.env.SMTP_FROM    ?? 'MIA Digital <noreply@miadigital.ma>'
-const CONTACT_TO = process.env.CONTACT_EMAIL ?? 'contact@miadigital.ma'
+const FROM       = process.env.SMTP_FROM    ?? 'MIA Académie <noreply@mia-academie.com>'
+const CONTACT_TO = process.env.CONTACT_EMAIL ?? 'contact@mia-academie.com'
 const APP_URL    = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 // ─── Design system tokens ────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ function shell(content: string) {
         <!-- Footer -->
         <div style="background:#fafafa;border-top:1px solid #f0f0f0;padding:18px 36px;">
           <p style="font-size:12px;color:#9ca3af;margin:0;line-height:1.7;">
-            <strong style="color:${PURPLE};">MIA Digital</strong> — Centre de formation professionnelle<br/>
+            <strong style="color:${PURPLE};">MIA Académie</strong> — Centre de formation professionnelle<br/>
             <a href="${APP_URL}" style="color:#9ca3af;text-decoration:none;">${APP_URL}</a>
           </p>
         </div>
@@ -109,7 +109,7 @@ export async function sendEvaluationEmail(to: string, firstName: string, token: 
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Complétez votre évaluation de besoins — MIA Digital',
+    subject: 'Complétez votre évaluation de besoins — MIA Académie',
     html: shell(`
       ${greeting(firstName)}
       ${para('Merci pour votre demande d\'inscription. Afin de mieux vous accompagner, nous avons besoin de quelques informations complémentaires.')}
@@ -125,7 +125,7 @@ export async function sendSignatureRequestEmail(to: string, firstName: string, t
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Documents à signer — MIA Digital',
+    subject: 'Documents à signer — MIA Académie',
     html: shell(`
       ${greeting(firstName)}
       ${para('Votre candidature a été <strong>acceptée</strong>. Pour finaliser votre inscription, merci de consulter et signer électroniquement vos documents contractuels.')}
@@ -150,7 +150,7 @@ export async function sendAcceptanceEmail(
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: '🎉 Votre candidature a été acceptée — MIA Digital',
+    subject: '🎉 Votre candidature a été acceptée — MIA Académie',
     html: shell(`
       ${greeting(firstName)}
       ${para(`Nous avons le plaisir de vous informer que votre candidature pour la formation <strong>${formationTitle}</strong> a été <strong style="color:#16a34a;">acceptée</strong>. 🎉`)}
@@ -171,7 +171,7 @@ export async function sendEnrollmentConfirmationEmail(
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: `Votre inscription à ${formationTitle} est confirmée — MIA Digital`,
+    subject: `Votre inscription à ${formationTitle} est confirmée — MIA Académie`,
     html: shell(`
       ${greeting(firstName)}
       ${para(`Félicitations ! Votre inscription à la formation <strong>${formationTitle}</strong> est maintenant <strong style="color:#16a34a;">confirmée</strong>. 🎉`)}
@@ -186,10 +186,10 @@ export async function sendTrainerWelcomeEmail(to: string, name: string, password
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Bienvenue sur MIA Digital — vos identifiants de connexion',
+    subject: 'Bienvenue sur MIA Académie — vos identifiants de connexion',
     html: shell(`
       ${greeting(name)}
-      ${para('Votre compte <strong>formateur</strong> a été créé sur <strong>MIA Digital</strong>. Voici vos identifiants de connexion :')}
+      ${para('Votre compte <strong>formateur</strong> a été créé sur <strong>MIA Académie</strong>. Voici vos identifiants de connexion :')}
       ${credentialsBox(to, password)}
       ${warningNote('Pour votre sécurité, nous vous recommandons de <strong>changer ce mot de passe</strong> dès votre première connexion.')}
       ${btn(loginUrl, 'Accéder à mon espace')}
@@ -205,7 +205,7 @@ export async function sendDeclineEmail(
 ) {
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Suite à votre candidature — MIA Digital',
+    subject: 'Suite à votre candidature — MIA Académie',
     html: shell(`
       ${greeting(firstName)}
       ${para(`Nous avons bien étudié votre candidature pour la formation <strong>${formationTitle}</strong>.`)}
@@ -230,7 +230,7 @@ export async function sendBilanChaudEmail(
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: '📋 Votre avis sur la formation — MIA Digital',
+    subject: '📋 Votre avis sur la formation — MIA Académie',
     html: shell(`
       ${greeting(firstName)}
       ${para(`Félicitations ! Vous avez terminé votre formation <strong>${formationTitle}</strong>. 🎉`)}
@@ -251,7 +251,7 @@ export async function sendBilanFroidEmail(
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: '📋 Suivi de votre formation — MIA Digital',
+    subject: '📋 Suivi de votre formation — MIA Académie',
     html: shell(`
       ${greeting(firstName)}
       ${para(`Cela fait 3 mois que vous avez terminé votre formation <strong>${formationTitle}</strong>.`)}
@@ -375,7 +375,7 @@ export async function sendGradingNotificationEmail(params: {
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: `📝 Correction requise — ${moduleName} — MIA Digital`,
+    subject: `📝 Correction requise — ${moduleName} — MIA Académie`,
     html: shell(`
       ${greeting(trainerName)}
       ${para('Un étudiant vient de soumettre un examen contenant des <strong>questions ouvertes</strong> qui nécessitent votre correction.')}
@@ -396,10 +396,10 @@ export async function sendCommercialWelcomeEmail(to: string, name: string, passw
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Bienvenue sur MIA Digital — votre espace commercial',
+    subject: 'Bienvenue sur MIA Académie — votre espace commercial',
     html: shell(`
       ${greeting(name)}
-      ${para('Votre compte <strong>commercial</strong> a été créé sur <strong>MIA Digital</strong>. Voici vos identifiants de connexion :')}
+      ${para('Votre compte <strong>commercial</strong> a été créé sur <strong>MIA Académie</strong>. Voici vos identifiants de connexion :')}
       ${credentialsBox(to, password)}
       ${warningNote('Pour votre sécurité, nous vous recommandons de <strong>changer ce mot de passe</strong> dès votre première connexion.')}
       ${btn(loginUrl, 'Accéder à mon espace')}

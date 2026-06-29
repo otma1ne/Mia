@@ -16,9 +16,9 @@ export default function Unauthorized() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-semibold text-sm">
             <div className="w-7 h-7 rounded-md bg-white border flex items-center justify-center shrink-0">
-              <Image src={logoSrc} alt="MIA Digital" width={20} height={20} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Académie" width={20} height={20} className="object-contain" />
             </div>
-            MIA Digital
+            MIA Académie
           </Link>
           <Link
             href="/login"
@@ -88,7 +88,7 @@ export default function Unauthorized() {
       <footer className="border-t px-6 py-6">
         <div className="mx-auto max-w-6xl flex items-center justify-center">
           <p className="text-xs text-zinc-400">
-            © {new Date().getFullYear()} Académie MIA Digital · contact@miaformation.ma
+            © {new Date().getFullYear()} MIA Académie · contact@mia-academie.com
           </p>
         </div>
       </footer>

@@ -41,7 +41,7 @@ export async function generateMetadata({
   })
   if (!f) return { title: 'Formation introuvable' }
   return {
-    title: `${f.title} — MIA Digital`,
+    title: `${f.title} — MIA Académie`,
     description: f.description.slice(0, 160),
   }
 }

@@ -2,7 +2,7 @@
 import { getTrainers, getTrainerFormCategories } from '@/app/actions/trainers'
 import TrainersClient from './_components/trainers-client'
 
-export const metadata: Metadata = { title: 'Formateurs — MIA Digital' }
+export const metadata: Metadata = { title: 'Formateurs — MIA Académie' }
 
 interface PageProps {
   searchParams: Promise<{ page?: string; search?: string }>

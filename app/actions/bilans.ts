@@ -65,7 +65,7 @@ export async function submitBilan(
     try {
       pdfUrl = await uploadToCloudinary(
         pdfBuffer,
-        `MIA Digital/bilans/${bilan.type.toLowerCase()}-${bilan.id}`
+        `MIA Academie/bilans/${bilan.type.toLowerCase()}-${bilan.id}`
       )
     } catch (err) {
       console.error('[submitBilan] Cloudinary upload error:', err)

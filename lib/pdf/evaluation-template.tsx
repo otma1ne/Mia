@@ -174,7 +174,7 @@ export default function EvaluationPDF({
         <View style={styles.header}>
           <View style={styles.headerLogo} />
           <View>
-            <Text style={styles.headerTitle}>MIA Digital</Text>
+            <Text style={styles.headerTitle}>MIA Académie</Text>
             <Text style={styles.headerSubtitle}>Évaluation de Besoins</Text>
           </View>
         </View>
@@ -226,7 +226,7 @@ export default function EvaluationPDF({
 
         {/* Footer */}
         <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>MIA Digital — Document confidentiel</Text>
+          <Text style={styles.footerText}>MIA Académie — Document confidentiel</Text>
           <Text style={styles.footerText}>Soumis le {dateStr}</Text>
         </View>
 
