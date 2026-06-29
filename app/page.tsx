@@ -59,11 +59,11 @@ export default function ComingSoonPage() {
 
         {/* Contact */}
         <a
-          href="mailto:contact@miadigital.ma"
+          href="mailto:contact@mia-academie.com"
           className="cs-contact-btn inline-flex items-center gap-2.5 px-5 py-3 rounded-full text-[14px] font-semibold transition-all hover:-translate-y-px"
         >
           <Mail className="cs-contact-icon w-4 h-4" />
-          contact@miadigital.ma
+          contact@mia-academie.com
         </a>
       </div>
 

@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 })
 
 const FROM       = process.env.SMTP_FROM    ?? 'MIA Digital <noreply@miadigital.ma>'
-const CONTACT_TO = process.env.CONTACT_EMAIL ?? 'contact@miadigital.ma'
+const CONTACT_TO = process.env.CONTACT_EMAIL ?? 'contact@mia-academie.com'
 const APP_URL    = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 // ─── Design system tokens ────────────────────────────────────────────────────
