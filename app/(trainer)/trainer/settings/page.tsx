@@ -4,7 +4,7 @@ import { getProfile } from '@/app/actions/profile'
 import ProfileForm from '@/app/(admin)/admin/settings/_components/profile-form'
 import PasswordForm from '@/app/(admin)/admin/settings/_components/password-form'
 
-export const metadata: Metadata = { title: 'Paramètres — MIA Digital' }
+export const metadata: Metadata = { title: 'Paramètres — MIA Académie' }
 
 export default async function TrainerSettingsPage() {
   const user = await getProfile()

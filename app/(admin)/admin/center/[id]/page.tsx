@@ -9,7 +9,7 @@ import RoomsManager from '../_components/rooms-manager'
 import CenterLegalForm from '../_components/center-legal-form'
 import CenterAccessPlansForm from '../_components/center-access-plans-form'
 
-export const metadata: Metadata = { title: 'Centre — MIA Formation' }
+export const metadata: Metadata = { title: 'Centre — MIA Académie' }
 
 export default async function CenterDetailPage({
   params,

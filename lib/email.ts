@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import type { PlanifierInput } from '@/app/actions/planifier'
 
 const transporter = nodemailer.createTransport({
   host:   process.env.SMTP_HOST,
@@ -10,53 +11,94 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-const FROM       = process.env.SMTP_FROM    ?? 'MIA Digital <noreply@miadigital.ma>'
-const CONTACT_TO = process.env.CONTACT_EMAIL ?? 'contact@mia-academie.com'
-const APP_URL    = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+const FROM        = process.env.SMTP_FROM    ?? 'MIA Académie <noreply@mia-academie.com>'
+const CONTACT_TO  = process.env.CONTACT_EMAIL ?? 'contact@mia-academie.com'
+const APP_URL     = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+const PORTAL_HOST = APP_URL.replace(/^https?:\/\//, '')
+const LOGO_URL     = `${APP_URL}/logo.png`
 
 // ─── Design system tokens ────────────────────────────────────────────────────
-const PURPLE  = '#6B2BD9'
-const NEAR_BK = '#17171C'
-const FONT    = "-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif"
+const PURPLE      = '#6B2BD9'
+const NEAR_BK      = '#17171C'
+const DARK_CARD_BOX = '#23232B'
+const BADGE_BG     = '#F3EDFF'
+const FONT         = "-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif"
 
-// ─── Shared shell ─────────────────────────────────────────────────────────────
-// Wraps every email in a consistent branded card
-function shell(content: string) {
+// ─── Header / footer (MIA brand template) ──────────────────────────────────────
+
+function header() {
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-bottom:1px solid #eef0f3;">
+      <tr>
+        <td style="padding:24px 36px;vertical-align:middle;">
+          <img src="${LOGO_URL}" alt="MIA" height="26" style="display:block;border:0;" />
+        </td>
+        <td style="padding:24px 36px;text-align:right;vertical-align:middle;">
+          <span style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:0.12em;text-transform:uppercase;">Académie</span>
+        </td>
+      </tr>
+    </table>
+  `
+}
+
+function contactBand(html: string) {
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fafafa;border-top:1px solid #f0f0f0;">
+      <tr><td style="padding:16px 36px;text-align:center;">
+        <p style="margin:0;font-size:13px;color:#6b7280;">${html}</p>
+      </td></tr>
+    </table>
+  `
+}
+
+function bottomFooter() {
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr><td style="padding:28px 36px;text-align:center;">
+        <img src="${LOGO_URL}" alt="MIA" height="20" style="display:inline-block;margin-bottom:10px;border:0;" />
+        <p style="margin:0 0 8px;font-size:12px;color:#9ca3af;">MIA Académie · Building Skills. Shaping Futures.</p>
+        <p style="margin:0;font-size:11px;color:#c1c5cb;">
+          <a href="${APP_URL}/courses" style="color:#c1c5cb;text-decoration:none;">Centre d'aide</a>
+          &nbsp;·&nbsp;
+          <a href="${APP_URL}" style="color:#c1c5cb;text-decoration:none;">Confidentialité</a>
+        </p>
+      </td></tr>
+    </table>
+  `
+}
+
+// Wraps every email in the consistent MIA brand card
+function shell(content: string, contactLine?: string) {
+  const defaultContact = `Une question ? Contactez notre équipe à <a href="mailto:${CONTACT_TO}" style="color:${PURPLE};font-weight:600;text-decoration:none;">${CONTACT_TO}</a>`
   return `
     <div style="font-family:${FONT};max-width:580px;margin:0 auto;color:${NEAR_BK};background:#f6f6f9;padding:32px 16px;">
-      <div style="border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
-
-        <!-- Header -->
-        <div style="background:${NEAR_BK};padding:26px 36px;">
-          <div>
-            <span style="font-size:21px;font-weight:800;color:#fff;letter-spacing:-0.02em;">MIA</span>
-            <span style="font-size:21px;font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:-0.02em;"> Digital</span>
-          </div>
-          <div style="width:30px;height:3px;background:${PURPLE};border-radius:2px;margin-top:10px;"></div>
-        </div>
-
-        <!-- Body -->
-        <div style="background:#fff;padding:36px 36px 28px;">
+      <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+        ${header()}
+        <div style="padding:32px 36px 28px;">
           ${content}
         </div>
-
-        <!-- Footer -->
-        <div style="background:#fafafa;border-top:1px solid #f0f0f0;padding:18px 36px;">
-          <p style="font-size:12px;color:#9ca3af;margin:0;line-height:1.7;">
-            <strong style="color:${PURPLE};">MIA Digital</strong> — Centre de formation professionnelle<br/>
-            <a href="${APP_URL}" style="color:#9ca3af;text-decoration:none;">${APP_URL}</a>
-          </p>
-        </div>
-
+        ${contactBand(contactLine ?? defaultContact)}
       </div>
+      ${bottomFooter()}
     </div>
   `
 }
 
 // ─── Reusable blocks ──────────────────────────────────────────────────────────
 
-function greeting(name: string) {
-  return `<p style="font-size:16px;font-weight:600;color:${NEAR_BK};margin:0 0 12px;">Bonjour ${name},</p>`
+function badge(text: string) {
+  return `
+    <div style="margin:0 0 18px;">
+      <span style="display:inline-block;background:${BADGE_BG};color:${PURPLE};font-size:11px;font-weight:800;
+                   letter-spacing:0.06em;text-transform:uppercase;padding:6px 14px;border-radius:20px;">
+        ${text}
+      </span>
+    </div>
+  `
+}
+
+function heading(text: string) {
+  return `<h1 style="margin:0 0 16px;font-size:28px;line-height:1.22;font-weight:600;color:${NEAR_BK};letter-spacing:-0.02em;">${text}</h1>`
 }
 
 function para(text: string) {
@@ -85,13 +127,70 @@ function infoBox(content: string, bg = '#F5F0FF', border = 'rgba(107,43,217,0.15
   `
 }
 
-function credentialsBox(email: string, password: string) {
-  return infoBox(`
-    <p style="margin:0 0 6px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;">Identifiant</p>
-    <p style="margin:0 0 16px;font-size:14px;font-weight:700;color:${NEAR_BK};">${email}</p>
-    <p style="margin:0 0 6px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;">Mot de passe temporaire</p>
-    <p style="margin:0;font-size:20px;font-weight:800;letter-spacing:4px;font-family:monospace;color:${PURPLE};">${password}</p>
-  `, '#f9fafb', '#e5e7eb')
+// Dark credentials card — matches the MIA brand template exactly
+function credentialsCard(params: {
+  username: string
+  password: string
+  buttonHref: string
+  buttonLabel?: string
+  portalLabel?: string
+}) {
+  const { username, password, buttonHref, buttonLabel = 'Accéder à mon espace', portalLabel = 'Portail' } = params
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${NEAR_BK};border-radius:16px;margin:24px 0;">
+      <tr><td style="padding:28px 28px 26px;">
+        <p style="margin:0 0 14px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);">
+          Vos identifiants de connexion
+        </p>
+        <p style="margin:0 0 4px;font-size:12px;color:rgba(255,255,255,0.45);">${portalLabel}</p>
+        <p style="margin:0 0 18px;font-size:14px;font-weight:600;color:#fff;">${PORTAL_HOST}</p>
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="48%" style="background:${DARK_CARD_BOX};border-radius:10px;padding:14px 16px;vertical-align:top;">
+              <p style="margin:0 0 4px;font-size:11px;color:rgba(255,255,255,0.4);">Identifiant</p>
+              <p style="margin:0;font-size:14px;font-weight:700;color:#fff;word-break:break-all;">${username}</p>
+            </td>
+            <td width="4%">&nbsp;</td>
+            <td width="48%" style="background:${DARK_CARD_BOX};border-radius:10px;padding:14px 16px;vertical-align:top;">
+              <p style="margin:0 0 4px;font-size:11px;color:rgba(255,255,255,0.4);">Mot de passe temporaire</p>
+              <p style="margin:0;font-size:14px;font-weight:700;font-family:monospace;letter-spacing:1px;color:#fff;">${password}</p>
+            </td>
+          </tr>
+        </table>
+
+        <div style="text-align:center;margin-top:22px;">
+          <a href="${buttonHref}"
+             style="display:inline-block;background:${PURPLE};color:#fff;text-decoration:none;
+                    padding:13px 34px;border-radius:32px;font-weight:700;font-size:14px;">
+            ${buttonLabel}
+          </a>
+        </div>
+      </td></tr>
+    </table>
+  `
+}
+
+function nextSteps(title: string, items: { title: string; desc: string }[]) {
+  const rows = items.map((it, i) => `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+      <tr>
+        <td width="32" style="vertical-align:top;">
+          <div style="width:24px;height:24px;border-radius:50%;background:${BADGE_BG};color:${PURPLE};
+                      font-size:12px;font-weight:800;text-align:center;line-height:24px;">${i + 1}</div>
+        </td>
+        <td style="padding-left:12px;vertical-align:top;">
+          <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:${NEAR_BK};">${it.title}</p>
+          <p style="margin:0;font-size:13px;color:#6b7280;line-height:1.6;">${it.desc}</p>
+        </td>
+      </tr>
+    </table>
+  `).join('')
+
+  return `
+    <p style="margin:28px 0 16px;font-size:16px;font-weight:700;color:${NEAR_BK};">${title}</p>
+    ${rows}
+  `
 }
 
 function warningNote(text: string) {
@@ -109,9 +208,10 @@ export async function sendEvaluationEmail(to: string, firstName: string, token: 
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Complétez votre évaluation de besoins — MIA Digital',
+    subject: 'Complétez votre évaluation de besoins — MIA Académie',
     html: shell(`
-      ${greeting(firstName)}
+      ${badge('Évaluation requise')}
+      ${heading(`Une dernière étape, ${firstName}.`)}
       ${para('Merci pour votre demande d\'inscription. Afin de mieux vous accompagner, nous avons besoin de quelques informations complémentaires.')}
       ${para('Veuillez compléter votre <strong>évaluation de besoins</strong> en cliquant sur le bouton ci-dessous.')}
       ${btn(link, 'Compléter l\'évaluation')}
@@ -125,9 +225,10 @@ export async function sendSignatureRequestEmail(to: string, firstName: string, t
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Documents à signer — MIA Digital',
+    subject: 'Documents à signer — MIA Académie',
     html: shell(`
-      ${greeting(firstName)}
+      ${badge('Documents à signer')}
+      ${heading(`Plus qu'une étape, ${firstName}.`)}
       ${para('Votre candidature a été <strong>acceptée</strong>. Pour finaliser votre inscription, merci de consulter et signer électroniquement vos documents contractuels.')}
       ${infoBox(`
         <p style="margin:0;font-size:13px;color:#6b7280;line-height:1.6;">
@@ -150,14 +251,17 @@ export async function sendAcceptanceEmail(
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: '🎉 Votre candidature a été acceptée — MIA Digital',
+    subject: '🎉 Votre candidature a été acceptée — MIA Académie',
     html: shell(`
-      ${greeting(firstName)}
-      ${para(`Nous avons le plaisir de vous informer que votre candidature pour la formation <strong>${formationTitle}</strong> a été <strong style="color:#16a34a;">acceptée</strong>. 🎉`)}
-      ${para('Votre compte a été créé. Voici vos identifiants de connexion :')}
-      ${credentialsBox(to, generatedPassword)}
-      ${warningNote('Pour votre sécurité, nous vous recommandons de <strong>changer ce mot de passe</strong> dès votre première connexion.')}
-      ${btn(loginUrl, 'Accéder à mon espace', '#16a34a')}
+      ${badge('Candidature validée')}
+      ${heading(`Bienvenue dans la promotion, ${firstName}.`)}
+      ${para(`Votre candidature pour la formation <strong>${formationTitle}</strong> a été <strong style="color:#16a34a;">acceptée</strong>. Votre compte est prêt — voici vos identifiants de connexion.`)}
+      ${credentialsCard({ username: to, password: generatedPassword, buttonHref: loginUrl, portalLabel: 'Espace étudiant' })}
+      ${nextSteps('Vos prochaines étapes', [
+        { title: 'Connectez-vous et changez votre mot de passe', desc: 'Utilisez les identifiants ci-dessus pour accéder à votre espace.' },
+        { title: 'Complétez votre profil', desc: 'Ajoutez vos informations pour un meilleur accompagnement.' },
+        { title: 'Consultez votre planning', desc: 'Retrouvez les dates et horaires de votre formation.' },
+      ])}
     `),
   })
 }
@@ -171,10 +275,11 @@ export async function sendEnrollmentConfirmationEmail(
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: `Votre inscription à ${formationTitle} est confirmée — MIA Digital`,
+    subject: `Votre inscription à ${formationTitle} est confirmée — MIA Académie`,
     html: shell(`
-      ${greeting(firstName)}
-      ${para(`Félicitations ! Votre inscription à la formation <strong>${formationTitle}</strong> est maintenant <strong style="color:#16a34a;">confirmée</strong>. 🎉`)}
+      ${badge('Inscription confirmée')}
+      ${heading(`C'est confirmé, ${firstName} !`)}
+      ${para(`Votre inscription à la formation <strong>${formationTitle}</strong> est maintenant <strong style="color:#16a34a;">confirmée</strong>. 🎉`)}
       ${para('Vous pouvez dès à présent accéder à votre espace étudiant pour suivre vos cours.')}
       ${btn(loginUrl, 'Accéder à mon espace', '#16a34a')}
     `),
@@ -186,13 +291,17 @@ export async function sendTrainerWelcomeEmail(to: string, name: string, password
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Bienvenue sur MIA Digital — vos identifiants de connexion',
+    subject: 'Bienvenue sur MIA Académie — vos identifiants de connexion',
     html: shell(`
-      ${greeting(name)}
-      ${para('Votre compte <strong>formateur</strong> a été créé sur <strong>MIA Digital</strong>. Voici vos identifiants de connexion :')}
-      ${credentialsBox(to, password)}
-      ${warningNote('Pour votre sécurité, nous vous recommandons de <strong>changer ce mot de passe</strong> dès votre première connexion.')}
-      ${btn(loginUrl, 'Accéder à mon espace')}
+      ${badge('Compte formateur')}
+      ${heading(`Bienvenue dans l'équipe, ${name}.`)}
+      ${para('Votre compte <strong>formateur</strong> a été créé sur <strong>MIA Académie</strong>. Voici vos identifiants de connexion.')}
+      ${credentialsCard({ username: to, password, buttonHref: loginUrl, portalLabel: 'Espace formateur' })}
+      ${nextSteps('Vos prochaines étapes', [
+        { title: 'Connectez-vous et changez votre mot de passe', desc: 'Utilisez les identifiants ci-dessus pour accéder à votre espace.' },
+        { title: 'Découvrez vos modules', desc: 'Consultez les formations qui vous sont assignées.' },
+        { title: 'Préparez votre planning', desc: 'Vérifiez vos prochaines sessions de formation.' },
+      ])}
     `),
   })
 }
@@ -205,9 +314,10 @@ export async function sendDeclineEmail(
 ) {
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Suite à votre candidature — MIA Digital',
+    subject: 'Suite à votre candidature — MIA Académie',
     html: shell(`
-      ${greeting(firstName)}
+      ${badge('Candidature étudiée')}
+      ${heading(`Concernant votre candidature, ${firstName}.`)}
       ${para(`Nous avons bien étudié votre candidature pour la formation <strong>${formationTitle}</strong>.`)}
       ${para('Après examen de votre dossier, nous ne sommes malheureusement pas en mesure de donner suite à votre demande pour le moment.')}
       ${adminNote ? infoBox(`
@@ -230,9 +340,10 @@ export async function sendBilanChaudEmail(
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: '📋 Votre avis sur la formation — MIA Digital',
+    subject: '📋 Votre avis sur la formation — MIA Académie',
     html: shell(`
-      ${greeting(firstName)}
+      ${badge('Bilan chaud')}
+      ${heading(`Votre avis compte, ${firstName}.`)}
       ${para(`Félicitations ! Vous avez terminé votre formation <strong>${formationTitle}</strong>. 🎉`)}
       ${para('Nous aimerions connaître votre retour sur cette expérience. Veuillez compléter le formulaire ci-dessous (environ 5 minutes).')}
       ${btn(link, 'Compléter mon Bilan Chaud')}
@@ -251,9 +362,10 @@ export async function sendBilanFroidEmail(
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: '📋 Suivi de votre formation — MIA Digital',
+    subject: '📋 Suivi de votre formation — MIA Académie',
     html: shell(`
-      ${greeting(firstName)}
+      ${badge('Bilan froid')}
+      ${heading(`Des nouvelles de votre parcours, ${firstName} ?`)}
       ${para(`Cela fait 3 mois que vous avez terminé votre formation <strong>${formationTitle}</strong>.`)}
       ${para('Nous aimerions savoir comment vous appliquez vos apprentissages dans la pratique. Veuillez compléter ce formulaire de suivi (environ 5 minutes).')}
       ${btn(link, 'Compléter mon Bilan Froid')}
@@ -279,7 +391,8 @@ export async function sendBilanReminderEmail(
     from: FROM, to,
     subject: `⏰ Rappel : ${title} — ${formationTitle}`,
     html: shell(`
-      ${greeting(firstName)}
+      ${badge('Rappel')}
+      ${heading(`N'oubliez pas votre ${title}, ${firstName}.`)}
       ${para(`Nous avons remarqué que vous n'avez pas encore complété votre <strong>${title}</strong> pour la formation <strong>${formationTitle}</strong>.`)}
       ${para(detail)}
       ${btn(link, 'Compléter maintenant', '#F59E0B')}
@@ -300,8 +413,9 @@ export async function sendAttestationEmail(
     from: FROM, to,
     subject: `🎓 Votre attestation de fin de formation — ${formationTitle}`,
     html: shell(`
-      ${greeting(firstName + ' 🎓')}
-      ${para(`Vous avez terminé avec succès la formation <strong>${formationTitle}</strong>. Félicitations !`)}
+      ${badge('Formation terminée')}
+      ${heading(`Félicitations, ${firstName} ! 🎓`)}
+      ${para(`Vous avez terminé avec succès la formation <strong>${formationTitle}</strong>.`)}
       ${para('Votre <strong>attestation de fin de formation</strong> (certificat de réalisation) est maintenant disponible. Vous pouvez la télécharger directement ci-dessous ou depuis votre espace étudiant.')}
       ${btn(attestationUrl, 'Télécharger mon attestation', '#16a34a')}
       ${divider()}
@@ -347,7 +461,8 @@ export async function sendConvocationEmail(params: {
     from: FROM, to,
     subject: `📅 Convocation — ${formationTitle} — ${dateStr}`,
     html: shell(`
-      ${greeting(firstName)}
+      ${badge('Convocation')}
+      ${heading(`Votre prochaine session, ${firstName}.`)}
       ${para(`Vous êtes convoqué(e) à la session suivante dans le cadre de votre formation <strong>${formationTitle}</strong>.`)}
       ${infoBox(`
         <p style="margin:0 0 10px;font-size:15px;font-weight:700;color:${NEAR_BK};">${moduleName}</p>
@@ -375,9 +490,10 @@ export async function sendGradingNotificationEmail(params: {
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: `📝 Correction requise — ${moduleName} — MIA Digital`,
+    subject: `📝 Correction requise — ${moduleName} — MIA Académie`,
     html: shell(`
-      ${greeting(trainerName)}
+      ${badge('Correction requise')}
+      ${heading(`Une copie vous attend, ${trainerName}.`)}
       ${para('Un étudiant vient de soumettre un examen contenant des <strong>questions ouvertes</strong> qui nécessitent votre correction.')}
       ${infoBox(`
         <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.06em;">Détails</p>
@@ -396,19 +512,22 @@ export async function sendCommercialWelcomeEmail(to: string, name: string, passw
 
   await transporter.sendMail({
     from: FROM, to,
-    subject: 'Bienvenue sur MIA Digital — votre espace commercial',
+    subject: 'Bienvenue sur MIA Académie — votre espace commercial',
     html: shell(`
-      ${greeting(name)}
-      ${para('Votre compte <strong>commercial</strong> a été créé sur <strong>MIA Digital</strong>. Voici vos identifiants de connexion :')}
-      ${credentialsBox(to, password)}
-      ${warningNote('Pour votre sécurité, nous vous recommandons de <strong>changer ce mot de passe</strong> dès votre première connexion.')}
-      ${btn(loginUrl, 'Accéder à mon espace')}
+      ${badge('Compte commercial')}
+      ${heading(`Bienvenue dans l'équipe, ${name}.`)}
+      ${para('Votre compte <strong>commercial</strong> a été créé sur <strong>MIA Académie</strong>. Voici vos identifiants de connexion.')}
+      ${credentialsCard({ username: to, password, buttonHref: loginUrl, portalLabel: 'Espace commercial' })}
+      ${nextSteps('Vos prochaines étapes', [
+        { title: 'Connectez-vous et changez votre mot de passe', desc: 'Utilisez les identifiants ci-dessus pour accéder à votre espace.' },
+        { title: 'Découvrez votre tableau de bord', desc: 'Suivez les candidatures et inscriptions en cours.' },
+        { title: 'Configurez vos préférences', desc: 'Personnalisez vos notifications et votre profil.' },
+      ])}
     `),
   })
 }
 
 // ── Planifier un échange — notification to admin ──────────────────────────────
-import type { PlanifierInput } from '@/app/actions/planifier'
 
 export async function sendPlanifierNotification(input: PlanifierInput) {
   const DAY_LABELS: Record<number, string> = {
@@ -424,7 +543,8 @@ export async function sendPlanifierNotification(input: PlanifierInput) {
     replyTo: input.email,
     subject: `📅 Nouvelle demande de RDV — ${input.firstName} ${input.lastName}`,
     html: shell(`
-      <p style="font-size:15px;font-weight:700;color:${NEAR_BK};margin:0 0 20px;">Nouvelle demande de rendez-vous</p>
+      ${badge('Nouvelle demande')}
+      ${heading('Nouveau rendez-vous à planifier.')}
       ${infoBox(`
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
           <tr>
@@ -457,6 +577,6 @@ export async function sendPlanifierNotification(input: PlanifierInput) {
       <p style="font-size:12px;color:#9ca3af;margin:16px 0 0;">
         Répondez directement à cet email pour contacter ${input.firstName}.
       </p>
-    `),
+    `, `Répondez directement à cet email pour contacter ${input.firstName}.`),
   })
 }

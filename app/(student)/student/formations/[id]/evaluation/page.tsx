@@ -12,7 +12,7 @@ import EvaluationForm from './_components/evaluation-form'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
-export const metadata: Metadata = { title: 'Évaluation finale — MIA Formation' }
+export const metadata: Metadata = { title: 'Évaluation finale — MIA Académie' }
 
 function StarDisplay({ value }: { value: number }) {
   return (

@@ -6,7 +6,7 @@ import { getDashboardStats, getRecentModules, getRevenueDashboard } from '@/app/
 import ModulesTable from './_components/modules-table'
 import RevenueChart from './_components/revenue-chart'
 
-export const metadata: Metadata = { title: 'Tableau de bord — MIA Digital' }
+export const metadata: Metadata = { title: 'Tableau de bord — MIA Académie' }
 
 function pctChange(current: number, prev: number) {
   if (prev === 0) return current > 0 ? '+100%' : '0%'

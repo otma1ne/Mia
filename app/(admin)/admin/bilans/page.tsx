@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { getBilanStats } from '@/app/actions/bilans'
 import { BarChart3, Users, ArrowRight, Thermometer, Snowflake } from 'lucide-react'
 
-export const metadata = { title: 'Bilans — MIA Digital' }
+export const metadata = { title: 'Bilans — MIA Académie' }
 
 export default async function BilansPage() {
   const formations = await db.formation.findMany({

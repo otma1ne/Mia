@@ -145,6 +145,6 @@ function applySecurityHeaders(response: NextResponse) {
 
 export const config = {
   matcher: [
-    '/((?!api/auth|api/cron|api/debug|api/upload-cv|api/webhooks|_next/static|_next/image|favicon.ico|mockup.html).*)',
+    '/((?!api/auth|api/cron|api/debug|api/upload-cv|api/webhooks|_next/static|_next/image|favicon.ico|mockup.html|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|css|js|woff|woff2|ttf|map|txt|xml|json)$).*)',
   ],
 }

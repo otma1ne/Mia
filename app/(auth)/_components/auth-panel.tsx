@@ -20,7 +20,7 @@ export default function AuthPanel() {
       <div className="relative z-10 flex flex-col justify-center h-full px-12 py-16 gap-10">
 
         {/* Logo */}
-        <Image src={logoLightSrc} alt="MIA Digital" width={44} height={44} className="object-contain" />
+        <Image src={logoLightSrc} alt="MIA Académie" width={44} height={44} className="object-contain" />
 
         {/* Headline */}
         <div className="flex flex-col gap-4">
@@ -28,7 +28,7 @@ export default function AuthPanel() {
             Développez vos compétences.<br />Façonnez votre avenir.
           </h2>
           <p className="text-white/70 text-base leading-relaxed max-w-xs">
-            MIA Digital accompagne les professionnels dans leur montée en compétences grâce à des programmes certifiés et des formateurs experts du terrain.
+            MIA Académie accompagne les professionnels dans leur montée en compétences grâce à des programmes certifiés et des formateurs experts du terrain.
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export default function AuthPanel() {
         {/* Testimonial */}
         <div className="bg-white/10 border border-white/15 rounded-2xl p-5">
           <p className="text-white/90 text-sm leading-relaxed">
-            &ldquo;MIA Digital a transformé mon parcours. En 6 mois j&apos;ai acquis les compétences pour décrocher mon premier emploi de développeuse.&rdquo;
+            &ldquo;MIA Académie a transformé mon parcours. En 6 mois j&apos;ai acquis les compétences pour décrocher mon premier emploi de développeuse.&rdquo;
           </p>
           <div className="flex items-center gap-3 mt-4">
             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-semibold text-xs shrink-0">

@@ -158,7 +158,7 @@ export default function BilanPDF({
         <View style={styles.header}>
           <View style={styles.headerLogo} />
           <View style={{ flex: 1 }}>
-            <Text style={styles.headerTitle}>MIA Digital</Text>
+            <Text style={styles.headerTitle}>MIA Académie</Text>
             <Text style={styles.headerSubtitle}>{bilanTitle}</Text>
           </View>
         </View>
@@ -195,7 +195,7 @@ export default function BilanPDF({
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Document généré automatiquement — MIA Digital
+            Document généré automatiquement — MIA Académie
           </Text>
           <Text style={styles.footerText}>
             {new Date().toLocaleDateString('fr-FR')}
