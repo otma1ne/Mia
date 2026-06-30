@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'MIA Digital',
+    name: 'MIA Académie',
     short_name: 'MIA',
     description: 'Centre de formation professionnelle certifié — Programmes certifiés et formateurs experts.',
     start_url: '/',

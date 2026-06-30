@@ -18,7 +18,7 @@ export default function ComingSoonPage() {
         <div className="mb-12">
           <Image
             src={logoLightSrc}
-            alt="MIA Digital"
+            alt="MIA Académie"
             width={72}
             height={72}
             className="object-contain"
@@ -46,7 +46,7 @@ export default function ComingSoonPage() {
 
         {/* Subtitle */}
         <p className="cs-subtitle text-[16px] leading-[1.8] mb-10 max-w-115">
-          MIA Digital finalise sa plateforme de formation professionnelle.
+          MIA Académie finalise sa plateforme de formation professionnelle.
           Des programmes certifiés, des formateurs experts — disponibles très prochainement.
         </p>
 
@@ -69,7 +69,7 @@ export default function ComingSoonPage() {
 
       {/* Footer note */}
       <p className="cs-footer-note absolute bottom-8 text-[12px]">
-        © {new Date().getFullYear()} MIA Digital. Tous droits réservés.
+        © {new Date().getFullYear()} MIA Académie. Tous droits réservés.
       </p>
     </div>
   )
