@@ -33,9 +33,6 @@ function header() {
         <td style="padding:24px 36px;vertical-align:middle;">
           <img src="${LOGO_URL}" alt="MIA" height="26" style="display:block;border:0;" />
         </td>
-        <td style="padding:24px 36px;text-align:right;vertical-align:middle;">
-          <span style="font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:0.12em;text-transform:uppercase;">Académie</span>
-        </td>
       </tr>
     </table>
   `
@@ -56,7 +53,7 @@ function bottomFooter() {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
       <tr><td style="padding:28px 36px;text-align:center;">
         <img src="${LOGO_URL}" alt="MIA" height="20" style="display:inline-block;margin-bottom:10px;border:0;" />
-        <p style="margin:0 0 8px;font-size:12px;color:#9ca3af;">MIA Académie · Building Skills. Shaping Futures.</p>
+        <p style="margin:0 0 8px;font-size:12px;color:#9ca3af;">MIA Académie · Centre de formation professionnelle</p>
         <p style="margin:0;font-size:11px;color:#c1c5cb;">
           <a href="${APP_URL}/courses" style="color:#c1c5cb;text-decoration:none;">Centre d'aide</a>
           &nbsp;·&nbsp;
@@ -72,7 +69,7 @@ function shell(content: string, contactLine?: string) {
   const defaultContact = `Une question ? Contactez notre équipe à <a href="mailto:${CONTACT_TO}" style="color:${PURPLE};font-weight:600;text-decoration:none;">${CONTACT_TO}</a>`
   return `
     <div style="font-family:${FONT};max-width:580px;margin:0 auto;color:${NEAR_BK};background:#f6f6f9;padding:32px 16px;">
-      <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+      <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.03);">
         ${header()}
         <div style="padding:32px 36px 28px;">
           ${content}
@@ -89,7 +86,7 @@ function shell(content: string, contactLine?: string) {
 function badge(text: string) {
   return `
     <div style="margin:0 0 18px;">
-      <span style="display:inline-block;background:${BADGE_BG};color:${PURPLE};font-size:11px;font-weight:800;
+      <span style="display:inline-block;background:${BADGE_BG};color:${PURPLE};font-size:11px;font-weight:700;
                    letter-spacing:0.06em;text-transform:uppercase;padding:6px 14px;border-radius:20px;">
         ${text}
       </span>
