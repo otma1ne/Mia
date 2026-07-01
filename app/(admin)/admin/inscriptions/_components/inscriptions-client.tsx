@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import InscriptionDetailSheet from './inscription-detail-sheet'
+import NewInscriptionDialog from './new-inscription-dialog'
 import type { Inscription, Formation } from '@prisma/client'
 import type { InscriptionStatus } from '@prisma/client'
 import { format } from 'date-fns'
@@ -18,6 +19,9 @@ type InscriptionWithFormation = Inscription & {
 
 interface InscriptionsClientProps {
   inscriptions: InscriptionWithFormation[]
+  students:     { id: string; name: string; email: string }[]
+  formations:   { id: string; title: string }[]
+  sessions:     { id: string; title: string; formationId: string }[]
 }
 
 const STATUS_TABS: { label: string; value: InscriptionStatus | 'ALL' }[] = [
@@ -45,7 +49,7 @@ function statusBadge(status: InscriptionStatus) {
   return <Badge variant="outline" className={className}>{label}</Badge>
 }
 
-export default function InscriptionsClient({ inscriptions }: InscriptionsClientProps) {
+export default function InscriptionsClient({ inscriptions, students, formations, sessions }: InscriptionsClientProps) {
   const [activeTab, setActiveTab]     = useState<InscriptionStatus | 'ALL'>('ALL')
   const [selected, setSelected]       = useState<InscriptionWithFormation | null>(null)
   const [sheetOpen, setSheetOpen]     = useState(false)
@@ -61,8 +65,9 @@ export default function InscriptionsClient({ inscriptions }: InscriptionsClientP
 
   return (
     <>
-      {/* Filter tabs */}
-      <div className="flex gap-0.5 flex-wrap">
+      {/* Header row */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex gap-0.5 flex-wrap">
         {STATUS_TABS.map(tab => {
           const count    = tab.value === 'ALL'
             ? inscriptions.length
@@ -89,6 +94,8 @@ export default function InscriptionsClient({ inscriptions }: InscriptionsClientP
             </button>
           )
         })}
+        </div>
+        <NewInscriptionDialog students={students} formations={formations} sessions={sessions} />
       </div>
 
       {/* Table */}
