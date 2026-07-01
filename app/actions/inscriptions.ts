@@ -37,12 +37,12 @@ export async function createInscription(
   const cvUrl         = (formData.get('cvUrl')         as string)?.trim()
 
   // Validate required fields
-  if (!firstName || !lastName || !email || !phone || !nationality || !dateOfBirthRaw || !formationId || !cvUrl) {
+  if (!firstName || !lastName || !email || !phone || !formationId || !cvUrl) {
     return { error: 'Tous les champs obligatoires doivent être renseignés.' }
   }
 
-  const dateOfBirth = new Date(dateOfBirthRaw)
-  if (Number.isNaN(dateOfBirth.getTime())) {
+  const dateOfBirth = dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined
+  if (dateOfBirthRaw && dateOfBirth && Number.isNaN(dateOfBirth.getTime())) {
     return { error: 'Date de naissance invalide.' }
   }
 
@@ -68,7 +68,9 @@ export async function createInscription(
   const inscription = await db.inscription.create({
     data: {
       firstName, lastName, email, phone,
-      nationality, dateOfBirth, postalAddress, poleEmploiId,
+      nationality: nationality || undefined,
+      dateOfBirth: dateOfBirth ?? undefined,
+      postalAddress, poleEmploiId,
       formationId, cvUrl, status: 'PENDING',
     },
   })
@@ -111,12 +113,12 @@ export async function createInscriptionAsStudent(
   const postalAddress = (formData.get('postalAddress') as string)?.trim() || undefined
   const poleEmploiId  = (formData.get('poleEmploiId')  as string)?.trim() || undefined
 
-  if (!formationId || !cvUrl || !nationality || !dateOfBirthRaw) {
+  if (!formationId || !cvUrl) {
     return { error: 'Tous les champs obligatoires doivent être renseignés.' }
   }
 
-  const dateOfBirth = new Date(dateOfBirthRaw)
-  if (Number.isNaN(dateOfBirth.getTime())) {
+  const dateOfBirth = dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined
+  if (dateOfBirthRaw && dateOfBirth && Number.isNaN(dateOfBirth.getTime())) {
     return { error: 'Date de naissance invalide.' }
   }
 
@@ -152,7 +154,9 @@ export async function createInscriptionAsStudent(
   const inscription = await db.inscription.create({
     data: {
       firstName, lastName, email, phone,
-      nationality, dateOfBirth, postalAddress, poleEmploiId,
+      nationality: nationality || undefined,
+      dateOfBirth: dateOfBirth ?? undefined,
+      postalAddress, poleEmploiId,
       formationId, cvUrl, status: 'PENDING',
     },
   })

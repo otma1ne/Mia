@@ -105,12 +105,12 @@ export async function adminLaunchInscriptionWorkflow(data: {
 
   const { firstName, lastName, email, phone, nationality, dateOfBirth, formationId, trainingSessionId } = data
 
-  if (!firstName || !lastName || !email || !phone || !nationality || !dateOfBirth || !formationId) {
+  if (!firstName || !lastName || !email || !phone || !formationId) {
     return { success: false, error: 'Tous les champs obligatoires doivent être renseignés.' }
   }
 
-  const dob = new Date(dateOfBirth)
-  if (isNaN(dob.getTime())) return { success: false, error: 'Date de naissance invalide.' }
+  const dob = dateOfBirth ? new Date(dateOfBirth) : undefined
+  if (dateOfBirth && dob && isNaN(dob.getTime())) return { success: false, error: 'Date de naissance invalide.' }
 
   const existing = await db.inscription.findFirst({
     where: {
@@ -126,7 +126,9 @@ export async function adminLaunchInscriptionWorkflow(data: {
   const inscription = await db.inscription.create({
     data: {
       firstName, lastName, email, phone,
-      nationality, dateOfBirth: dob, formationId,
+      nationality: nationality || undefined,
+      dateOfBirth: dob ?? undefined,
+      formationId,
       ...(trainingSessionId ? { trainingSessionId } : {}),
       status: 'PENDING',
     },
