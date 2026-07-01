@@ -49,6 +49,12 @@ enum FormationType {
   REMOTE_ASYNC  // Self-paced: students watch videos / read PDFs at their own pace, no live sessions
 }
 
+enum TrainingNiveau {
+  START   // MIA Start – Niveau 1 – 7H
+  PRO     // MIA Pro   – Niveau 2 – 14H
+  EXPERT  // MIA Expert – Niveau 3 – 21H
+}
+
 enum FormationStatus {
   DRAFT
   PUBLISHED
@@ -273,6 +279,7 @@ model TrainingSession {
   formationId String                @db.ObjectId
   trainerId   String?               @db.ObjectId
   title       String
+  niveau      TrainingNiveau?       // START / PRO / EXPERT
   status      TrainingSessionStatus @default(DRAFT)
   startDate   DateTime
   endDate     DateTime

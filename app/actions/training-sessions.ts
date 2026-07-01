@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import type { TrainingSessionStatus } from '@prisma/client'
+import type { TrainingSessionStatus, TrainingNiveau } from '@prisma/client'
 
 async function requireAdmin() {
   const session = await auth()
@@ -14,6 +14,7 @@ async function requireAdmin() {
 export type TrainingSessionRow = {
   id: string
   title: string
+  niveau: TrainingNiveau | null
   startDate: Date
   endDate: Date
   status: TrainingSessionStatus
@@ -41,6 +42,7 @@ export async function getTrainingSessionsForFormation(formationId: string): Prom
   return rows.map(r => ({
     id:               r.id,
     title:            r.title,
+    niveau:           r.niveau,
     startDate:        r.startDate,
     endDate:          r.endDate,
     status:           r.status,
@@ -58,6 +60,7 @@ export async function getTrainingSessionsForFormation(formationId: string): Prom
 
 export async function createTrainingSession(formationId: string, data: {
   title: string
+  niveau?: TrainingNiveau | null
   startDate: string
   endDate: string
   maxStudents: number
@@ -74,6 +77,7 @@ export async function createTrainingSession(formationId: string, data: {
       data: {
         formationId,
         title:       data.title,
+        niveau:      data.niveau ?? null,
         startDate:   new Date(data.startDate),
         endDate:     new Date(data.endDate),
         maxStudents: data.maxStudents,
@@ -102,6 +106,7 @@ export async function updateTrainingSessionStatus(id: string, status: TrainingSe
 
 export async function updateTrainingSession(id: string, data: {
   title?: string
+  niveau?: TrainingNiveau | null
   startDate?: string
   endDate?: string
   maxStudents?: number
@@ -119,6 +124,7 @@ export async function updateTrainingSession(id: string, data: {
       where: { id },
       data: {
         ...(data.title       !== undefined && { title: data.title }),
+        ...(data.niveau      !== undefined && { niveau: data.niveau }),
         ...(data.startDate   !== undefined && { startDate: new Date(data.startDate) }),
         ...(data.endDate     !== undefined && { endDate: new Date(data.endDate) }),
         ...(data.maxStudents !== undefined && { maxStudents: data.maxStudents }),
