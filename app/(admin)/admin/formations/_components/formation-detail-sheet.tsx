@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from 'react'
 import { getFormation, updateFormationStatus, updateFormationDetails } from '@/app/actions/formations'
-import { Badge } from '@/components/ui/badge'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import {
   Sheet,
   SheetContent,
@@ -232,12 +232,11 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-muted-foreground">Programme de formation</label>
-                    <textarea
-                      rows={6}
+                    <RichTextEditor
                       value={detailProgramme}
-                      onChange={e => setDetailProgramme(e.target.value)}
+                      onChange={setDetailProgramme}
                       placeholder="Décrivez le contenu détaillé du programme…"
-                      className="h-auto w-full min-w-0 resize-none rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                      minHeight={160}
                     />
                   </div>
                   <Button variant="outline" size="sm" className="w-full" onClick={() => setEditingDetails(false)}>
@@ -257,7 +256,10 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                   <div className="flex flex-col gap-1 mt-1">
                     <span className="text-muted-foreground">Programme</span>
                     {formation.programme ? (
-                      <p className="text-xs leading-relaxed bg-muted rounded-lg px-3 py-2 whitespace-pre-wrap line-clamp-5">{formation.programme}</p>
+                      <div
+                        className="prose-editor text-xs leading-relaxed bg-muted rounded-lg px-3 py-2 line-clamp-5"
+                        dangerouslySetInnerHTML={{ __html: formation.programme }}
+                      />
                     ) : (
                       <p className="text-xs text-muted-foreground italic">Non renseigné</p>
                     )}
