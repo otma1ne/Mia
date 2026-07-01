@@ -45,9 +45,11 @@ function getInitials(name?: string | null) {
 }
 
 const rolePrefix: Record<string, string> = {
-  ADMIN:   '/admin',
-  TRAINER: '/trainer',
-  STUDENT: '/student',
+  ADMIN:      '/admin',
+  TRAINER:    '/trainer',
+  STUDENT:    '/student',
+  COMMERCIAL: '/commercial',
+  COMPANY:    '/entreprise',
 }
 
 function secondaryNav(role: string) {
