@@ -52,6 +52,10 @@ export async function requireCommercial() {
   return requireRole('COMMERCIAL')
 }
 
+export async function requireCompany() {
+  return requireRole('COMPANY')
+}
+
 // ─────────────────────────────────────────
 // Password utilities
 // ─────────────────────────────────────────

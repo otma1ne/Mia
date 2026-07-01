@@ -524,6 +524,32 @@ export async function sendCommercialWelcomeEmail(to: string, name: string, passw
   })
 }
 
+export async function sendCompanyWelcomeEmail(
+  to: string,
+  nomDirigeant: string,
+  prenomDirigeant: string,
+  raisonSociale: string,
+  password: string,
+) {
+  const loginUrl = `${APP_URL}/login`
+
+  await transporter.sendMail({
+    from: FROM, to,
+    subject: `Bienvenue sur MIA Académie — espace entreprise ${raisonSociale}`,
+    html: shell(`
+      ${badge('Espace entreprise')}
+      ${heading(`Bienvenue, ${prenomDirigeant} ${nomDirigeant}.`)}
+      ${para(`Votre espace entreprise <strong>${raisonSociale}</strong> a été créé sur <strong>MIA Académie</strong>. Voici vos identifiants de connexion.`)}
+      ${credentialsCard({ username: to, password, buttonHref: loginUrl, portalLabel: 'Espace entreprise' })}
+      ${nextSteps('Vos prochaines étapes', [
+        { title: 'Connectez-vous à votre espace', desc: 'Utilisez les identifiants ci-dessus pour accéder à votre tableau de bord entreprise.' },
+        { title: 'Consultez vos formations', desc: 'Retrouvez les sessions de formation, les dates et les modalités.' },
+        { title: 'Gérez vos salariés', desc: 'Visualisez la liste des salariés inscrits et leurs documents.' },
+      ])}
+    `),
+  })
+}
+
 // ── Planifier un échange — notification to admin ──────────────────────────────
 
 export async function sendPlanifierNotification(input: PlanifierInput) {
