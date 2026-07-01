@@ -106,7 +106,6 @@ export default function NewInscriptionDialog({ students, formations, sessions }:
     if (!wkFirstName || !wkLastName) { setError('Le prénom et le nom sont requis.'); return }
     if (!wkEmail) { setError('L\'email est requis.'); return }
     if (!wkPhone) { setError('Le téléphone est requis.'); return }
-    if (!wkNationality || !wkDob) { setError('La nationalité et la date de naissance sont requises.'); return }
     if (!wkFormationId) { setError('Veuillez sélectionner une formation.'); return }
     setError(''); setSuccess('')
     startTransition(async () => {
@@ -295,14 +294,14 @@ export default function NewInscriptionDialog({ students, formations, sessions }:
                 </Field>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Nationalité" required>
+                <Field label="Nationalité" optional>
                   <Input
                     value={wkNationality}
                     onChange={e => setWkNationality(e.target.value)}
                     placeholder="Marocaine"
                   />
                 </Field>
-                <Field label="Date de naissance" required>
+                <Field label="Date de naissance" optional>
                   <Input
                     type="date"
                     value={wkDob}

@@ -94,12 +94,16 @@ export default function InscriptionForm({ formations, defaultFormationId, user }
       {/* Nationality + Date of birth row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label htmlFor="nationality">Nationalité</Label>
-          <Input id="nationality" name="nationality" type="text" required placeholder="Marocaine" />
+          <Label htmlFor="nationality">
+            Nationalité <span className="text-xs font-normal text-muted-foreground">(facultatif)</span>
+          </Label>
+          <Input id="nationality" name="nationality" type="text" placeholder="Marocaine" />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="dateOfBirth">Date de naissance</Label>
-          <Input id="dateOfBirth" name="dateOfBirth" type="date" required />
+          <Label htmlFor="dateOfBirth">
+            Date de naissance <span className="text-xs font-normal text-muted-foreground">(facultatif)</span>
+          </Label>
+          <Input id="dateOfBirth" name="dateOfBirth" type="date" />
         </div>
       </div>
 
