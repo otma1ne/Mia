@@ -5,8 +5,9 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import {
   CalendarRange, Users, ChevronDown, Plus, Check,
-  MapPin, Monitor, ExternalLink,
+  MapPin, Monitor, ExternalLink, GraduationCap,
 } from 'lucide-react'
+import type { TrainingNiveau } from '@prisma/client'
 import { cn } from '@/lib/utils'
 import type { TrainingSessionRow } from '@/app/actions/training-sessions'
 import { updateTrainingSessionStatus } from '@/app/actions/training-sessions'
@@ -16,6 +17,12 @@ import {
 import { Button } from '@/components/ui/button'
 import type { TrainingSessionStatus } from '@prisma/client'
 import CreateTrainingSessionDialog from './create-training-session-dialog'
+
+const NIVEAU_CONFIG: Record<TrainingNiveau, { label: string; className: string }> = {
+  START:  { label: 'MIA Start – Niv. 1',  className: 'bg-sky-50 text-sky-700 border-sky-200' },
+  PRO:    { label: 'MIA Pro – Niv. 2',    className: 'bg-violet-50 text-violet-700 border-violet-200' },
+  EXPERT: { label: 'MIA Expert – Niv. 3', className: 'bg-amber-50 text-amber-700 border-amber-200' },
+}
 
 const STATUS_CONFIG: Record<TrainingSessionStatus, { label: string; dot: string; badge: string }> = {
   DRAFT:     { label: 'Brouillon',    dot: 'bg-amber-400',         badge: 'bg-amber-50 text-amber-700 border-amber-200' },
@@ -87,8 +94,19 @@ export default function TrainingSessionsSection({ formationId, initialSessions, 
               <div key={s.id} className="rounded-xl border bg-card p-4 flex flex-col gap-3">
                 {/* Row 1: title + status */}
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold leading-snug truncate">{s.title}</p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold leading-snug truncate">{s.title}</p>
+                      {s.niveau && (
+                        <span className={cn(
+                          'inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold',
+                          NIVEAU_CONFIG[s.niveau].className,
+                        )}>
+                          <GraduationCap className="h-2.5 w-2.5" />
+                          {NIVEAU_CONFIG[s.niveau].label}
+                        </span>
+                      )}
+                    </div>
                     {s.trainerName && (
                       <p className="text-xs text-muted-foreground mt-0.5">
                         Formateur : {s.trainerName}
