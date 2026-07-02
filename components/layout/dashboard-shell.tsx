@@ -11,9 +11,10 @@ interface DashboardShellProps {
     image?: string | null
     role: UserRole
   }
+  notifications?: ReactNode
 }
 
-export default function DashboardShell({ children, user }: DashboardShellProps) {
+export default function DashboardShell({ children, user, notifications }: DashboardShellProps) {
   return (
     <div className="flex h-screen overflow-hidden bg-muted/40">
       {/* Sidebar — desktop */}
@@ -22,7 +23,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
       {/* Main area */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Header — mobile hamburger + user menu */}
-        <DashboardHeader user={user} />
+        <DashboardHeader user={user} notifications={notifications} />
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto">

@@ -137,7 +137,7 @@ export default async function CoursesPage({
           <div className="flex items-center gap-4 text-xs text-zinc-400">
             <span>contact@mia-academie.com</span>
             <span>·</span>
-            <span>+212 522 456 789</span>
+            <span>+33 1 23 45 67 89</span>
             <span>·</span>
             <span>© {new Date().getFullYear()} MIA Académie</span>
           </div>

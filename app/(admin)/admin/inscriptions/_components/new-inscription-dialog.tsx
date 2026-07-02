@@ -298,7 +298,7 @@ export default function NewInscriptionDialog({ students, formations, sessions }:
                   <Input
                     value={wkNationality}
                     onChange={e => setWkNationality(e.target.value)}
-                    placeholder="Marocaine"
+                    placeholder="Française"
                   />
                 </Field>
                 <Field label="Date de naissance" optional>
@@ -330,7 +330,7 @@ export default function NewInscriptionDialog({ students, formations, sessions }:
                     type="tel"
                     value={wkPhone}
                     onChange={e => setWkPhone(e.target.value)}
-                    placeholder="+212 6 00 00 00 00"
+                    placeholder="+33 6 00 00 00 00"
                   />
                 </Field>
               </div>

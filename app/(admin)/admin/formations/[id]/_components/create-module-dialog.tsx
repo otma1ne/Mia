@@ -70,13 +70,12 @@ export default function CreateModuleDialog({ formationId, onCreated }: CreateMod
 
             <div className="space-y-1.5">
               <Label>Type</Label>
-              <Select name="type" value={type} onValueChange={(v) => setType(String(v))} labelItems={{ THEORY: 'Théorie (vidéo + ressources)', PRACTICAL: 'Conduite (séances avec formateur)', ASSESSMENT: 'Évaluation finale' }} required>
+              <Select name="type" value={type} onValueChange={(v) => setType(String(v))} labelItems={{ THEORY: 'Théorie (vidéo + ressources)', ASSESSMENT: 'Évaluation finale' }} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Choisir un type" />
                 </SelectTrigger>
                 <SelectContent className="min-w-96">
                   <SelectItem value="THEORY" label="Théorie (vidéo + ressources)">Théorie (vidéo + ressources)</SelectItem>
-                  <SelectItem value="PRACTICAL" label="Conduite (séances avec formateur)">Conduite (séances avec formateur)</SelectItem>
                   <SelectItem value="ASSESSMENT" label="Évaluation finale">Évaluation finale</SelectItem>
                 </SelectContent>
               </Select>

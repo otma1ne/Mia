@@ -168,7 +168,7 @@ export default function CreateTrainingSessionDialog({
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-muted-foreground">Lieu (présentiel)</label>
-            <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="Ex: Salle A3 — Casablanca" className="h-8 text-sm" />
+            <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="Ex: Salle A3 — Paris" className="h-8 text-sm" />
           </div>
 
           <div className="flex flex-col gap-1.5">

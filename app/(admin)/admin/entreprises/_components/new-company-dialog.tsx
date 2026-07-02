@@ -110,7 +110,7 @@ export default function NewCompanyDialog() {
                 <Input id="siret" name="siret" placeholder="12345678900012" />
               </Field>
               <Field id="adresse" label="Adresse">
-                <Input id="adresse" name="adresse" placeholder="45 rue des Lilas, Casablanca" />
+                <Input id="adresse" name="adresse" placeholder="45 rue des Lilas, Paris" />
               </Field>
             </div>
           </div>
@@ -134,7 +134,7 @@ export default function NewCompanyDialog() {
                 <Input id="email" name="email" type="email" placeholder="k.benali@entreprise.ma" required />
               </Field>
               <Field id="phone" label="Téléphone" required>
-                <Input id="phone" name="phone" type="tel" placeholder="+212 6XX XXX XXX" required />
+                <Input id="phone" name="phone" type="tel" placeholder="+33 6 XX XX XX XX" required />
               </Field>
             </div>
           </div>

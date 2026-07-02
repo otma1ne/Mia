@@ -48,22 +48,22 @@ export default async function HomePage() {
     logo: 'https://mia-academie.com/og-image.jpg',
     email: 'contact@mia-academie.com',
     description:
-      'Centre de formation professionnelle à Casablanca proposant des formations certifiées en développement web, data science, design et marketing digital.',
+      'Centre de formation professionnelle à Paris proposant des formations certifiées en développement web, data science, design et marketing digital.',
     address: {
       '@type': 'PostalAddress',
       streetAddress: '45 Avenue de la Formation',
-      addressLocality: 'Casablanca',
-      postalCode: '20250',
-      addressCountry: 'MA',
+      addressLocality: 'Paris',
+      postalCode: '75000',
+      addressCountry: 'FR',
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 33.5731,
-      longitude: -7.5898,
+      latitude: 48.8566,
+      longitude: 2.3522,
     },
     areaServed: {
       '@type': 'Country',
-      name: 'Maroc',
+      name: 'France',
     },
     hasOfferCatalog: {
       '@type': 'OfferCatalog',

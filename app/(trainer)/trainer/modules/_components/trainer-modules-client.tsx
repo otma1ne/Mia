@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/sheet'
 import {
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
-  MoreVertical, Search, BookOpen, Car, ClipboardCheck, Clock,
+  MoreVertical, Search, BookOpen, ClipboardCheck, Clock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ModuleStatus, ModuleType } from '@prisma/client'
@@ -43,7 +43,6 @@ const statusConfig: Record<ModuleStatus, { dot: string; label: string }> = {
 
 const typeConfig: Record<ModuleType, { label: string; icon: React.ReactNode; classes: string }> = {
   THEORY:     { label: 'Théorie',    icon: <BookOpen className="h-3 w-3" />,        classes: 'bg-blue-50 text-blue-700 border-blue-200' },
-  PRACTICAL:  { label: 'Conduite',   icon: <Car className="h-3 w-3" />,             classes: 'bg-green-50 text-green-700 border-green-200' },
   ASSESSMENT: { label: 'Évaluation', icon: <ClipboardCheck className="h-3 w-3" />, classes: 'bg-purple-50 text-purple-700 border-purple-200' },
 }
 

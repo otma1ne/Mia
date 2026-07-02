@@ -10,7 +10,7 @@
 // User ──< ModuleEnrollment
 // User ──< MaterialProgress
 // Trainer ──< TrainerAvailability
-// Trainer ──< Session (optional, PRACTICAL type)
+// Trainer ──< Session (optional)
 // Category ──< Formation
 // Formation ──< Module
 // Formation ──< FormationEnrollment
@@ -62,9 +62,30 @@ enum FormationStatus {
   COMPLETED
 }
 
+// ─────────────────────────────────────────
+// Notification
+// ─────────────────────────────────────────
+
+enum NotificationType {
+  INSCRIPTION_NEW
+  DOCUMENT_SIGNED
+  PAYMENT_RECEIVED
+  SESSION_CHANGED
+}
+
+model Notification {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  type      NotificationType
+  title     String
+  body      String           // action text only (e.g. "a soumis une demande pour")
+  href      String?
+  data      Json?            // structured payload: firstName, lastName, formationTitle, etc.
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+}
+
 enum ModuleType {
-  THEORY      // Self-paced: video + materials (code de la route, etc.)
-  PRACTICAL   // In-person driving sessions with trainer
+  THEORY      // Self-paced: video + materials
   ASSESSMENT  // Final exam / evaluation
 }
 
@@ -360,7 +381,7 @@ model Module {
 
   formation   Formation          @relation(fields: [formationId], references: [id], onDelete: Cascade)
   enrollments ModuleEnrollment[]
-  sessions    Session[]          // PRACTICAL: scheduled driving sessions
+  sessions    Session[]
   materials   ModuleMaterial[]   // supplementary resources
   exam        Exam?              // ASSESSMENT: exam definition (1:1)
 }
@@ -431,7 +452,7 @@ model ModuleEnrollment {
 }
 
 // ─────────────────────────────────────────
-// Session (individual class meeting for PRACTICAL modules)
+// Session (individual class meeting)
 // ─────────────────────────────────────────
 
 model Session {

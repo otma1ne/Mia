@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   ChevronUp, ChevronDown, MoreVertical, Plus,
-  BookOpen, Car, ClipboardCheck, Video, Clock,
+  BookOpen, ClipboardCheck, Video, Clock,
 } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -31,7 +31,6 @@ import ModuleMaterialsDialog from './module-materials-dialog'
 
 const typeConfig: Record<ModuleType, { label: string; icon: React.ReactNode; classes: string }> = {
   THEORY:     { label: 'Théorie',    icon: <BookOpen className="h-3.5 w-3.5" />,        classes: 'bg-blue-50 text-blue-700 border-blue-200' },
-  PRACTICAL:  { label: 'Conduite',   icon: <Car className="h-3.5 w-3.5" />,             classes: 'bg-green-50 text-green-700 border-green-200' },
   ASSESSMENT: { label: 'Évaluation', icon: <ClipboardCheck className="h-3.5 w-3.5" />, classes: 'bg-purple-50 text-purple-700 border-purple-200' },
 }
 

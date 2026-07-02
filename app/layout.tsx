@@ -22,18 +22,18 @@ const BASE_URL = 'https://mia-academie.com'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'MIA Académie — Centre de formation professionnelle à Casablanca',
+    default: 'MIA Académie — Centre de formation professionnelle à Paris',
     template: '%s — MIA Académie',
   },
   description:
-    'MIA Académie est un organisme de formation professionnelle à Casablanca. Formations certifiées en développement web, data science, design, marketing digital. Présentiel et en ligne.',
+    'MIA Académie est un organisme de formation professionnelle à Paris. Formations certifiées en développement web, data science, design, marketing digital. Présentiel et en ligne.',
   keywords: [
-    'formation professionnelle Casablanca',
-    'centre de formation Maroc',
-    'formation développement web Maroc',
-    'formation data science Maroc',
-    'formation marketing digital Casablanca',
-    'formation en ligne Maroc',
+    'formation professionnelle Paris',
+    'centre de formation Paris',
+    'formation développement web Paris',
+    'formation data science Paris',
+    'formation marketing digital Paris',
+    'formation en ligne France',
     'MIA Académie',
     'organisme de formation agréé',
   ],
@@ -44,12 +44,12 @@ export const metadata: Metadata = {
   // ── OpenGraph ─────────────────────────────────────────────────────
   openGraph: {
     type: 'website',
-    locale: 'fr_MA',
+    locale: 'fr_FR',
     url: BASE_URL,
     siteName: 'MIA Académie',
-    title: 'MIA Académie — Centre de formation professionnelle à Casablanca',
+    title: 'MIA Académie — Centre de formation professionnelle à Paris',
     description:
-      'Formations certifiées en développement web, data science, design et marketing digital. Présentiel à Casablanca et en ligne.',
+      'Formations certifiées en développement web, data science, design et marketing digital. Présentiel à Paris et en ligne.',
     images: [
       {
         url: '/og-image.jpg',
@@ -63,9 +63,9 @@ export const metadata: Metadata = {
   // ── Twitter / X ────────────────────────────────────────────────────
   twitter: {
     card: 'summary_large_image',
-    title: 'MIA Académie — Formation professionnelle au Maroc',
+    title: 'MIA Académie — Formation professionnelle à Paris',
     description:
-      'Formations certifiées en développement web, data science, design et marketing digital à Casablanca.',
+      'Formations certifiées en développement web, data science, design et marketing digital à Paris.',
     images: ['/og-image.jpg'],
   },
 
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: BASE_URL,
     languages: {
-      'fr-MA': BASE_URL,
+      'fr-FR': BASE_URL,
     },
   },
 
@@ -100,11 +100,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`h-full antialiased ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
-        {/* Géolocalisation — référencement local Maroc / Casablanca */}
-        <meta name="geo.region"   content="MA-06" />
-        <meta name="geo.placename" content="Casablanca, Maroc" />
-        <meta name="geo.position" content="33.5731;-7.5898" />
-        <meta name="ICBM"         content="33.5731, -7.5898" />
+        {/* Géolocalisation — référencement local France / Paris */}
+        <meta name="geo.region"   content="FR-75" />
+        <meta name="geo.placename" content="Paris, France" />
+        <meta name="geo.position" content="48.8566;2.3522" />
+        <meta name="ICBM"         content="48.8566, 2.3522" />
         {/* Langue et audience */}
         <meta name="language"  content="fr" />
         <meta name="audience"  content="all" />
