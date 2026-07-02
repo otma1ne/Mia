@@ -5,6 +5,7 @@ import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import type { TrainingSessionStatus, TrainingNiveau } from '@prisma/client'
+import { publishNotification } from '@/lib/pusher'
 
 async function requireAdmin() {
   const session = await auth()
@@ -96,12 +97,31 @@ export async function createTrainingSession(formationId: string, data: {
   }
 }
 
+const SESSION_STATUS_LABELS: Record<TrainingSessionStatus, string> = {
+  DRAFT:     'Brouillon',
+  OPEN:      'Ouverte',
+  STARTED:   'En cours',
+  COMPLETED: 'Terminée',
+  CANCELLED: 'Annulée',
+}
+
 export async function updateTrainingSessionStatus(id: string, status: TrainingSessionStatus): Promise<void> {
   await requireAdmin()
-  const ts = await db.trainingSession.findUnique({ where: { id }, select: { formationId: true } })
+  const ts = await db.trainingSession.findUnique({
+    where: { id },
+    select: { formationId: true, title: true },
+  })
   if (!ts) return
   await db.trainingSession.update({ where: { id }, data: { status } })
   revalidatePath(`/admin/formations/${ts.formationId}`)
+
+  publishNotification({
+    type:  'SESSION_CHANGED',
+    title: 'Statut de session modifié',
+    body:  `est maintenant ${SESSION_STATUS_LABELS[status] ?? status}`,
+    href:  `/admin/formations/${ts.formationId}`,
+    data:  { sessionTitle: ts.title },
+  }).catch(() => {})
 }
 
 export async function updateTrainingSession(id: string, data: {

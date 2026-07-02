@@ -780,8 +780,8 @@ export default function LandingPage({
             </p>
             <div className="flex flex-col gap-4 mb-8">
               {[
-                { Icon: MapPin, text: '45 Avenue de la Formation, Casablanca 20250, Maroc' },
-                { Icon: Phone,  text: '+212 522 456 789'        },
+                { Icon: MapPin, text: '45 Avenue de la Formation, Paris 75000, France' },
+                { Icon: Phone,  text: '+33 1 23 45 67 89'        },
                 { Icon: Mail,   text: 'contact@mia-academie.com' },
               ].map(({ Icon, text }) => (
                 <div key={text} className="flex items-start gap-3.5 text-[14px]"

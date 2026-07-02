@@ -97,7 +97,7 @@ export default function InscriptionForm({ formations, defaultFormationId, user }
           <Label htmlFor="nationality">
             Nationalité <span className="text-xs font-normal text-muted-foreground">(facultatif)</span>
           </Label>
-          <Input id="nationality" name="nationality" type="text" placeholder="Marocaine" />
+          <Input id="nationality" name="nationality" type="text" placeholder="Française" />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="dateOfBirth">

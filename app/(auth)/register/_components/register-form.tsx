@@ -112,14 +112,14 @@ export default function RegisterForm({ formations }: RegisterFormProps) {
       {/* Phone */}
       <div className="space-y-1.5">
         <Label htmlFor="phone">Téléphone</Label>
-        <Input id="phone" name="phone" type="tel" required placeholder="+212 6XX XXX XXX" />
+        <Input id="phone" name="phone" type="tel" required placeholder="+33 6 XX XX XX XX" />
       </div>
 
       {/* Nationality + Date of birth row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label htmlFor="nationality">Nationalité</Label>
-          <Input id="nationality" name="nationality" type="text" required placeholder="Marocaine" />
+          <Input id="nationality" name="nationality" type="text" required placeholder="Française" />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="dateOfBirth">Date de naissance</Label>

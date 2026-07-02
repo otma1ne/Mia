@@ -4,11 +4,9 @@ import Link from 'next/link'
 import type { FormationDetailModule } from '@/app/actions/student-dashboard'
 import { cn } from '@/lib/utils'
 import {
-  Lock, CheckCircle2, BookOpen, Car, ClipboardCheck,
-  Clock, Video, ChevronRight, Calendar,
+  Lock, CheckCircle2, BookOpen, ClipboardCheck,
+  Clock, Video, ChevronRight,
 } from 'lucide-react'
-import { format } from 'date-fns'
-import { fr } from 'date-fns/locale'
 
 // ─────────────────────────────────────────
 // Type config
@@ -16,7 +14,6 @@ import { fr } from 'date-fns/locale'
 
 const typeConfig = {
   THEORY:     { label: 'Théorie',    icon: BookOpen,        classes: 'bg-blue-50 text-blue-700 border-blue-200' },
-  PRACTICAL:  { label: 'Conduite',   icon: Car,             classes: 'bg-green-50 text-green-700 border-green-200' },
   ASSESSMENT: { label: 'Évaluation', icon: ClipboardCheck,  classes: 'bg-purple-50 text-purple-700 border-purple-200' },
 }
 
@@ -37,7 +34,6 @@ interface ModuleCardProps {
 export default function ModuleCard({ module, formationId, orderNumber }: ModuleCardProps) {
   const { label: typeLabel, icon: TypeIcon, classes: typeClasses } = typeConfig[module.type]
 
-  const isPractical  = module.type === 'PRACTICAL'
   const isAssessment = module.type === 'ASSESSMENT'
 
   return (
@@ -110,7 +106,7 @@ export default function ModuleCard({ module, formationId, orderNumber }: ModuleC
           </div>
 
           {/* CTA arrow */}
-          {!module.isLocked && !isPractical && (
+          {!module.isLocked && (
             <Link
               href={`/student/formations/${formationId}/modules/${module.id}`}
               className={cn(
@@ -141,43 +137,6 @@ export default function ModuleCard({ module, formationId, orderNumber }: ModuleC
           </div>
         )}
 
-        {/* PRACTICAL: sessions list */}
-        {isPractical && module.sessions.length > 0 && (
-          <div className="mt-3 ml-8 space-y-1.5">
-            {module.sessions.map(session => (
-              <div
-                key={session.id}
-                className="flex items-center justify-between text-xs rounded-lg border bg-background px-3 py-2"
-              >
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                  <span className="font-medium">
-                    {format(new Date(session.date), 'EEE d MMM', { locale: fr })}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {session.startTime} – {session.endTime}
-                  </span>
-                  {session.roomName && (
-                    <span className="text-muted-foreground">· {session.roomName}</span>
-                  )}
-                </div>
-                {session.attendanceStatus && (
-                  <span className={cn(
-                    'rounded-full px-2 py-0.5 text-[10px] font-medium',
-                    session.attendanceStatus === 'PRESENT'  && 'bg-emerald-100 text-emerald-700',
-                    session.attendanceStatus === 'ABSENT'   && 'bg-red-100 text-red-700',
-                    session.attendanceStatus === 'LATE'     && 'bg-amber-100 text-amber-700',
-                    session.attendanceStatus === 'EXCUSED'  && 'bg-blue-100 text-blue-700',
-                  )}>
-                    {session.attendanceStatus === 'PRESENT'  ? 'Présent'  :
-                     session.attendanceStatus === 'ABSENT'   ? 'Absent'   :
-                     session.attendanceStatus === 'LATE'     ? 'En retard' : 'Excusé'}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* Locked message */}
         {module.isLocked && (

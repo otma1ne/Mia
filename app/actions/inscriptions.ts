@@ -15,6 +15,7 @@ import { headers } from 'next/headers'
 import { getClientIp } from '@/lib/rate-limit'
 import crypto from 'crypto'
 import React from 'react'
+import { publishNotification } from '@/lib/pusher'
 
 // ─────────────────────────────────────────
 // createInscription
@@ -73,6 +74,7 @@ export async function createInscription(
       postalAddress, poleEmploiId,
       formationId, cvUrl, status: 'PENDING',
     },
+    include: { formation: { select: { title: true, description: true } } },
   })
 
   // Create evaluation token (24h expiry)
@@ -88,8 +90,21 @@ export async function createInscription(
     await sendEvaluationEmail(email, firstName, token)
   } catch (err) {
     console.error('[inscription] Failed to send email:', err)
-    // Don't fail the inscription if email fails — token is still in DB
   }
+
+  publishNotification({
+    type:  'INSCRIPTION_NEW',
+    title: 'Nouvelle inscription',
+    body:  "a soumis une demande d'inscription pour",
+    href:  '/admin/inscriptions',
+    data:  {
+      firstName,
+      lastName,
+      formationTitle:       inscription.formation.title,
+      formationDescription: inscription.formation.description ?? undefined,
+      inscriptionId:        inscription.id,
+    },
+  }).catch(() => {})
 
   return { success: true }
 }
@@ -159,6 +174,7 @@ export async function createInscriptionAsStudent(
       postalAddress, poleEmploiId,
       formationId, cvUrl, status: 'PENDING',
     },
+    include: { formation: { select: { title: true, description: true } } },
   })
 
   const token     = crypto.randomUUID()
@@ -173,6 +189,20 @@ export async function createInscriptionAsStudent(
   } catch (err) {
     console.error('[createInscriptionAsStudent] Failed to send email:', err)
   }
+
+  publishNotification({
+    type:  'INSCRIPTION_NEW',
+    title: 'Nouvelle inscription',
+    body:  "a soumis une demande d'inscription pour",
+    href:  '/admin/inscriptions',
+    data:  {
+      firstName,
+      lastName,
+      formationTitle:       inscription.formation.title,
+      formationDescription: inscription.formation.description ?? undefined,
+      inscriptionId:        inscription.id,
+    },
+  }).catch(() => {})
 
   return { success: true }
 }
@@ -408,6 +438,19 @@ export async function submitSignature(
     where: { id: sigToken.id },
     data:  { usedAt: new Date() },
   })
+
+  publishNotification({
+    type:  'DOCUMENT_SIGNED',
+    title: 'Documents signés',
+    body:  'a signé les documents',
+    href:  '/admin/inscriptions',
+    data:  {
+      firstName:     inscription.firstName,
+      lastName:      inscription.lastName,
+      formationTitle: inscription.formation.title,
+      inscriptionId:  inscription.id,
+    },
+  }).catch(() => {})
 
   redirect('/signature/merci')
 }

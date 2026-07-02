@@ -91,7 +91,7 @@ export default function AddEmployeeDialog({ companyId }: { companyId: string }) 
           </Field>
 
           <Field id="phone" label="Téléphone">
-            <Input id="phone" name="phone" type="tel" placeholder="+212 6XX XXX XXX" />
+            <Input id="phone" name="phone" type="tel" placeholder="+33 6 XX XX XX XX" />
           </Field>
 
           <p className="text-xs text-muted-foreground">
