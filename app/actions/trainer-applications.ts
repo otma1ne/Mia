@@ -135,27 +135,29 @@ export async function acceptTrainerApplication(id: string): Promise<{ error?: st
   const hashed       = await hashPassword(tempPassword)
   const name         = `${application.firstName} ${application.lastName}`.trim()
 
-  await db.user.create({
-    data: {
-      name,
-      email:    application.email,
-      phone:    application.phone,
-      password: hashed,
-      role:     'TRAINER',
-      trainer: {
-        create: {
-          bio:             application.bio,
-          specializations: skills.map(s => s.name),
-          expertiseLevels,
-          credentials:     [],
-          cvUrl:           application.cvUrl,
-          diplomeUrl:      application.diplomeUrls[0] ?? null,
+  await db.$transaction([
+    db.user.create({
+      data: {
+        name,
+        email:    application.email,
+        phone:    application.phone,
+        password: hashed,
+        role:     'TRAINER',
+        trainer: {
+          create: {
+            bio:             application.bio,
+            specializations: skills.map(s => s.name),
+            expertiseLevels,
+            credentials:     [],
+            cvUrl:           application.cvUrl,
+            diplomeUrl:      application.diplomeUrls[0] ?? null,
+          },
         },
       },
-    },
-  })
+    }),
+    db.trainerApplication.update({ where: { id }, data: { status: 'ACCEPTED' } }),
+  ])
 
-  await db.trainerApplication.update({ where: { id }, data: { status: 'ACCEPTED' } })
   revalidatePath('/admin/trainers')
 
   try {
@@ -177,6 +179,7 @@ export async function declineTrainerApplication(
 
   const application = await db.trainerApplication.findUnique({ where: { id } })
   if (!application) return { error: 'Candidature introuvable.' }
+  if (application.status !== 'PENDING') return { error: 'Cette candidature a déjà été traitée.' }
 
   await db.trainerApplication.update({
     where: { id },
@@ -192,4 +195,5 @@ export async function declineTrainerApplication(
 export async function updateTrainerApplicationNote(id: string, note: string): Promise<void> {
   await requireAdmin()
   await db.trainerApplication.update({ where: { id }, data: { adminNote: note } })
+  revalidatePath('/admin/trainers')
 }
