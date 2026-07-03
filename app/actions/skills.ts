@@ -26,12 +26,12 @@ export async function createSkill(
   if (existing) return { error: 'Cette compétence existe déjà.' }
 
   await db.skill.create({ data: { name } })
-  revalidatePath('/admin/center')
+  revalidatePath('/admin/center', 'layout')
   return { success: true }
 }
 
 export async function deleteSkill(id: string): Promise<void> {
   await requireAdmin()
   await db.skill.delete({ where: { id } })
-  revalidatePath('/admin/center')
+  revalidatePath('/admin/center', 'layout')
 }
