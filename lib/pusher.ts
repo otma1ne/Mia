@@ -17,6 +17,7 @@ export type NotificationType =
   | 'DOCUMENT_SIGNED'
   | 'PAYMENT_RECEIVED'
   | 'SESSION_CHANGED'
+  | 'TRAINER_APPLICATION_NEW'
 
 export type NotifData = {
   firstName?:           string
