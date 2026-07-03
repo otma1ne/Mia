@@ -764,6 +764,51 @@ export default function LandingPage({
         </div>
       </section>
 
+      {/* ── Vous êtes formateur ? ───────────────────────────────────── */}
+      <section className="relative py-20" style={{ background: 'var(--surface-default)' }}>
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <div className="reveal-up rounded-[24px] px-10 py-12 flex flex-col md:flex-row items-center justify-between gap-8"
+               style={{ background: 'var(--surface-accent)', border: '1px solid var(--mia-purple-soft)' }}>
+            <div className="flex flex-col gap-4 max-w-lg">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                      style={{ background: 'var(--mia-purple)', color: '#fff' }}>
+                  Intervenants
+                </span>
+              </div>
+              <h2 className="font-heading leading-tight tracking-tight"
+                  style={{ fontSize: 'clamp(22px, 2.5vw, 30px)', color: 'var(--text-strong)', fontWeight: 600 }}>
+                Vous êtes formateur ?
+              </h2>
+              <p className="text-[15px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Rejoignez notre réseau d&apos;intervenants et partagez votre expertise avec nos apprenants.
+                Déposez votre candidature en quelques minutes.
+              </p>
+              <ul className="flex flex-col gap-2">
+                {[
+                  'Formations certifiées et reconnues',
+                  'Flexibilité : présentiel ou distanciel',
+                  'Accompagnement pédagogique dédié',
+                ].map(item => (
+                  <li key={item} className="flex items-center gap-2 text-[14px]" style={{ color: 'var(--text-muted)' }}>
+                    <CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: 'var(--mia-purple)' }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="shrink-0">
+              <Link href="/rejoindre-notre-equipe"
+                    className="inline-flex items-center gap-2.5 px-8 py-4 rounded-[32px] text-white text-[15px] font-semibold transition-all hover:-translate-y-px"
+                    style={{ background: 'var(--mia-purple)' }}>
+                Candidater maintenant
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ══ CONTACT ═══════════════════════════════════════════════════════════ */}
       <section id="contact" className="relative py-28" style={{ background: 'var(--surface-muted)' }}>
         <div className="info-two-col mx-auto max-w-[1200px] px-8 grid items-start gap-20"
