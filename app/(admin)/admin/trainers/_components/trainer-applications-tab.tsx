@@ -132,6 +132,7 @@ export default function TrainerApplicationsTab({ applications }: TrainerApplicat
 
       {selected && (
         <TrainerApplicationDetailSheet
+          key={selected.id}
           application={selected}
           open={sheetOpen}
           onOpenChange={setSheetOpen}
