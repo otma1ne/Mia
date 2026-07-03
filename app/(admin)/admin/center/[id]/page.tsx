@@ -9,7 +9,7 @@ import OperatingHoursForm from '../_components/operating-hours-form'
 import RoomsManager from '../_components/rooms-manager'
 import CenterLegalForm from '../_components/center-legal-form'
 import CenterAccessPlansForm from '../_components/center-access-plans-form'
-import SkillsManager from '../_components/skills-manager'
+import SkillsManager from '@/app/(admin)/admin/center/_components/skills-manager'
 
 export const metadata: Metadata = { title: 'Centre — MIA Académie' }
 
