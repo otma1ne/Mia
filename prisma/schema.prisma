@@ -71,6 +71,13 @@ enum NotificationType {
   DOCUMENT_SIGNED
   PAYMENT_RECEIVED
   SESSION_CHANGED
+  TRAINER_APPLICATION_NEW
+}
+
+enum TrainerApplicationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }
 
 model Notification {
@@ -833,4 +840,36 @@ model Contact {
 
   @@index([commercialId])
   @@index([status])
+}
+
+// ─────────────────────────────────────────
+// Skill (trainer expertise tag)
+// ─────────────────────────────────────────
+
+model Skill {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────
+// TrainerApplication (self-registration)
+// skills JSON shape: Array<{ skillId: string; name: string; level: 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' | 'EXPERT' }>
+// ─────────────────────────────────────────
+
+model TrainerApplication {
+  id          String                   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName   String
+  lastName    String
+  email       String
+  phone       String
+  city        String
+  bio         String
+  cvUrl       String
+  diplomeUrls String[]
+  skills      Json
+  status      TrainerApplicationStatus @default(PENDING)
+  adminNote   String?
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
 }
