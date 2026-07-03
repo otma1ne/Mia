@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, CheckCircle2, Loader2, UploadCloud, FileText, X } from 'lucide-react'
 import { useFormStatus } from 'react-dom'
-import SkillSelector from './skill-selector'
+import SkillSelector from '@/app/rejoindre-notre-equipe/_components/skill-selector'
 
 function SubmitButton() {
   const { pending } = useFormStatus()
