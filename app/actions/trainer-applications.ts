@@ -127,9 +127,11 @@ export async function acceptTrainerApplication(id: string): Promise<{ error?: st
   const skills = application.skills as ApplicationSkill[]
 
   const VALID: ExpertiseLevel[] = ['DEBUTANT', 'INTERMEDIAIRE', 'AVANCE', 'EXPERT']
-  const expertiseLevels = skills
-    .map(s => s.level)
-    .filter((l): l is ExpertiseLevel => VALID.includes(l as ExpertiseLevel))
+  const expertiseLevels = [...new Set(
+    skills
+      .map(s => s.level)
+      .filter((l): l is ExpertiseLevel => VALID.includes(l as ExpertiseLevel))
+  )]
 
   const tempPassword = generatePassword()
   const hashed       = await hashPassword(tempPassword)
