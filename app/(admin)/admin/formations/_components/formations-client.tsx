@@ -39,6 +39,12 @@ const STATUS_TABS = [
 
 type TabKey = typeof STATUS_TABS[number]['key']
 
+const NIVEAU_LABELS: Record<string, string> = {
+  START:  'MIA Start',
+  PRO:    'MIA Pro',
+  EXPERT: 'MIA Expert',
+}
+
 const statusConfig: Record<FormationStatus, { dot: string; label: string }> = {
   DRAFT:     { dot: 'bg-amber-400',        label: 'Brouillon' },
   PUBLISHED: { dot: 'bg-emerald-500',      label: 'Publiée' },
@@ -164,6 +170,9 @@ export default function FormationsClient({
               <TableHead className="px-5 text-xs">Formation</TableHead>
               <TableHead className="px-5 text-xs">Secteur</TableHead>
               <TableHead className="px-5 text-xs">Type</TableHead>
+              <TableHead className="px-5 text-xs">Niveau</TableHead>
+              <TableHead className="px-5 text-xs">Code RS</TableHead>
+              <TableHead className="px-5 text-xs">Durée</TableHead>
               <TableHead className="px-5 text-xs">Statut</TableHead>
               <TableHead className="px-5 text-right text-xs">Inscrits</TableHead>
               <TableHead className="px-5 text-right text-xs">Modules</TableHead>
@@ -173,7 +182,7 @@ export default function FormationsClient({
           <TableBody>
             {formations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="px-5 py-12 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={11} className="px-5 py-12 text-center text-sm text-muted-foreground">
                   {initialSearch
                     ? `Aucune formation ne correspond à "${initialSearch}".`
                     : activeTab !== 'all'
@@ -193,14 +202,29 @@ export default function FormationsClient({
                     <TableCell className="px-5 py-4 text-muted-foreground tabular-nums">
                       {(page - 1) * pageSize + i + 1}
                     </TableCell>
-                    <TableCell className="px-5 py-4 font-medium max-w-60">
-                      <span className="line-clamp-1">{formation.title}</span>
+                    <TableCell className="px-5 py-4 font-medium max-w-64">
+                      <span className="line-clamp-2 whitespace-normal leading-snug">{formation.title}</span>
                     </TableCell>
                     <TableCell className="px-5 py-4 text-muted-foreground">{formation.categoryName}</TableCell>
                     <TableCell className="px-5 py-4">
                       <Badge variant="secondary" className="text-[11px]">
                         {formation.type === 'PRESENTIAL' ? 'Présentiel' : 'À distance'}
                       </Badge>
+                    </TableCell>
+                    <TableCell className="px-5 py-4">
+                      {formation.niveau ? (
+                        <Badge variant="outline" className="text-[11px]">
+                          {NIVEAU_LABELS[formation.niveau]}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground/50 text-xs">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-sm text-muted-foreground tabular-nums">
+                      {formation.codeRS ?? <span className="text-muted-foreground/50 text-xs">—</span>}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-sm text-muted-foreground tabular-nums">
+                      {formation.duration != null ? `${formation.duration} h` : <span className="text-muted-foreground/50 text-xs">—</span>}
                     </TableCell>
                     <TableCell className="px-5 py-4">
                       <span className="inline-flex items-center gap-1.5">

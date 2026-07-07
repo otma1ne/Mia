@@ -276,6 +276,8 @@ model Formation {
   status      FormationStatus @default(DRAFT)
   maxStudents Int
   thumbnail   String?
+  niveau      TrainingNiveau? // niveau cible : START / PRO / EXPERT
+  codeRS      String?         // code Répertoire Spécifique (certification)
   price       Float?          // tarif en MAD (used in contrat PDF)
   duration    Int?            // durée totale en heures (used in contrat + programme PDF)
   programme   String?         // contenu du programme (admin-authored, used in programme PDF)

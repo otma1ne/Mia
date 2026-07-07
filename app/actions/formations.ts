@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
-import type { FormationStatus, FormationType } from '@prisma/client'
+import type { FormationStatus, FormationType, TrainingNiveau } from '@prisma/client'
 
 export interface FormationRow {
   id: string
@@ -10,6 +10,9 @@ export interface FormationRow {
   categoryName: string
   type: FormationType
   status: FormationStatus
+  niveau: TrainingNiveau | null
+  codeRS: string | null
+  duration: number | null
   maxStudents: number
   enrollmentCount: number
   moduleCount: number
@@ -73,6 +76,9 @@ export async function getFormations({
       categoryName: f.category.name,
       type: f.type,
       status: f.status,
+      niveau: f.niveau,
+      codeRS: f.codeRS,
+      duration: f.duration,
       maxStudents: f.maxStudents,
       enrollmentCount: f._count.enrollments,
       moduleCount: f._count.modules,
@@ -133,6 +139,8 @@ export async function createFormation(_prevState: unknown, formData: FormData) {
   const priceRaw    = formData.get('price')     as string
   const durationRaw = formData.get('duration')  as string
   const programme   = (formData.get('programme') as string)?.trim() || undefined
+  const niveauRaw   = (formData.get('niveau')   as string)?.trim() || undefined
+  const codeRS      = (formData.get('codeRS')    as string)?.trim() || undefined
 
   if (!title || !description || !categoryId || !type) {
     return { error: 'Titre, description, catégorie et type sont requis.' }
@@ -140,6 +148,11 @@ export async function createFormation(_prevState: unknown, formData: FormData) {
   if (isNaN(maxStudents) || maxStudents < 1) {
     return { error: 'La capacité doit être d\'au moins 1.' }
   }
+
+  const VALID_NIVEAUX = ['START', 'PRO', 'EXPERT']
+  const niveau = niveauRaw && VALID_NIVEAUX.includes(niveauRaw)
+    ? (niveauRaw as TrainingNiveau)
+    : undefined
 
   const price    = priceRaw    ? parseFloat(priceRaw)    : undefined
   const duration = durationRaw ? parseInt(durationRaw)   : undefined
@@ -152,8 +165,10 @@ export async function createFormation(_prevState: unknown, formData: FormData) {
       type,
       maxStudents,
       status: 'DRAFT',
-      ...(price    !== undefined ? { price }    : {}),
-      ...(duration !== undefined ? { duration } : {}),
+      ...(niveau    !== undefined ? { niveau }    : {}),
+      ...(codeRS    !== undefined ? { codeRS }    : {}),
+      ...(price     !== undefined ? { price }     : {}),
+      ...(duration  !== undefined ? { duration }  : {}),
       ...(programme               ? { programme } : {}),
     },
   })
@@ -168,7 +183,13 @@ export async function createFormation(_prevState: unknown, formData: FormData) {
 
 export async function updateFormationDetails(
   id: string,
-  data: { price?: number | null; duration?: number | null; programme?: string | null }
+  data: {
+    price?: number | null
+    duration?: number | null
+    programme?: string | null
+    niveau?: TrainingNiveau | null
+    codeRS?: string | null
+  }
 ) {
   await db.formation.update({
     where: { id },
@@ -176,6 +197,8 @@ export async function updateFormationDetails(
       price:     data.price     ?? null,
       duration:  data.duration  ?? null,
       programme: data.programme ?? null,
+      niveau:    data.niveau    ?? null,
+      codeRS:    data.codeRS != null ? (data.codeRS.trim() || null) : null,
     },
   })
   revalidatePath('/admin/formations')
