@@ -205,6 +205,35 @@ export async function updateFormationDetails(
 }
 
 // ─────────────────────────────────────────
+// Duplicate formation
+// ─────────────────────────────────────────
+
+export async function duplicateFormation(id: string): Promise<{ error?: string }> {
+  const source = await db.formation.findUnique({ where: { id } })
+  if (!source) return { error: 'Formation introuvable.' }
+
+  await db.formation.create({
+    data: {
+      title:       `Copie de ${source.title}`,
+      description: source.description,
+      categoryId:  source.categoryId,
+      type:        source.type,
+      status:      'DRAFT',
+      maxStudents: source.maxStudents,
+      thumbnail:   source.thumbnail,
+      niveau:      source.niveau,
+      codeRS:      source.codeRS,
+      price:       source.price,
+      duration:    source.duration,
+      programme:   source.programme,
+    },
+  })
+
+  revalidatePath('/admin/formations')
+  return {}
+}
+
+// ─────────────────────────────────────────
 // Update formation status
 // ─────────────────────────────────────────
 

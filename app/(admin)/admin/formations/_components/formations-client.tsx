@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { FormationsResult } from '@/app/actions/formations'
-import { deleteFormation } from '@/app/actions/formations'
+import { deleteFormation, duplicateFormation } from '@/app/actions/formations'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/dialog'
 import {
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
-  MoreVertical, Search, LayoutList,
+  MoreVertical, Search, LayoutList, Copy,
 } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -71,6 +71,7 @@ export default function FormationsClient({
   const [selectedFormationId, setSelectedFormationId] = useState<string | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const updateParams = useCallback(
@@ -94,6 +95,12 @@ export default function FormationsClient({
 
   function handleTabChange(tab: TabKey) {
     updateParams({ status: tab === 'all' ? null : tab, page: null, search: null })
+  }
+
+  async function handleDuplicate(id: string) {
+    setDuplicatingId(id)
+    await duplicateFormation(id)
+    setDuplicatingId(null)
   }
 
   async function handleDelete() {
@@ -261,6 +268,13 @@ export default function FormationsClient({
                           <DropdownMenuItem onClick={() => window.location.href = `/admin/formations/${formation.id}`}>
                             <LayoutList className="h-4 w-4 mr-2" />
                             Gérer les modules
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            disabled={duplicatingId === formation.id}
+                            onClick={() => handleDuplicate(formation.id)}
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            {duplicatingId === formation.id ? 'Duplication…' : 'Dupliquer'}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
