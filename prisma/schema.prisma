@@ -74,12 +74,6 @@ enum NotificationType {
   TRAINER_APPLICATION_NEW
 }
 
-enum TrainerApplicationStatus {
-  PENDING
-  ACCEPTED
-  DECLINED
-}
-
 model Notification {
   id        String           @id @default(auto()) @map("_id") @db.ObjectId
   type      NotificationType
@@ -854,8 +848,13 @@ model Skill {
 
 // ─────────────────────────────────────────
 // TrainerApplication (self-registration)
-// skills JSON shape: Array<{ skillId: string; name: string; level: 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' | 'EXPERT' }>
 // ─────────────────────────────────────────
+
+enum TrainerApplicationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
 
 model TrainerApplication {
   id          String                   @id @default(auto()) @map("_id") @db.ObjectId
@@ -867,9 +866,12 @@ model TrainerApplication {
   bio         String
   cvUrl       String
   diplomeUrls String[]
+  // skills JSON shape: Array<{ skillId: string; name: string; level: 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' | 'EXPERT' }>
   skills      Json
   status      TrainerApplicationStatus @default(PENDING)
   adminNote   String?
   createdAt   DateTime                 @default(now())
   updatedAt   DateTime                 @updatedAt
+
+  @@index([status])
 }
