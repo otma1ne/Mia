@@ -59,6 +59,70 @@ export async function getTrainingSessionsForFormation(formationId: string): Prom
   }))
 }
 
+export type TrainingSessionListRow = TrainingSessionRow & {
+  formationId:    string
+  formationTitle: string
+}
+
+export async function getTrainingSessions({
+  status,
+  search = '',
+}: {
+  status?: TrainingSessionStatus
+  search?: string
+} = {}): Promise<TrainingSessionListRow[]> {
+  await requireAdmin()
+  const rows = await db.trainingSession.findMany({
+    where: {
+      ...(status ? { status } : {}),
+      ...(search.trim()
+        ? {
+            OR: [
+              { title:     { contains: search, mode: 'insensitive' } },
+              { formation: { title: { contains: search, mode: 'insensitive' } } },
+            ],
+          }
+        : {}),
+    },
+    orderBy: { startDate: 'asc' },
+    include: {
+      formation: { select: { id: true, title: true } },
+      trainer:   { include: { user: { select: { name: true } } } },
+      _count:    { select: { enrollments: true, inscriptions: true } },
+    },
+  })
+  return rows.map(r => ({
+    id:               r.id,
+    formationId:      r.formationId,
+    formationTitle:   r.formation.title,
+    title:            r.title,
+    niveau:           r.niveau,
+    startDate:        r.startDate,
+    endDate:          r.endDate,
+    status:           r.status,
+    maxStudents:      r.maxStudents,
+    price:            r.price,
+    location:         r.location,
+    onlineUrl:        r.onlineUrl,
+    notes:            r.notes,
+    trainerId:        r.trainerId,
+    trainerName:      r.trainer?.user.name ?? null,
+    enrollmentCount:  r._count.enrollments,
+    inscriptionCount: r._count.inscriptions,
+  }))
+}
+
+export async function getTrainingSessionCounts(): Promise<Record<string, number>> {
+  await requireAdmin()
+  const grouped = await db.trainingSession.groupBy({ by: ['status'], _count: { _all: true } })
+  const map: Record<string, number> = { all: 0 }
+  for (const g of grouped) {
+    map[g.status] = g._count._all
+    map.all += g._count._all
+  }
+  return map
+}
+
 export async function createTrainingSession(formationId: string, data: {
   title: string
   niveau?: TrainingNiveau | null
