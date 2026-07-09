@@ -16,6 +16,13 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Dialog, DialogContent, DialogDescription,
   DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
@@ -59,10 +66,11 @@ interface FormationsClientProps {
   search: string
   activeTab: TabKey
   categories: Category[]
+  activeCategoryId: string | null
 }
 
 export default function FormationsClient({
-  data, search: initialSearch, activeTab, categories,
+  data, search: initialSearch, activeTab, categories, activeCategoryId,
 }: FormationsClientProps) {
   const router   = useRouter()
   const pathname = usePathname()
@@ -153,8 +161,32 @@ export default function FormationsClient({
           })}
         </div>
 
-        {/* Search + actions */}
+        {/* Search + category filter + actions */}
         <div className="flex items-center gap-2">
+          {/* Category (Thématique) filter */}
+          <Select
+            value={activeCategoryId ?? ''}
+            onValueChange={v => { const val = v as string; updateParams({ categoryId: val !== '' ? val : null, page: null }) }}
+            labelItems={Object.fromEntries(categories.map(c => [c.id, c.name])) as Record<string, string>}
+          >
+            <SelectTrigger className="w-44">
+              <SelectValue placeholder="Toutes les thématiques" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map(c => (
+                <SelectItem key={c.id} value={c.id} label={c.name}>{c.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {activeCategoryId && (
+            <button
+              type="button"
+              onClick={() => updateParams({ categoryId: null, page: null })}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ✕
+            </button>
+          )}
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <Input
@@ -175,7 +207,7 @@ export default function FormationsClient({
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-10 px-5 text-xs">#</TableHead>
               <TableHead className="px-5 text-xs">Formation</TableHead>
-              <TableHead className="px-5 text-xs">Secteur</TableHead>
+              <TableHead className="px-5 text-xs">Thématique</TableHead>
               <TableHead className="px-5 text-xs">Type</TableHead>
               <TableHead className="px-5 text-xs">Niveau</TableHead>
               <TableHead className="px-5 text-xs">Code RS</TableHead>
