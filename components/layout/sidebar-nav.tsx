@@ -20,6 +20,7 @@ import {
   ClipboardCheck,
   Briefcase,
   Factory,
+  CalendarRange,
 } from 'lucide-react'
 
 interface NavItem {
@@ -46,6 +47,7 @@ const adminSections: NavSection[] = [
       { label: 'Étudiants',    href: '/admin/students',      icon: Users },
       { label: 'Formateurs',   href: '/admin/trainers',      icon: GraduationCap },
       { label: 'Formations',   href: '/admin/formations',    icon: Layers },
+      { label: 'Sessions',     href: '/admin/sessions',      icon: CalendarRange },
       { label: 'Bilans',       href: '/admin/bilans',        icon: BarChart3 },
       { label: "Secteurs d'activité",   href: '/admin/categories',    icon: Tag },
       { label: 'Commercial',   href: '/admin/commercial',    icon: Briefcase },
