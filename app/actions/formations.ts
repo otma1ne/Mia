@@ -37,14 +37,17 @@ export async function getFormations({
   pageSize = 10,
   search = '',
   status,
+  categoryId,
 }: {
   page?: number
   pageSize?: number
   search?: string
   status?: FormationStatus
+  categoryId?: string
 } = {}): Promise<FormationsResult> {
   const where = {
-    ...(status ? { status } : {}),
+    ...(status     ? { status }               : {}),
+    ...(categoryId ? { categoryId }           : {}),
     ...(search.trim()
       ? { title: { contains: search, mode: 'insensitive' as const } }
       : {}),
