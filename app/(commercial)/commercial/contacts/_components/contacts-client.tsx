@@ -21,18 +21,18 @@ import CreateContactDialog from './create-contact-dialog'
 import EditContactDialog from './edit-contact-dialog'
 
 const STATUS_TABS = [
-  { value: undefined,    label: 'Tous' },
-  { value: 'NOUVEAU',    label: 'Nouveau' },
-  { value: 'CONTACTE',   label: 'Contacté' },
-  { value: 'RELANCE',    label: 'Relancé' },
-  { value: 'CONVERTI',   label: 'Converti' },
+  { value: undefined,   label: 'Tous' },
+  { value: 'PROSPECT',  label: 'Prospect' },
+  { value: 'INDECIS',   label: 'Indécis' },
+  { value: 'GAGNE',     label: 'Gagné' },
+  { value: 'PERDU',     label: 'Perdu' },
 ] as const
 
 const statusConfig: Record<ContactStatus, { label: string; className: string }> = {
-  NOUVEAU:  { label: 'Nouveau',  className: 'bg-blue-100 text-blue-700' },
-  CONTACTE: { label: 'Contacté', className: 'bg-amber-100 text-amber-700' },
-  RELANCE:  { label: 'Relancé',  className: 'bg-orange-100 text-orange-700' },
-  CONVERTI: { label: 'Converti', className: 'bg-green-100 text-green-700' },
+  PROSPECT: { label: 'Prospect', className: 'bg-blue-100 text-blue-700' },
+  INDECIS:  { label: 'Indécis',  className: 'bg-amber-100 text-amber-700' },
+  GAGNE:    { label: 'Gagné',    className: 'bg-green-100 text-green-700' },
+  PERDU:    { label: 'Perdu',    className: 'bg-red-100 text-red-700' },
 }
 
 interface Props {
