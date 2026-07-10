@@ -120,9 +120,9 @@ export default function CreateTrainingSessionDialog({
               className="h-8 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus:border-ring"
             >
               <option value="">— Aucun niveau —</option>
-              <option value="START">MIA Start – Niveau 1 (7H)</option>
-              <option value="PRO">MIA Pro – Niveau 2 (14H)</option>
-              <option value="EXPERT">MIA Expert – Niveau 3 (21H)</option>
+              <option value="START">MIA Bronze – Niveau 1 (7H)</option>
+              <option value="PRO">MIA Argent – Niveau 2 (14H)</option>
+              <option value="EXPERT">MIA Or – Niveau 3 (21H)</option>
             </select>
           </div>
 

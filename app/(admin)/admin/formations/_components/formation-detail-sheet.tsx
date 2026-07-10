@@ -30,9 +30,9 @@ import {
 import type { FormationStatus, TrainingNiveau } from '@prisma/client'
 
 const NIVEAU_LABELS: Record<TrainingNiveau, string> = {
-  START:  'MIA Start',
-  PRO:    'MIA Pro',
-  EXPERT: 'MIA Expert',
+  START:  'MIA Bronze',
+  PRO:    'MIA Argent',
+  EXPERT: 'MIA Or',
 }
 
 type Formation = NonNullable<Awaited<ReturnType<typeof getFormation>>>
@@ -230,15 +230,15 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                       <Select
                         value={detailNiveau}
                         onValueChange={v => setDetailNiveau(v as TrainingNiveau | '')}
-                        labelItems={{ START: 'MIA Start', PRO: 'MIA Pro', EXPERT: 'MIA Expert' }}
+                        labelItems={{ START: 'MIA Bronze', PRO: 'MIA Argent', EXPERT: 'MIA Or' }}
                       >
                         <SelectTrigger className="h-8 text-sm w-full">
                           <SelectValue placeholder="Aucun" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="START" label="MIA Start">MIA Start</SelectItem>
-                          <SelectItem value="PRO" label="MIA Pro">MIA Pro</SelectItem>
-                          <SelectItem value="EXPERT" label="MIA Expert">MIA Expert</SelectItem>
+                          <SelectItem value="START" label="MIA Bronze">MIA Bronze</SelectItem>
+                          <SelectItem value="PRO" label="MIA Argent">MIA Argent</SelectItem>
+                          <SelectItem value="EXPERT" label="MIA Or">MIA Or</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
