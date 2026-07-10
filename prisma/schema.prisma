@@ -509,6 +509,11 @@ enum InscriptionStatus {
   DECLINED          // admin declined
 }
 
+enum InscriptionSource {
+  FORM        // public registration form
+  COMMERCIAL  // created by commercial rep after prospect conversion
+}
+
 model Inscription {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
   firstName        String
@@ -522,6 +527,8 @@ model Inscription {
   formationId      String            @db.ObjectId
   cvUrl            String?
   status           InscriptionStatus @default(PENDING)
+  source           InscriptionSource @default(FORM)
+  contactId        String?           @db.ObjectId
   adminNote        String?
   evaluationData   Json?             // raw answers stored as JSON
   evaluationPdfUrl      String?           // Cloudinary URL of generated PDF
