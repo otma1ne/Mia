@@ -250,7 +250,57 @@ export async function updateFormationStatus(id: string, status: FormationStatus)
 // ─────────────────────────────────────────
 
 export async function deleteFormation(id: string) {
+  // Collect IDs at each level — Prisma/MongoDB cascade emulation is unreliable
+  // beyond 2 levels deep, so we delete explicitly in leaf-first order.
+
+  const [modules, sessions, trainingSessions, enrollments, inscriptions] = await Promise.all([
+    db.module.findMany({ where: { formationId: id }, select: { id: true } }),
+    db.session.findMany({ where: { formationId: id }, select: { id: true } }),
+    db.trainingSession.findMany({ where: { formationId: id }, select: { id: true } }),
+    db.formationEnrollment.findMany({ where: { formationId: id }, select: { id: true } }),
+    db.inscription.findMany({ where: { formationId: id }, select: { id: true } }),
+  ])
+
+  const moduleIds          = modules.map(m => m.id)
+  const sessionIds         = sessions.map(s => s.id)
+  const trainingSessionIds = trainingSessions.map(ts => ts.id)
+  const enrollmentIds      = enrollments.map(e => e.id)
+  const inscriptionIds     = inscriptions.map(i => i.id)
+
+  const [materials, moduleEnrollments] = await Promise.all([
+    db.moduleMaterial.findMany({ where: { moduleId: { in: moduleIds } }, select: { id: true } }),
+    db.moduleEnrollment.findMany({ where: { moduleId: { in: moduleIds } }, select: { id: true } }),
+  ])
+
+  const materialIds        = materials.map(m => m.id)
+  const moduleEnrollmentIds = moduleEnrollments.map(me => me.id)
+
+  const examAttempts = await db.examAttempt.findMany({
+    where: { moduleEnrollmentId: { in: moduleEnrollmentIds } },
+    select: { id: true },
+  })
+  const examAttemptIds = examAttempts.map(ea => ea.id)
+
+  // Delete deepest-first
+  await db.answerSubmission.deleteMany({ where: { attemptId: { in: examAttemptIds } } })
+  await db.examAttempt.deleteMany({ where: { id: { in: examAttemptIds } } })
+  await db.attendance.deleteMany({
+    where: { OR: [{ sessionId: { in: sessionIds } }, { moduleEnrollmentId: { in: moduleEnrollmentIds } }] },
+  })
+  await db.formationBilan.deleteMany({ where: { enrollmentId: { in: enrollmentIds } } })
+  await db.moduleEnrollment.deleteMany({ where: { id: { in: moduleEnrollmentIds } } })
+  await db.formationEnrollment.deleteMany({ where: { formationId: id } })
+  await db.materialProgress.deleteMany({ where: { materialId: { in: materialIds } } })
+  await db.moduleMaterial.deleteMany({ where: { moduleId: { in: moduleIds } } })
+  await db.session.deleteMany({ where: { formationId: id } })
+  await db.evaluationToken.deleteMany({ where: { inscriptionId: { in: inscriptionIds } } })
+  await db.signatureToken.deleteMany({ where: { inscriptionId: { in: inscriptionIds } } })
+  await db.inscription.deleteMany({ where: { formationId: id } })
+  await db.companyInscription.deleteMany({ where: { trainingSessionId: { in: trainingSessionIds } } })
+  await db.trainingSession.deleteMany({ where: { formationId: id } })
+  await db.module.deleteMany({ where: { formationId: id } })
   await db.formation.delete({ where: { id } })
+
   revalidatePath('/admin/formations')
 }
 

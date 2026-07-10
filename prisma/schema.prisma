@@ -544,8 +544,8 @@ model Inscription {
 
   trainingSessionId String?           @db.ObjectId
 
-  formation      Formation        @relation(fields: [formationId], references: [id])
-  trainingSession TrainingSession? @relation(fields: [trainingSessionId], references: [id])
+  formation      Formation        @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  trainingSession TrainingSession? @relation(fields: [trainingSessionId], references: [id], onDelete: SetNull)
   evalToken      EvaluationToken?
   signatureToken SignatureToken?
 }
@@ -794,7 +794,7 @@ model CompanyInscription {
   updatedAt DateTime @updatedAt
 
   company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  trainingSession TrainingSession @relation(fields: [trainingSessionId], references: [id])
+  trainingSession TrainingSession @relation(fields: [trainingSessionId], references: [id], onDelete: Cascade)
 
   @@index([companyId])
   @@index([trainingSessionId])
