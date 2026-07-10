@@ -112,10 +112,14 @@ enum AttendanceStatus {
 }
 
 enum ContactStatus {
-  NOUVEAU
-  CONTACTE
-  RELANCE
-  CONVERTI
+  NOUVEAU   // deprecated — migrate to PROSPECT
+  CONTACTE  // deprecated — migrate to INDECIS
+  RELANCE   // deprecated — migrate to INDECIS
+  CONVERTI  // deprecated — migrate to GAGNE
+  PROSPECT
+  INDECIS
+  GAGNE
+  PERDU
 }
 
 enum QuestionType {
@@ -828,9 +832,11 @@ model Contact {
   email         String?
   city          String?
   need          String
-  status        ContactStatus         @default(NOUVEAU)
-  notes         String?
-  statusHistory ContactStatusChange[]
+  status         ContactStatus  @default(PROSPECT)
+  reminderDate   DateTime?
+  reminderSentAt DateTime?
+  notes          String?
+  statusHistory  ContactStatusChange[]
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
 
