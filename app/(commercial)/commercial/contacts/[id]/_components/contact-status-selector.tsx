@@ -64,6 +64,9 @@ export default function ContactStatusSelector({ contactId, currentStatus, format
   function handleSelect(status: ContactStatus) {
     if (status === currentStatus) return
     if (status === 'GAGNE') {
+      setSelected(null)
+      setNote('')
+      setReminderDate('')
       setGagneOpen(true)
       return
     }
