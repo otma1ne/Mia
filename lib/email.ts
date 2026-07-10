@@ -603,3 +603,55 @@ export async function sendPlanifierNotification(input: PlanifierInput) {
     `, `Répondez directement à cet email pour contacter ${input.firstName}.`),
   })
 }
+
+// ─── Contact reminder (sent to the commercial rep) ───────────────────────────
+
+export async function sendContactReminderEmail({
+  to,
+  commercialName,
+  contactFirstName,
+  contactLastName,
+  contactPhone,
+  contactNeed,
+}: {
+  to: string
+  commercialName: string
+  contactFirstName: string
+  contactLastName: string
+  contactPhone: string
+  contactNeed: string
+}) {
+  const subject = `Rappel : suivi de prospect — ${contactFirstName} ${contactLastName}`
+
+  const html = shell(`
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr><td style="padding:32px 36px 8px;">
+        <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${NEAR_BK};">Rappel prospect</h1>
+        <p style="margin:0;font-size:15px;color:#4b5563;">Bonjour ${commercialName},</p>
+      </td></tr>
+      <tr><td style="padding:16px 36px;">
+        <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.6;">
+          Vous aviez prévu de relancer ce prospect aujourd'hui :
+        </p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+               style="background:${DARK_CARD_BOX};border-radius:10px;">
+          <tr><td style="padding:20px 24px;">
+            <p style="margin:0 0 6px;font-size:17px;font-weight:700;color:#ffffff;">
+              ${contactFirstName} ${contactLastName}
+            </p>
+            <p style="margin:0 0 4px;font-size:14px;color:#d1d5db;">📞 ${contactPhone}</p>
+            <p style="margin:0;font-size:14px;color:#d1d5db;">💬 ${contactNeed}</p>
+          </td></tr>
+        </table>
+        <div style="margin-top:24px;text-align:center;">
+          <a href="${APP_URL}/commercial/contacts"
+             style="display:inline-block;padding:12px 28px;background:${PURPLE};color:#fff;font-weight:600;font-size:14px;border-radius:8px;text-decoration:none;">
+            Voir mes contacts
+          </a>
+        </div>
+      </td></tr>
+    </table>
+  `)
+
+  await transporter.sendMail({ from: FROM, to, subject, html })
+}
