@@ -9,6 +9,7 @@ import { ChevronLeft } from 'lucide-react'
 import ContactStatusSelector from './_components/contact-status-selector'
 import ContactNotes from './_components/contact-notes'
 import ContactStatusHistory from './_components/contact-status-history'
+import { getPublishedFormationsBasic } from '@/app/actions/commercial'
 
 export default async function ContactDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -18,7 +19,10 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
   const commercial = await db.commercial.findUnique({ where: { userId: session.user.id } })
   if (!commercial) redirect('/login')
 
-  const contact = await db.contact.findUnique({ where: { id } })
+  const [contact, formations] = await Promise.all([
+    db.contact.findUnique({ where: { id } }),
+    getPublishedFormationsBasic(),
+  ])
   if (!contact || contact.commercialId !== commercial.id) notFound()
 
   return (
@@ -52,7 +56,7 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
       </div>
 
       {/* Status selector */}
-      <ContactStatusSelector contactId={id} currentStatus={contact.status} />
+      <ContactStatusSelector contactId={id} currentStatus={contact.status} formations={formations} />
 
       {/* Notes */}
       <ContactNotes contactId={id} initialNotes={contact.notes ?? ''} />

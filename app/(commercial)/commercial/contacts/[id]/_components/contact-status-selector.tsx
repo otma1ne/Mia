@@ -7,30 +7,69 @@ import type { ContactStatus } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Loader2 } from 'lucide-react'
+import GagneFormationDialog from './gagne-formation-dialog'
 
-const STATUSES: { value: ContactStatus; label: string; className: string; activeClass: string }[] = [
-  { value: 'NOUVEAU',  label: 'Nouveau',  className: 'border-blue-300 text-blue-700 hover:bg-blue-50',   activeClass: 'bg-blue-100 border-blue-400 text-blue-800 font-semibold' },
-  { value: 'CONTACTE', label: 'Contacté', className: 'border-amber-300 text-amber-700 hover:bg-amber-50', activeClass: 'bg-amber-100 border-amber-400 text-amber-800 font-semibold' },
-  { value: 'RELANCE',  label: 'Relancé',  className: 'border-orange-300 text-orange-700 hover:bg-orange-50', activeClass: 'bg-orange-100 border-orange-400 text-orange-800 font-semibold' },
-  { value: 'CONVERTI', label: 'Converti', className: 'border-green-300 text-green-700 hover:bg-green-50',  activeClass: 'bg-green-100 border-green-400 text-green-800 font-semibold' },
+interface FormationOption {
+  id: string
+  title: string
+}
+
+const STATUSES: {
+  value: ContactStatus
+  label: string
+  className: string
+  activeClass: string
+}[] = [
+  {
+    value:       'PROSPECT',
+    label:       'Prospect',
+    className:   'border-blue-300 text-blue-700 hover:bg-blue-50',
+    activeClass: 'bg-blue-100 border-blue-400 text-blue-800 font-semibold',
+  },
+  {
+    value:       'INDECIS',
+    label:       'Indécis',
+    className:   'border-amber-300 text-amber-700 hover:bg-amber-50',
+    activeClass: 'bg-amber-100 border-amber-400 text-amber-800 font-semibold',
+  },
+  {
+    value:       'GAGNE',
+    label:       'Gagné',
+    className:   'border-green-300 text-green-700 hover:bg-green-50',
+    activeClass: 'bg-green-100 border-green-400 text-green-800 font-semibold',
+  },
+  {
+    value:       'PERDU',
+    label:       'Perdu',
+    className:   'border-red-300 text-red-700 hover:bg-red-50',
+    activeClass: 'bg-red-100 border-red-400 text-red-800 font-semibold',
+  },
 ]
 
 interface Props {
   contactId: string
   currentStatus: ContactStatus
+  formations: FormationOption[]
 }
 
-export default function ContactStatusSelector({ contactId, currentStatus }: Props) {
+export default function ContactStatusSelector({ contactId, currentStatus, formations }: Props) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
-  const [note, setNote] = useState('')
-  const [selected, setSelected] = useState<ContactStatus | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [note, setNote]             = useState('')
+  const [reminderDate, setReminderDate] = useState('')
+  const [selected, setSelected]     = useState<ContactStatus | null>(null)
+  const [error, setError]           = useState<string | null>(null)
+  const [gagneOpen, setGagneOpen]   = useState(false)
 
   function handleSelect(status: ContactStatus) {
     if (status === currentStatus) return
+    if (status === 'GAGNE') {
+      setGagneOpen(true)
+      return
+    }
     setSelected(status)
     setNote('')
+    setReminderDate('')
     setError(null)
   }
 
@@ -38,13 +77,20 @@ export default function ContactStatusSelector({ contactId, currentStatus }: Prop
     if (!selected) return
     setError(null)
     startTransition(async () => {
-      const result = await updateContactStatus(contactId, selected, note || undefined)
+      const rd = selected === 'INDECIS' && reminderDate
+        ? new Date(reminderDate)
+        : null
+      const result = await updateContactStatus(contactId, selected, note || undefined, rd)
       if (result?.error) { setError(result.error); return }
       setSelected(null)
       setNote('')
+      setReminderDate('')
       router.refresh()
     })
   }
+
+  // Today's date in YYYY-MM-DD for min attribute
+  const todayStr = new Date().toISOString().split('T')[0]
 
   return (
     <div className="space-y-3">
@@ -68,12 +114,30 @@ export default function ContactStatusSelector({ contactId, currentStatus }: Prop
       {selected && selected !== currentStatus && (
         <div className="border rounded-lg p-3 space-y-2 bg-muted/30">
           <p className="text-sm">
-            Changer vers <strong>{STATUSES.find(s => s.value === selected)?.label}</strong> — note optionnelle :
+            Changer vers <strong>{STATUSES.find(s => s.value === selected)?.label}</strong>
           </p>
+
+          {selected === 'INDECIS' && (
+            <div className="space-y-1">
+              <label htmlFor="reminder-date" className="text-xs text-muted-foreground">
+                Date de rappel (optionnel)
+              </label>
+              <input
+                id="reminder-date"
+                type="date"
+                min={todayStr}
+                value={reminderDate}
+                onChange={e => setReminderDate(e.target.value)}
+                title="Date de rappel"
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              />
+            </div>
+          )}
+
           <Input
             value={note}
             onChange={e => setNote(e.target.value)}
-            placeholder="Note sur ce changement…"
+            placeholder="Note optionnelle sur ce changement…"
             maxLength={500}
           />
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -87,6 +151,14 @@ export default function ContactStatusSelector({ contactId, currentStatus }: Prop
           </div>
         </div>
       )}
+
+      <GagneFormationDialog
+        open={gagneOpen}
+        onClose={() => setGagneOpen(false)}
+        onSuccess={() => router.refresh()}
+        contactId={contactId}
+        formations={formations}
+      />
     </div>
   )
 }
