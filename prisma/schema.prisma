@@ -50,9 +50,9 @@ enum FormationType {
 }
 
 enum TrainingNiveau {
-  START   // MIA Start – Niveau 1 – 7H
-  PRO     // MIA Pro   – Niveau 2 – 14H
-  EXPERT  // MIA Expert – Niveau 3 – 21H
+  START   // MIA Bronze – Niveau 1 – 7H
+  PRO     // MIA Argent – Niveau 2 – 14H
+  EXPERT  // MIA Or     – Niveau 3 – 21H
 }
 
 enum FormationStatus {

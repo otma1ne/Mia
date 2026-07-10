@@ -34,9 +34,9 @@ const STATUS_CONFIG: Record<TrainingSessionStatus, { dot: string; label: string 
 }
 
 const NIVEAU_LABELS: Record<string, string> = {
-  START:  'MIA Start',
-  PRO:    'MIA Pro',
-  EXPERT: 'MIA Expert',
+  START:  'MIA Bronze',
+  PRO:    'MIA Argent',
+  EXPERT: 'MIA Or',
 }
 
 function formatDate(d: Date) {

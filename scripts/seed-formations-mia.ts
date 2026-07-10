@@ -1,6 +1,6 @@
 /**
  * Seed des 5 formations réelles MIA Académie (IA & Outils Pro)
- * Structure : 1 formation = 3 modules (MIA Start / MIA Pro / MIA Expert)
+ * Structure : 1 formation = 3 modules (MIA Bronze / MIA Argent / MIA Or)
  *
  * Non-destructif pour le reste de la DB.
  * Supprime puis recrée uniquement les 5 formations MIA ciblées.
@@ -41,7 +41,7 @@ const FORMATIONS: FormationData[] = [
       'tous les niveaux — du collaborateur débutant au responsable digital.',
     modules: [
       {
-        title:       'MIA Start – Niveau 1 : Découverte de ChatGPT et des IA Génératives (7H)',
+        title:       'MIA Bronze – Niveau 1 : Découverte de ChatGPT et des IA Génératives (7H)',
         description: 'Introduction aux IA génératives et à ChatGPT · Principes du prompt engineering · ' +
                      'Cas d\'usage bureautiques : rédaction, résumé, traduction, emails · ' +
                      'Limites et bonnes pratiques (confidentialité, hallucinations) · Atelier pratique guidé',
@@ -49,7 +49,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  0,
       },
       {
-        title:       'MIA Pro – Niveau 2 : Maîtriser ChatGPT et les IA Génératives en entreprise (14H)',
+        title:       'MIA Argent – Niveau 2 : Maîtriser ChatGPT et les IA Génératives en entreprise (14H)',
         description: 'Techniques de prompting avancées (chain-of-thought, few-shot) · ' +
                      'Comparatif GPT-4 / Claude / Gemini · Automatisation de workflows métier · ' +
                      'Intégration avec Microsoft 365 et Google Workspace · ' +
@@ -58,7 +58,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  1,
       },
       {
-        title:       'MIA Expert – Niveau 3 : Concevoir et déployer des solutions IA Génératives (21H)',
+        title:       'MIA Or – Niveau 3 : Concevoir et déployer des solutions IA Génératives (21H)',
         description: 'Architecture LLM : fonctionnement, fine-tuning, RAG · ' +
                      'Déploiement d\'un assistant IA métier (no-code / low-code) · ' +
                      'API OpenAI : requêtes, paramètres, gestion des coûts · ' +
@@ -80,7 +80,7 @@ const FORMATIONS: FormationData[] = [
       'De la formule avancée aux macros IA, chaque niveau est ancré dans des cas concrets d\'entreprise.',
     modules: [
       {
-        title:       'MIA Start – Niveau 1 : Excel & IA pour gagner en productivité (7H)',
+        title:       'MIA Bronze – Niveau 1 : Excel & IA pour gagner en productivité (7H)',
         description: 'Formules incontournables : SI, RECHERCHEV/X, NB.SI, SOMME.SI · ' +
                      'Tableaux croisés dynamiques : création, filtres, segments · ' +
                      'Introduction aux idées intelligentes Excel (IA intégrée) · ' +
@@ -89,7 +89,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  0,
       },
       {
-        title:       'MIA Pro – Niveau 2 : Automatiser ses analyses Excel avec l\'IA (14H)',
+        title:       'MIA Argent – Niveau 2 : Automatiser ses analyses Excel avec l\'IA (14H)',
         description: 'Power Query : import, nettoyage et transformation de données · ' +
                      'Formules matricielles dynamiques (FILTRE, TRIER, UNIQUE) · ' +
                      'Macros VBA : automatisation de rapports récurrents · ' +
@@ -99,7 +99,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  1,
       },
       {
-        title:       'MIA Expert – Niveau 3 : Excel & IA avancé — Modélisation et automatisation complète (21H)',
+        title:       'MIA Or – Niveau 3 : Excel & IA avancé — Modélisation et automatisation complète (21H)',
         description: 'Power Pivot et modélisation de données avancée · DAX : mesures calculées, intelligence temporelle · ' +
                      'Connexion Excel ↔ Python pour analyses avancées · ' +
                      'Intégration API : récupérer des données externes dans Excel · ' +
@@ -120,7 +120,7 @@ const FORMATIONS: FormationData[] = [
       'et workflows puissants sans écrire une seule ligne de code.',
     modules: [
       {
-        title:       "MIA Start – Niveau 1 : IA & Automatisation — Gagnez jusqu'à 2 heures par jour (7H)",
+        title:       "MIA Bronze – Niveau 1 : IA & Automatisation — Gagnez jusqu'à 2 heures par jour (7H)",
         description: 'Cartographie de ses tâches chronophages et répétitives · ' +
                      'Introduction à Zapier et Make : logique de déclencheurs et d\'actions · ' +
                      'Automatisations simples : emails, notifications, formulaires · ' +
@@ -130,7 +130,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  0,
       },
       {
-        title:       "MIA Pro – Niveau 2 : IA & Automatisation — Gagnez jusqu'à 2 heures par jour (14H)",
+        title:       "MIA Argent – Niveau 2 : IA & Automatisation — Gagnez jusqu'à 2 heures par jour (14H)",
         description: 'Make (ex-Integromat) : scénarios avancés, itérateurs, agrégateurs · ' +
                      'n8n : solution open-source hébergeable · ' +
                      'Automatisation de la chaîne documentaire : PDF, Drive, email, CRM · ' +
@@ -141,7 +141,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  1,
       },
       {
-        title:       "MIA Expert – Niveau 3 : IA & Automatisation — Concevoir et déployer des processus intelligents (21H)",
+        title:       "MIA Or – Niveau 3 : IA & Automatisation — Concevoir et déployer des processus intelligents (21H)",
         description: 'Architecture d\'un système d\'automatisation d\'entreprise · ' +
                      'Agents IA autonomes : conception, déploiement, maintenance · ' +
                      'RPA : introduction à Power Automate Desktop · ' +
@@ -163,7 +163,7 @@ const FORMATIONS: FormationData[] = [
       'analyser des données en langage naturel et collaborer plus efficacement.',
     modules: [
       {
-        title:       "MIA Start – Niveau 1 : Booster sa productivité avec Microsoft 365 Copilot et l'IA (7H)",
+        title:       "MIA Bronze – Niveau 1 : Booster sa productivité avec Microsoft 365 Copilot et l'IA (7H)",
         description: 'Présentation de Microsoft 365 Copilot et de l\'écosystème IA Microsoft · ' +
                      'Copilot dans Word : rédaction, résumé, reformulation · ' +
                      'Copilot dans Outlook : gestion des emails et du calendrier · ' +
@@ -173,7 +173,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  0,
       },
       {
-        title:       "MIA Pro – Niveau 2 : Booster sa productivité avec Microsoft 365 Copilot et l'IA (14H)",
+        title:       "MIA Argent – Niveau 2 : Booster sa productivité avec Microsoft 365 Copilot et l'IA (14H)",
         description: 'Copilot dans Excel : génération de formules, analyse de données · ' +
                      'Copilot dans PowerPoint : création de présentations depuis un document · ' +
                      'Microsoft Designer et la génération d\'images · ' +
@@ -184,7 +184,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  1,
       },
       {
-        title:       "MIA Expert – Niveau 3 : Booster sa productivité avec Microsoft 365 Copilot et l'IA (21H)",
+        title:       "MIA Or – Niveau 3 : Booster sa productivité avec Microsoft 365 Copilot et l'IA (21H)",
         description: 'Copilot Studio : création d\'agents personnalisés pour l\'entreprise · ' +
                      'Power Platform + Copilot : Power Apps, Power Automate, Power BI · ' +
                      'SharePoint + Copilot : gestion documentaire intelligente · ' +
@@ -206,7 +206,7 @@ const FORMATIONS: FormationData[] = [
       'prédictives et des visuels automatiques accessibles à tous les niveaux.',
     modules: [
       {
-        title:       'MIA Start – Niveau 1 : Power BI & IA — Concevoir des tableaux de bord décisionnels (7H)',
+        title:       'MIA Bronze – Niveau 1 : Power BI & IA — Concevoir des tableaux de bord décisionnels (7H)',
         description: 'Découverte de Power BI Desktop et du service Power BI · ' +
                      'Connexion aux sources de données (Excel, CSV, base de données) · ' +
                      'Création de visuels : graphiques, cartes, jauges · ' +
@@ -216,7 +216,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  0,
       },
       {
-        title:       'MIA Pro – Niveau 2 : Power BI & IA — Concevoir des tableaux de bord décisionnels (14H)',
+        title:       'MIA Argent – Niveau 2 : Power BI & IA — Concevoir des tableaux de bord décisionnels (14H)',
         description: 'Power Query : nettoyage et transformation des données · ' +
                      'Modélisation en étoile : tables de faits et dimensions · ' +
                      'DAX fondamentaux : CALCULATE, FILTER, mesures de base · ' +
@@ -227,7 +227,7 @@ const FORMATIONS: FormationData[] = [
         orderIndex:  1,
       },
       {
-        title:       'MIA Expert – Niveau 3 : Power BI & IA — Concevoir des tableaux de bord décisionnels (21H)',
+        title:       'MIA Or – Niveau 3 : Power BI & IA — Concevoir des tableaux de bord décisionnels (21H)',
         description: 'DAX avancé : intelligence temporelle, ratios, classements dynamiques · ' +
                      'Power BI Embedded : intégration dans une application · ' +
                      'Connexion directe à Azure Synapse / SQL Server · ' +
@@ -300,9 +300,9 @@ async function main() {
     }
 
     console.log(`✅ "${f.title}"`)
-    console.log(`    ├─ Module 0 : MIA Start  (7H)`)
-    console.log(`    ├─ Module 1 : MIA Pro   (14H)`)
-    console.log(`    └─ Module 2 : MIA Expert (21H)`)
+    console.log(`    ├─ Module 0 : MIA Bronze  (7H)`)
+    console.log(`    ├─ Module 1 : MIA Argent   (14H)`)
+    console.log(`    └─ Module 2 : MIA Or (21H)`)
   }
 
   console.log('\n🎉 Terminé !')

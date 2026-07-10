@@ -47,9 +47,9 @@ const STATUS_TABS = [
 type TabKey = typeof STATUS_TABS[number]['key']
 
 const NIVEAU_LABELS: Record<string, string> = {
-  START:  'MIA Start',
-  PRO:    'MIA Pro',
-  EXPERT: 'MIA Expert',
+  START:  'MIA Bronze',
+  PRO:    'MIA Argent',
+  EXPERT: 'MIA Or',
 }
 
 const statusConfig: Record<FormationStatus, { dot: string; label: string }> = {

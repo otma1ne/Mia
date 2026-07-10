@@ -114,14 +114,14 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
               <Label>Niveau</Label>
-              <Select name="niveau" labelItems={{ START: 'MIA Start', PRO: 'MIA Pro', EXPERT: 'MIA Expert' }}>
+              <Select name="niveau" labelItems={{ START: 'MIA Bronze', PRO: 'MIA Argent', EXPERT: 'MIA Or' }}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Choisir…" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="START" label="MIA Start">MIA Start</SelectItem>
-                  <SelectItem value="PRO" label="MIA Pro">MIA Pro</SelectItem>
-                  <SelectItem value="EXPERT" label="MIA Expert">MIA Expert</SelectItem>
+                  <SelectItem value="START" label="MIA Bronze">MIA Bronze</SelectItem>
+                  <SelectItem value="PRO" label="MIA Argent">MIA Argent</SelectItem>
+                  <SelectItem value="EXPERT" label="MIA Or">MIA Or</SelectItem>
                 </SelectContent>
               </Select>
             </div>

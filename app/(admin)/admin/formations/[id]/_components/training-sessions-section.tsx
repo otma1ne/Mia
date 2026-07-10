@@ -19,9 +19,9 @@ import type { TrainingSessionStatus } from '@prisma/client'
 import CreateTrainingSessionDialog from './create-training-session-dialog'
 
 const NIVEAU_CONFIG: Record<TrainingNiveau, { label: string; className: string }> = {
-  START:  { label: 'MIA Start – Niv. 1',  className: 'bg-sky-50 text-sky-700 border-sky-200' },
-  PRO:    { label: 'MIA Pro – Niv. 2',    className: 'bg-violet-50 text-violet-700 border-violet-200' },
-  EXPERT: { label: 'MIA Expert – Niv. 3', className: 'bg-amber-50 text-amber-700 border-amber-200' },
+  START:  { label: 'MIA Bronze – Niv. 1', className: 'bg-sky-50 text-sky-700 border-sky-200' },
+  PRO:    { label: 'MIA Argent – Niv. 2', className: 'bg-violet-50 text-violet-700 border-violet-200' },
+  EXPERT: { label: 'MIA Or – Niv. 3',     className: 'bg-amber-50 text-amber-700 border-amber-200' },
 }
 
 const STATUS_CONFIG: Record<TrainingSessionStatus, { label: string; dot: string; badge: string }> = {
