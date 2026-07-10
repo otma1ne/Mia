@@ -526,8 +526,8 @@ export async function sendCommercialWelcomeEmail(to: string, name: string, passw
 
 export async function sendCompanyWelcomeEmail(
   to: string,
-  nomDirigeant: string,
-  prenomDirigeant: string,
+  nomSignataire: string,
+  prenomSignataire: string,
   raisonSociale: string,
   password: string,
 ) {
@@ -538,7 +538,7 @@ export async function sendCompanyWelcomeEmail(
     subject: `Bienvenue sur MIA Académie — espace entreprise ${raisonSociale}`,
     html: shell(`
       ${badge('Espace entreprise')}
-      ${heading(`Bienvenue, ${prenomDirigeant} ${nomDirigeant}.`)}
+      ${heading(`Bienvenue, ${prenomSignataire} ${nomSignataire}.`)}
       ${para(`Votre espace entreprise <strong>${raisonSociale}</strong> a été créé sur <strong>MIA Académie</strong>. Voici vos identifiants de connexion.`)}
       ${credentialsCard({ username: to, password, buttonHref: loginUrl, portalLabel: 'Espace entreprise' })}
       ${nextSteps('Vos prochaines étapes', [

@@ -12,13 +12,13 @@ import Link from 'next/link'
 import NewCompanyDialog from './new-company-dialog'
 
 type CompanyRow = {
-  id:              string
-  raisonSociale:   string
-  nomDirigeant:    string
-  prenomDirigeant: string
-  email:           string
-  phone:           string
-  createdAt:       Date
+  id:               string
+  raisonSociale:    string
+  nomSignataire:    string
+  prenomSignataire: string
+  email:            string
+  phone:            string
+  createdAt:        Date
   _count: { employees: number; inscriptions: number }
 }
 
@@ -31,7 +31,7 @@ export default function CompaniesClient({ companies }: CompaniesClientProps) {
 
   const filtered = companies.filter(c =>
     c.raisonSociale.toLowerCase().includes(search.toLowerCase()) ||
-    `${c.prenomDirigeant} ${c.nomDirigeant}`.toLowerCase().includes(search.toLowerCase()) ||
+    `${c.prenomSignataire} ${c.nomSignataire}`.toLowerCase().includes(search.toLowerCase()) ||
     c.email.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -57,7 +57,7 @@ export default function CompaniesClient({ companies }: CompaniesClientProps) {
           <TableHeader>
             <TableRow className="hover:bg-transparent">
               <TableHead className="px-5 text-xs">Entreprise</TableHead>
-              <TableHead className="px-5 text-xs">Dirigeant</TableHead>
+              <TableHead className="px-5 text-xs">Signataire</TableHead>
               <TableHead className="px-5 text-xs">Contact</TableHead>
               <TableHead className="px-5 text-xs">Salariés</TableHead>
               <TableHead className="px-5 text-xs">Inscriptions</TableHead>
@@ -83,7 +83,7 @@ export default function CompaniesClient({ companies }: CompaniesClientProps) {
                     </Link>
                   </TableCell>
                   <TableCell className="px-5 py-4 text-muted-foreground">
-                    {company.prenomDirigeant} {company.nomDirigeant}
+                    {company.prenomSignataire} {company.nomSignataire}
                   </TableCell>
                   <TableCell className="px-5 py-4">
                     <div className="flex flex-col gap-0.5">

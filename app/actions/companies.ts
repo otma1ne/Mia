@@ -57,20 +57,22 @@ export async function getCompany(id: string) {
 // ─────────────────────────────────────────────────────────────────
 
 export async function createCompany(data: {
-  raisonSociale:   string
-  nomDirigeant:    string
-  prenomDirigeant: string
-  fonction:        string
-  email:           string
-  phone:           string
-  siret?:          string
-  adresse?:        string
+  raisonSociale:    string
+  nomSignataire:    string
+  prenomSignataire: string
+  fonction:         string
+  email:            string
+  phone:            string
+  siret?:           string
+  adresse?:         string
+  ville?:           string
+  codePostal?:      string
 }): Promise<{ success: boolean; error?: string; companyId?: string }> {
   await requireAdmin()
 
-  const { raisonSociale, nomDirigeant, prenomDirigeant, fonction, email, phone, siret, adresse } = data
+  const { raisonSociale, nomSignataire, prenomSignataire, fonction, email, phone, siret, adresse, ville, codePostal } = data
 
-  if (!raisonSociale || !nomDirigeant || !prenomDirigeant || !fonction || !email || !phone) {
+  if (!raisonSociale || !nomSignataire || !prenomSignataire || !fonction || !email || !phone) {
     return { success: false, error: 'Tous les champs obligatoires doivent être renseignés.' }
   }
 
@@ -85,7 +87,7 @@ export async function createCompany(data: {
       data: {
         email,
         password: hashedPassword,
-        name:     `${prenomDirigeant} ${nomDirigeant}`,
+        name:     `${prenomSignataire} ${nomSignataire}`,
         phone,
         role:     'COMPANY',
       },
@@ -93,17 +95,19 @@ export async function createCompany(data: {
 
     return tx.company.create({
       data: {
-        raisonSociale, nomDirigeant, prenomDirigeant,
+        raisonSociale, nomSignataire, prenomSignataire,
         fonction, email, phone,
-        siret:   siret   || undefined,
-        adresse: adresse || undefined,
+        siret:      siret      || undefined,
+        adresse:    adresse    || undefined,
+        ville:      ville      || undefined,
+        codePostal: codePostal || undefined,
         userId:  user.id,
       },
     })
   })
 
   try {
-    await sendCompanyWelcomeEmail(email, nomDirigeant, prenomDirigeant, raisonSociale, plainPassword)
+    await sendCompanyWelcomeEmail(email, nomSignataire, prenomSignataire, raisonSociale, plainPassword)
   } catch (err) {
     console.error('[createCompany] Email send error:', err)
   }

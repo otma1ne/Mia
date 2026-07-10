@@ -46,18 +46,20 @@ type SessionOption = {
 }
 
 interface CompanyDetailClientProps {
-  companyId:     string
-  raisonSociale: string
-  nomDirigeant:  string
-  prenomDirigeant: string
-  fonction:      string
-  email:         string
-  phone:         string
-  siret:         string | null
-  adresse:       string | null
-  employees:     Employee[]
-  inscriptions:  Inscription[]
-  sessions:      SessionOption[]
+  companyId:        string
+  raisonSociale:    string
+  nomSignataire:    string
+  prenomSignataire: string
+  fonction:         string
+  email:            string
+  phone:            string
+  siret:            string | null
+  adresse:          string | null
+  ville:            string | null
+  codePostal:       string | null
+  employees:        Employee[]
+  inscriptions:     Inscription[]
+  sessions:         SessionOption[]
 }
 
 const INSCRIPTION_STATUS: Record<CompanyInscriptionStatus, { label: string; className: string }> = {
@@ -78,8 +80,8 @@ function getInitials(first: string, last: string) {
 }
 
 export default function CompanyDetailClient({
-  companyId, raisonSociale, nomDirigeant, prenomDirigeant, fonction,
-  email, phone, siret, adresse, employees, inscriptions, sessions,
+  companyId, raisonSociale, nomSignataire, prenomSignataire, fonction,
+  email, phone, siret, adresse, ville, codePostal, employees, inscriptions, sessions,
 }: CompanyDetailClientProps) {
   const [isPending, startTransition] = useTransition()
 
@@ -108,8 +110,8 @@ export default function CompanyDetailClient({
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div>
-              <p className="text-xs font-medium text-muted-foreground">Dirigeant</p>
-              <p className="mt-0.5 font-medium">{prenomDirigeant} {nomDirigeant}</p>
+              <p className="text-xs font-medium text-muted-foreground">Signataire</p>
+              <p className="mt-0.5 font-medium">{prenomSignataire} {nomSignataire}</p>
               <p className="text-muted-foreground">{fonction}</p>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
@@ -120,10 +122,13 @@ export default function CompanyDetailClient({
               <Phone className="h-3.5 w-3.5 shrink-0" />
               <span>{phone}</span>
             </div>
-            {adresse && (
+            {(adresse || ville || codePostal) && (
               <div className="text-muted-foreground">
                 <p className="text-xs font-medium text-muted-foreground mb-0.5">Adresse</p>
-                {adresse}
+                {adresse && <p>{adresse}</p>}
+                {(codePostal || ville) && (
+                  <p>{[codePostal, ville].filter(Boolean).join(' ')}</p>
+                )}
               </div>
             )}
           </CardContent>
