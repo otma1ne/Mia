@@ -112,10 +112,6 @@ enum AttendanceStatus {
 }
 
 enum ContactStatus {
-  NOUVEAU   // deprecated — migrate to PROSPECT
-  CONTACTE  // deprecated — migrate to INDECIS
-  RELANCE   // deprecated — migrate to INDECIS
-  CONVERTI  // deprecated — migrate to GAGNE
   PROSPECT
   INDECIS
   GAGNE
