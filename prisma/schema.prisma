@@ -742,16 +742,18 @@ enum CompanyInscriptionStatus {
 }
 
 model Company {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  raisonSociale   String
-  nomDirigeant    String
-  prenomDirigeant String
-  fonction        String
-  email           String   @unique
-  phone           String
-  siret           String?
-  adresse         String?
-  userId          String   @unique @db.ObjectId
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  raisonSociale  String
+  nomSignataire  String
+  prenomSignataire String
+  fonction       String
+  email          String   @unique
+  phone          String
+  siret          String?
+  adresse        String?
+  ville          String?
+  codePostal     String?
+  userId         String   @unique @db.ObjectId
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

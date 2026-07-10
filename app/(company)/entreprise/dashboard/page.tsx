@@ -66,7 +66,7 @@ export default async function CompanyDashboardPage() {
         <div>
           <h1 className="text-xl font-semibold">{company.raisonSociale}</h1>
           <p className="text-sm text-muted-foreground">
-            {company.prenomDirigeant} {company.nomDirigeant} — {company.fonction}
+            {company.prenomSignataire} {company.nomSignataire} — {company.fonction}
           </p>
         </div>
       </div>

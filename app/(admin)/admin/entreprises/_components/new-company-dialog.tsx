@@ -46,20 +46,22 @@ export default function NewCompanyDialog() {
     const fd = new FormData(e.currentTarget)
 
     const data = {
-      raisonSociale:   fd.get('raisonSociale')   as string,
-      nomDirigeant:    fd.get('nomDirigeant')     as string,
-      prenomDirigeant: fd.get('prenomDirigeant')  as string,
-      fonction:        fd.get('fonction')          as string,
-      email:           fd.get('email')             as string,
-      phone:           fd.get('phone')             as string,
-      siret:           (fd.get('siret')  as string) || undefined,
-      adresse:         (fd.get('adresse') as string) || undefined,
+      raisonSociale:    fd.get('raisonSociale')    as string,
+      nomSignataire:    fd.get('nomSignataire')     as string,
+      prenomSignataire: fd.get('prenomSignataire')  as string,
+      fonction:         fd.get('fonction')           as string,
+      email:            fd.get('email')              as string,
+      phone:            fd.get('phone')              as string,
+      siret:            (fd.get('siret')       as string) || undefined,
+      adresse:          (fd.get('adresse')     as string) || undefined,
+      ville:            (fd.get('ville')       as string) || undefined,
+      codePostal:       (fd.get('codePostal')  as string) || undefined,
     }
 
     startTransition(async () => {
       const result = await createCompany(data)
       if (result.success) {
-        setFeedback({ type: 'success', message: 'Espace entreprise créé. Les identifiants ont été envoyés au dirigeant.' })
+        setFeedback({ type: 'success', message: 'Espace entreprise créé. Les identifiants ont été envoyés au signataire.' })
         ;(e.target as HTMLFormElement).reset()
       } else {
         setFeedback({ type: 'error', message: result.error ?? 'Une erreur est survenue.' })
@@ -105,25 +107,31 @@ export default function NewCompanyDialog() {
             <Field id="raisonSociale" label="Raison sociale" required>
               <Input id="raisonSociale" name="raisonSociale" placeholder="MIA Consulting SARL" required />
             </Field>
+            <Field id="siret" label="SIRET">
+              <Input id="siret" name="siret" placeholder="12345678900012" />
+            </Field>
+            <Field id="adresse" label="Adresse">
+              <Input id="adresse" name="adresse" placeholder="45 rue des Lilas" />
+            </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field id="siret" label="SIRET">
-                <Input id="siret" name="siret" placeholder="12345678900012" />
+              <Field id="ville" label="Ville">
+                <Input id="ville" name="ville" placeholder="Paris" />
               </Field>
-              <Field id="adresse" label="Adresse">
-                <Input id="adresse" name="adresse" placeholder="45 rue des Lilas, Paris" />
+              <Field id="codePostal" label="Code postal">
+                <Input id="codePostal" name="codePostal" placeholder="75011" />
               </Field>
             </div>
           </div>
 
-          {/* Dirigeant */}
+          {/* Signataire */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Dirigeant / Contact</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Signataire / Contact</p>
             <div className="grid grid-cols-2 gap-3">
-              <Field id="prenomDirigeant" label="Prénom" required>
-                <Input id="prenomDirigeant" name="prenomDirigeant" placeholder="Karim" required />
+              <Field id="prenomSignataire" label="Prénom" required>
+                <Input id="prenomSignataire" name="prenomSignataire" placeholder="Karim" required />
               </Field>
-              <Field id="nomDirigeant" label="Nom" required>
-                <Input id="nomDirigeant" name="nomDirigeant" placeholder="Benali" required />
+              <Field id="nomSignataire" label="Nom" required>
+                <Input id="nomSignataire" name="nomSignataire" placeholder="Benali" required />
               </Field>
             </div>
             <Field id="fonction" label="Fonction" required>

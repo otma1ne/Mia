@@ -33,13 +33,15 @@ export default async function CompanyDetailPage({ params }: { params: { id: stri
       <CompanyDetailClient
         companyId={company.id}
         raisonSociale={company.raisonSociale}
-        nomDirigeant={company.nomDirigeant}
-        prenomDirigeant={company.prenomDirigeant}
+        nomSignataire={company.nomSignataire}
+        prenomSignataire={company.prenomSignataire}
         fonction={company.fonction}
         email={company.email}
         phone={company.phone}
         siret={company.siret}
         adresse={company.adresse}
+        ville={company.ville}
+        codePostal={company.codePostal}
         employees={company.employees}
         inscriptions={company.inscriptions}
         sessions={sessions}
