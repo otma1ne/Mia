@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/dialog'
 import {
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
-  MoreVertical, Search, LayoutList, Copy,
+  MoreVertical, Search, LayoutList, Copy, AlertTriangle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -77,7 +77,7 @@ export default function FormationsClient({
   const params   = useSearchParams()
 
   const [selectedFormationId, setSelectedFormationId] = useState<string | null>(null)
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string; enrollmentCount: number } | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -311,7 +311,7 @@ export default function FormationsClient({
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             variant="destructive"
-                            onClick={() => setDeleteTarget({ id: formation.id, title: formation.title })}
+                            onClick={() => setDeleteTarget({ id: formation.id, title: formation.title, enrollmentCount: formation.enrollmentCount })}
                           >
                             Supprimer
                           </DropdownMenuItem>
@@ -370,14 +370,25 @@ export default function FormationsClient({
           <DialogHeader>
             <DialogTitle>Supprimer la formation</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer <strong>{deleteTarget?.title}</strong> ? Toutes les inscriptions
-              et cours associés seront également supprimés. Cette action est irréversible.
+              Êtes-vous sûr de vouloir supprimer <strong>{deleteTarget?.title}</strong> ?
+              Cette action est irréversible.
             </DialogDescription>
           </DialogHeader>
+
+          {deleteTarget && deleteTarget.enrollmentCount > 0 && (
+            <div className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+              <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-destructive" />
+              <div className="text-sm text-destructive leading-snug">
+                <strong>{deleteTarget.enrollmentCount} étudiant{deleteTarget.enrollmentCount > 1 ? 's' : ''} inscrit{deleteTarget.enrollmentCount > 1 ? 's' : ''}</strong> à cette formation.
+                Toutes leurs inscriptions, progressions, présences et données d&apos;examen seront définitivement supprimées.
+              </div>
+            </div>
+          )}
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Annuler</Button>
             <Button variant="destructive" disabled={isDeleting} onClick={handleDelete}>
-              {isDeleting ? 'Suppression…' : 'Supprimer'}
+              {isDeleting ? 'Suppression…' : 'Supprimer définitivement'}
             </Button>
           </DialogFooter>
         </DialogContent>
