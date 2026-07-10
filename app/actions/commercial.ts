@@ -210,6 +210,14 @@ export async function updateContactStatus(
   try {
     updateContactStatusSchema.parse({ status, note })
 
+    if (status === 'INDECIS' && reminderDate != null) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      if (reminderDate < today) {
+        return { error: 'La date de rappel doit être aujourd\'hui ou dans le futur.' }
+      }
+    }
+
     // Clear reminder fields unless transitioning to INDECIS
     const reminderUpdate =
       status === 'INDECIS'
@@ -259,20 +267,18 @@ export async function convertContactToGagne(
   })
   if (!formation) return { success: false, error: 'Formation introuvable ou non publiée.' }
 
-  // Check no active inscription already exists for same email + formation
-  const existing = await db.inscription.findFirst({
-    where: {
-      email: contact.email,
-      formationId,
-      status: { in: ['PENDING', 'EVALUATED', 'PENDING_SIGNATURE'] },
-    },
-  })
-  if (existing) {
-    return { success: false, error: 'Une demande est déjà en cours pour cet email et cette formation.' }
-  }
-
-  // Create inscription + update contact atomically
+  // Create inscription + update contact atomically (duplicate check inside tx for race safety)
+  let alreadyExists = false
   await db.$transaction(async (tx) => {
+    const existing = await tx.inscription.findFirst({
+      where: {
+        email: contact.email!,
+        formationId,
+        status: { in: ['PENDING', 'EVALUATED', 'PENDING_SIGNATURE'] },
+      },
+    })
+    if (existing) { alreadyExists = true; return }
+
     await tx.inscription.create({
       data: {
         firstName:  contact.firstName,
@@ -299,6 +305,10 @@ export async function convertContactToGagne(
       },
     })
   })
+
+  if (alreadyExists) {
+    return { success: false, error: 'Une demande est déjà en cours pour cet email et cette formation.' }
+  }
 
   revalidatePath('/commercial/contacts')
   revalidatePath(`/commercial/contacts/${contactId}`)
