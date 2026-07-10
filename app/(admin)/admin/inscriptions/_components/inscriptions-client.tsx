@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import InscriptionDetailSheet from './inscription-detail-sheet'
 import NewInscriptionDialog from './new-inscription-dialog'
 import type { Inscription, Formation } from '@prisma/client'
-import type { InscriptionStatus } from '@prisma/client'
+import type { InscriptionStatus, InscriptionSource } from '@prisma/client'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
@@ -24,14 +24,26 @@ interface InscriptionsClientProps {
   sessions:     { id: string; title: string; formationId: string }[]
 }
 
-const STATUS_TABS: { label: string; value: InscriptionStatus | 'ALL' }[] = [
+type TabValue = InscriptionStatus | 'ALL' | 'COMMERCIAL'
+
+const STATUS_TABS: { label: string; value: TabValue }[] = [
   { label: 'Toutes',       value: 'ALL' },
   { label: 'En attente',   value: 'PENDING' },
   { label: 'Évaluées',     value: 'EVALUATED' },
   { label: 'En signature', value: 'PENDING_SIGNATURE' },
   { label: 'Acceptées',    value: 'ACCEPTED' },
   { label: 'Refusées',     value: 'DECLINED' },
+  { label: 'Commerciales', value: 'COMMERCIAL' },
 ]
+
+function commercialBadge(source: InscriptionSource) {
+  if (source !== 'COMMERCIAL') return null
+  return (
+    <Badge variant="outline" className="bg-purple-100 text-purple-700 border-purple-200">
+      Via commercial
+    </Badge>
+  )
+}
 
 function getInitials(firstName: string, lastName: string) {
   return `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase()
@@ -50,13 +62,15 @@ function statusBadge(status: InscriptionStatus) {
 }
 
 export default function InscriptionsClient({ inscriptions, students, formations, sessions }: InscriptionsClientProps) {
-  const [activeTab, setActiveTab]     = useState<InscriptionStatus | 'ALL'>('ALL')
+  const [activeTab, setActiveTab]     = useState<TabValue>('ALL')
   const [selected, setSelected]       = useState<InscriptionWithFormation | null>(null)
   const [sheetOpen, setSheetOpen]     = useState(false)
 
   const filtered = activeTab === 'ALL'
     ? inscriptions
-    : inscriptions.filter(i => i.status === activeTab)
+    : activeTab === 'COMMERCIAL'
+      ? inscriptions.filter(i => i.source === 'COMMERCIAL')
+      : inscriptions.filter(i => i.status === activeTab)
 
   function openSheet(inscription: InscriptionWithFormation) {
     setSelected(inscription)
@@ -71,7 +85,9 @@ export default function InscriptionsClient({ inscriptions, students, formations,
         {STATUS_TABS.map(tab => {
           const count    = tab.value === 'ALL'
             ? inscriptions.length
-            : inscriptions.filter(i => i.status === tab.value).length
+            : tab.value === 'COMMERCIAL'
+              ? inscriptions.filter(i => i.source === 'COMMERCIAL').length
+              : inscriptions.filter(i => i.status === tab.value).length
           const isActive = activeTab === tab.value
           return (
             <button
@@ -108,13 +124,14 @@ export default function InscriptionsClient({ inscriptions, students, formations,
               <TableHead className="px-5 text-xs">Email</TableHead>
               <TableHead className="px-5 text-xs">Formation</TableHead>
               <TableHead className="px-5 text-xs">Date</TableHead>
-              <TableHead className="px-5 text-xs">Statut</TableHead>
+              <TableHead className="px-5 text-xs">Statut dossier</TableHead>
+              <TableHead className="px-5 text-xs">Statut commercial</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="px-5 py-12 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={7} className="px-5 py-12 text-center text-sm text-muted-foreground">
                   Aucune demande trouvée.
                 </TableCell>
               </TableRow>
@@ -144,6 +161,7 @@ export default function InscriptionsClient({ inscriptions, students, formations,
                     {format(new Date(inscription.createdAt), 'dd MMM yyyy', { locale: fr })}
                   </TableCell>
                   <TableCell className="px-5 py-4">{statusBadge(inscription.status)}</TableCell>
+                  <TableCell className="px-5 py-4">{commercialBadge(inscription.source)}</TableCell>
                 </TableRow>
               ))
             )}

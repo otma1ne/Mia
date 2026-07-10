@@ -287,6 +287,8 @@ export async function convertContactToGagne(
         phone:      contact.phone,
         formationId,
         status:     'PENDING',
+        source:     'COMMERCIAL',
+        contactId,
       },
     })
     await tx.contact.update({
