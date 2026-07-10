@@ -255,7 +255,7 @@ export async function convertContactToGagne(
 
   const formation = await db.formation.findUnique({
     where: { id: formationId, status: 'PUBLISHED' },
-    select: { id: true },
+    select: { id: true, title: true },
   })
   if (!formation) return { success: false, error: 'Formation introuvable ou non publiée.' }
 
@@ -271,19 +271,19 @@ export async function convertContactToGagne(
     return { success: false, error: 'Une demande est déjà en cours pour cet email et cette formation.' }
   }
 
-  // Create inscription + update contact status in parallel
-  await Promise.all([
-    db.inscription.create({
+  // Create inscription + update contact atomically
+  await db.$transaction(async (tx) => {
+    await tx.inscription.create({
       data: {
         firstName:  contact.firstName,
         lastName:   contact.lastName,
-        email:      contact.email,
+        email:      contact.email!,
         phone:      contact.phone,
         formationId,
         status:     'PENDING',
       },
-    }),
-    db.contact.update({
+    })
+    await tx.contact.update({
       where: { id: contactId },
       data: {
         status:        'GAGNE',
@@ -293,12 +293,12 @@ export async function convertContactToGagne(
           push: {
             status:    'GAGNE',
             changedAt: new Date(),
-            note:      note ?? `Inscrit à la formation (ID: ${formationId})`,
+            note:      note ?? `Inscrit à la formation : ${formation.title!}`,
           },
         },
       },
-    }),
-  ])
+    })
+  })
 
   revalidatePath('/commercial/contacts')
   revalidatePath(`/commercial/contacts/${contactId}`)
