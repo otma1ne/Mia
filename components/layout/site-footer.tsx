@@ -67,8 +67,8 @@ export default function SiteFooter() {
         <div className="sf-bottom">
           <span className="sf-copy">© {new Date().getFullYear()} MIA Académie. Tous droits réservés.</span>
           <div className="sf-legal">
-            <Link href="#" className="sf-legal-link">Confidentialité</Link>
-            <Link href="#" className="sf-legal-link">Conditions</Link>
+            <Link href="/legal/privacy" className="sf-legal-link">Confidentialité</Link>
+            <Link href="/legal/terms" className="sf-legal-link">Conditions</Link>
           </div>
         </div>
       </div>
