@@ -8,7 +8,7 @@ const { auth } = NextAuth(authConfig)
 
 const publicRoutes = ['/', '/courses']
 const authRoutes = ['/login', '/register']
-const publicPrefixes = ['/evaluation', '/signature', '/formations', '/planifier']
+const publicPrefixes = ['/evaluation', '/signature', '/formations', '/planifier', '/legal']
 
 // ────────────────────────────────────────
 // Security Headers Configuration
@@ -64,8 +64,8 @@ const securityHeaders = {
 export default auth((req: NextRequest & { auth: any }) => {
   const { nextUrl } = req
 
-  // ── Coming Soon: redirect everything to home ──────────
-  if (nextUrl.pathname !== '/') {
+  // ── Coming Soon: redirect everything to home (except legal pages) ──────────
+  if (nextUrl.pathname !== '/' && !nextUrl.pathname.startsWith('/legal')) {
     return NextResponse.redirect(new URL('/', nextUrl))
   }
 
