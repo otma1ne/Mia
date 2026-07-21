@@ -89,6 +89,14 @@ enum ContactStatus {
   CONVERTI
 }
 
+enum TrainingSessionStatus {
+  DRAFT
+  OPEN
+  STARTED
+  COMPLETED
+  CANCELLED
+}
+
 enum QuestionType {
   QCM         // Multiple choices, one correct
   TRUE_FALSE  // Boolean
@@ -138,10 +146,11 @@ model Trainer {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sessions     Session[]
-  availability TrainerAvailability[]
-  categories   Category[]            @relation(fields: [categoryIds], references: [id])
+  user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions         Session[]
+  availability     TrainerAvailability[]
+  categories       Category[]            @relation(fields: [categoryIds], references: [id])
+  trainingSessions TrainingSession[]
 }
 
 enum ExpertiseLevel {
@@ -242,11 +251,12 @@ model Formation {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
-  category     Category              @relation(fields: [categoryId], references: [id])
-  modules      Module[]
-  sessions     Session[]
-  enrollments  FormationEnrollment[]
-  inscriptions Inscription[]
+  category         Category              @relation(fields: [categoryId], references: [id])
+  modules          Module[]
+  sessions         Session[]
+  enrollments      FormationEnrollment[]
+  inscriptions     Inscription[]
+  trainingSessions TrainingSession[]
 }
 
 // ─────────────────────────────────────────
@@ -272,8 +282,11 @@ model FormationEnrollment {
   bilanFroidSentAt     DateTime?  // when Bilan Froid email was sent
   bilanFroidRemindedAt DateTime?  // when reminder was sent
 
+  trainingSessionId String?          @db.ObjectId
+
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   formation         Formation          @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  trainingSession   TrainingSession?   @relation(fields: [trainingSessionId], references: [id])
   moduleEnrollments ModuleEnrollment[] // auto-created per module for progress tracking
   bilans            FormationBilan[]
 
@@ -463,9 +476,41 @@ model Inscription {
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
 
-  formation      Formation        @relation(fields: [formationId], references: [id])
-  evalToken      EvaluationToken?
-  signatureToken SignatureToken?
+  trainingSessionId String?          @db.ObjectId
+
+  formation         Formation        @relation(fields: [formationId], references: [id])
+  trainingSession   TrainingSession? @relation(fields: [trainingSessionId], references: [id])
+  evalToken         EvaluationToken?
+  signatureToken    SignatureToken?
+}
+
+// ─────────────────────────────────────────
+// TrainingSession (inter-entreprises session)
+// ─────────────────────────────────────────
+
+model TrainingSession {
+  id          String                @id @default(auto()) @map("_id") @db.ObjectId
+  formationId String                @db.ObjectId
+  trainerId   String?               @db.ObjectId
+  title       String
+  status      TrainingSessionStatus @default(DRAFT)
+  startDate   DateTime
+  endDate     DateTime
+  maxStudents Int
+  price       Float?
+  location    String?
+  onlineUrl   String?
+  notes       String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  formation    Formation             @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  trainer      Trainer?              @relation(fields: [trainerId], references: [id])
+  enrollments  FormationEnrollment[]
+  inscriptions Inscription[]
+
+  @@index([formationId])
+  @@index([status])
 }
 
 model EvaluationToken {
@@ -674,4 +719,17 @@ model Contact {
 
   @@index([commercialId])
   @@index([status])
+}
+
+
+// ─────────────────────────────────────────
+// Waitlist
+// ─────────────────────────────────────────
+
+model Waitlist {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName String
+  email     String   @unique
+  phone     String?
+  createdAt DateTime @default(now())
 }

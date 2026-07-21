@@ -79,7 +79,7 @@ function renderInline(
   marks: InlineStyle,
   baseStyle: Record<string, unknown>,
   keyPrefix: string,
-): React.ReactNode[] {
+): React.ReactElement[] {
   return nodes.flatMap((node, i) => {
     const key = `${keyPrefix}-${i}`
     if (node.kind === 'text') {
@@ -140,7 +140,7 @@ function renderBlocks(
   nodes: PNode[],
   styles: BlockStyles,
   keyPrefix: string,
-): React.ReactNode[] {
+): React.ReactElement[] {
   const noMarks: InlineStyle = { bold: false, italic: false, strike: false }
 
   return nodes.flatMap((node, i) => {

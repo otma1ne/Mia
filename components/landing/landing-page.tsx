@@ -14,6 +14,7 @@ import {
   ChevronLeft, ChevronRight, CheckCircle2, BookOpen,
   Menu, X,
 } from 'lucide-react'
+import WaitlistForm from '@/components/landing/waitlist-form'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -207,11 +208,11 @@ export default function LandingPage({
           .fromTo('#hero-badge',     { y: 18,  opacity: 0 }, { ...show, duration: 0.5 })
           .fromTo('.hero-word',      { y: 72,  opacity: 0 }, { ...show, stagger: 0.08, duration: 0.8 }, '-=0.3')
           .fromTo('#hero-sub',       { y: 22,  opacity: 0 }, { ...show, duration: 0.55 }, '<0.2')
-          .fromTo('#hero-ctas > *',  { y: 14,  opacity: 0 }, { ...show, stagger: 0.1,  duration: 0.45 }, '<0.2')
+          .fromTo('#hero-ctas',  { y: 14,  opacity: 0 }, { ...show, stagger: 0.1,  duration: 0.45 }, '<0.2')
           .fromTo('#hero-stats > *', { y: 30,  opacity: 0 }, { ...show, stagger: 0.08, duration: 0.6 }, '<0.15')
       } else {
         // Back-navigation: hero already scrolled past — reveal everything immediately
-        gsap.set('#hero-badge, .hero-word, #hero-sub, #hero-ctas > *, #hero-stats > *', { opacity: 1, y: 0 })
+        gsap.set('#hero-badge, .hero-word, #hero-sub, #hero-ctas, #hero-stats > *', { opacity: 1, y: 0 })
       }
 
       ScrollTrigger.batch('.f-card', {
@@ -424,18 +425,9 @@ export default function LandingPage({
             grâce à des programmes certifiés et des formateurs experts du terrain.
           </p>
 
-          {/* CTAs */}
-          <div id="hero-ctas" className="flex items-center justify-center gap-3 flex-wrap mb-16">
-            <Link href="/register"
-                  className="inline-flex items-center gap-2 font-semibold text-[15px] px-8 py-3.5 rounded-[32px] text-white transition-all hover:-translate-y-px active:scale-[0.97]"
-                  style={{ background: 'var(--mia-purple)' }}>
-              Explorer les formations
-            </Link>
-            <Link href="/planifier"
-               className="inline-flex items-center gap-2 font-semibold text-[14px] px-6 py-3.5 rounded-[32px] transition-all hover:-translate-y-px"
-               style={{ border: '1px solid rgba(255,255,255,0.18)', color: 'rgba(255,255,255,0.8)' }}>
-              Planifier un échange
-            </Link>
+          {/* Waitlist form */}
+          <div id="hero-ctas" className="mb-16">
+            <WaitlistForm />
           </div>
 
           {/* Stats with vertical dividers */}
