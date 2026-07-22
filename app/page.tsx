@@ -1,10 +1,39 @@
 import { db } from '@/lib/db'
 import LandingPage from '@/components/landing/landing-page'
+import WaitlistForm from '@/components/landing/waitlist-form'
+import Image from 'next/image'
+import logoLightSrc from '@/public/logo-light.png'
 import type { FormationType } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
+  if (process.env.COMING_SOON === 'true') {
+    return (
+      <div style={{
+        minHeight: '100dvh',
+        background: 'linear-gradient(135deg, #0f0c29 0%, #1a1040 50%, #0f0c29 100%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+        gap: '2rem',
+      }}>
+        <Image src={logoLightSrc} alt="MIA Académie" width={72} height={72} style={{ objectFit: 'contain' }} />
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ color: '#fff', fontSize: 'clamp(1.75rem, 5vw, 2.75rem)', fontWeight: 700, marginBottom: '0.5rem' }}>
+            Bientôt disponible
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '1rem', maxWidth: '380px' }}>
+            MIA Académie ouvre bientôt ses portes. Rejoins la liste d&apos;attente pour être prévenu(e) en premier.
+          </p>
+        </div>
+        <WaitlistForm />
+      </div>
+    )
+  }
+
   const [rawCategories, rawFormations] = await Promise.all([
     db.category.findMany({
       orderBy: { name: 'asc' },
