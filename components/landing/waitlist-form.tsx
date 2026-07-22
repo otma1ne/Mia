@@ -29,13 +29,16 @@ export default function WaitlistForm() {
 
   if (success) {
     return (
-      <div className="mx-auto max-w-[420px] rounded-2xl px-8 py-7 text-center"
-           style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }}>
-        <div className="flex justify-center mb-3">
-          <CheckCircle2 className="h-9 w-9" style={{ color: 'var(--mia-purple)' }} />
+      <div className="w-full max-w-sm mx-auto rounded-2xl px-8 py-8 text-center"
+           style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="flex justify-center mb-4">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center"
+               style={{ background: 'rgba(107,43,217,0.2)' }}>
+            <CheckCircle2 className="h-6 w-6" style={{ color: 'var(--mia-purple-soft)' }} />
+          </div>
         </div>
-        <p className="text-white font-semibold text-lg mb-1">C&apos;est noté !</p>
-        <p className="text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>
+        <p className="font-semibold text-white text-lg mb-1">C&apos;est noté !</p>
+        <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
           Tu es sur la liste d&apos;attente MIA Académie.<br />
           On te préviendra dès l&apos;ouverture des inscriptions.
         </p>
@@ -43,23 +46,31 @@ export default function WaitlistForm() {
     )
   }
 
+  const inputClass = [
+    'w-full rounded-xl px-4 py-3 text-sm font-medium outline-none transition-all',
+    'placeholder:text-white/30 text-white disabled:opacity-60',
+    'focus:ring-2 focus:ring-offset-0',
+  ].join(' ')
+
+  const inputStyle = {
+    background:  'rgba(255,255,255,0.07)',
+    border:      '1px solid rgba(255,255,255,0.12)',
+    '--tw-ring-color': 'var(--mia-purple)',
+  } as React.CSSProperties
+
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-[460px] w-full">
-      <div className="flex flex-col gap-2.5">
+    <form onSubmit={handleSubmit} className="w-full max-w-sm mx-auto">
+      <div className="flex flex-col gap-3">
         {/* Prénom + Email row */}
-        <div className="flex gap-2.5">
+        <div className="flex gap-3">
           <input
             name="firstName"
             type="text"
             placeholder="Prénom"
             required
             disabled={isPending}
-            className="flex-1 rounded-xl px-4 py-3 text-sm font-medium outline-none transition-colors disabled:opacity-60"
-            style={{
-              background:  'rgba(255,255,255,0.08)',
-              border:      '1px solid rgba(255,255,255,0.14)',
-              color:       '#fff',
-            }}
+            className={inputClass}
+            style={inputStyle}
           />
           <input
             name="email"
@@ -67,12 +78,8 @@ export default function WaitlistForm() {
             placeholder="Email"
             required
             disabled={isPending}
-            className="flex-1 rounded-xl px-4 py-3 text-sm font-medium outline-none transition-colors disabled:opacity-60"
-            style={{
-              background:  'rgba(255,255,255,0.08)',
-              border:      '1px solid rgba(255,255,255,0.14)',
-              color:       '#fff',
-            }}
+            className={inputClass}
+            style={inputStyle}
           />
         </div>
 
@@ -82,20 +89,18 @@ export default function WaitlistForm() {
           type="tel"
           placeholder="Téléphone (optionnel)"
           disabled={isPending}
-          className="w-full rounded-xl px-4 py-3 text-sm font-medium outline-none transition-colors disabled:opacity-60"
-          style={{
-            background:  'rgba(255,255,255,0.08)',
-            border:      '1px solid rgba(255,255,255,0.14)',
-            color:       '#fff',
-          }}
+          className={inputClass}
+          style={inputStyle}
         />
 
-        {/* Bouton */}
+        {/* Submit */}
         <button
           type="submit"
           disabled={isPending}
-          className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-px active:scale-[0.98] disabled:opacity-60 disabled:translate-y-0 flex items-center justify-center gap-2"
+          className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-px active:scale-[0.98] disabled:opacity-60 disabled:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
           style={{ background: 'var(--mia-purple)' }}
+          onMouseEnter={e => { if (!isPending) (e.currentTarget as HTMLButtonElement).style.background = 'var(--mia-violet)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--mia-purple)' }}
         >
           {isPending
             ? <><Loader2 className="h-4 w-4 animate-spin" />Envoi…</>
@@ -103,13 +108,11 @@ export default function WaitlistForm() {
         </button>
       </div>
 
-      {/* Erreur */}
       {error && (
-        <p className="mt-3 text-center text-xs" style={{ color: '#f87171' }}>{error}</p>
+        <p className="mt-3 text-center text-xs" style={{ color: 'var(--mia-coral)' }}>{error}</p>
       )}
 
-      {/* Anti-spam */}
-      <p className="mt-4 text-center text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+      <p className="mt-4 text-center text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
         Zéro spam. Tu seras prévenu(e) dès l&apos;ouverture.
       </p>
     </form>

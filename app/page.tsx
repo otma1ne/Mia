@@ -10,27 +10,30 @@ export const dynamic = 'force-dynamic'
 export default async function HomePage() {
   if (process.env.COMING_SOON === 'true') {
     return (
-      <div style={{
-        minHeight: '100dvh',
-        background: 'linear-gradient(135deg, #0f0c29 0%, #1a1040 50%, #0f0c29 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem',
-        gap: '2rem',
-      }}>
-        <Image src={logoLightSrc} alt="MIA Académie" width={72} height={72} style={{ objectFit: 'contain' }} />
-        <div style={{ textAlign: 'center' }}>
-          <h1 style={{ color: '#fff', fontSize: 'clamp(1.75rem, 5vw, 2.75rem)', fontWeight: 700, marginBottom: '0.5rem' }}>
+      <main className="min-h-dvh flex flex-col items-center justify-center px-4 py-16 gap-10"
+            style={{ background: 'var(--mia-near-black)' }}>
+        {/* Logo */}
+        <Image src={logoLightSrc} alt="MIA Académie" width={64} height={64} className="object-contain" />
+
+        {/* Heading */}
+        <div className="text-center max-w-md">
+          <span className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase"
+                style={{ background: 'rgba(107,43,217,0.18)', color: 'var(--mia-purple-soft)', border: '1px solid rgba(107,43,217,0.3)' }}>
             Bientôt disponible
+          </span>
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight">
+            La plateforme de formation<br />
+            <span style={{ color: 'var(--mia-purple-soft)' }}>MIA Académie</span>
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '1rem', maxWidth: '380px' }}>
-            MIA Académie ouvre bientôt ses portes. Rejoins la liste d&apos;attente pour être prévenu(e) en premier.
+          <p className="text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            Nous préparons quelque chose d&apos;exceptionnel. Rejoins la liste d&apos;attente
+            pour être parmi les premiers à accéder à la plateforme.
           </p>
         </div>
+
+        {/* Waitlist form */}
         <WaitlistForm />
-      </div>
+      </main>
     )
   }
 

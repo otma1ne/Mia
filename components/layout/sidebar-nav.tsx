@@ -21,6 +21,7 @@ import {
   Briefcase,
   Factory,
   CalendarRange,
+  ListOrdered,
 } from 'lucide-react'
 
 interface NavItem {
@@ -50,8 +51,9 @@ const adminSections: NavSection[] = [
       { label: 'Sessions',     href: '/admin/sessions',      icon: CalendarRange },
       { label: 'Bilans',       href: '/admin/bilans',        icon: BarChart3 },
       { label: "Secteurs d'activité",   href: '/admin/categories',    icon: Tag },
-      { label: 'Commercial',   href: '/admin/commercial',    icon: Briefcase },
-      { label: 'Entreprises',  href: '/admin/entreprises',   icon: Factory },
+      { label: 'Commercial',     href: '/admin/commercial',    icon: Briefcase },
+      { label: 'Entreprises',   href: '/admin/entreprises',   icon: Factory },
+      { label: 'Liste d\'attente', href: '/admin/waitlist',  icon: ListOrdered },
       { label: 'Planning',     href: '/admin/schedule',      icon: CalendarDays },
       { label: 'Centres',      href: '/admin/center',        icon: Building2 },
     ],
