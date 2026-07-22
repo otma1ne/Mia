@@ -1,0 +1,120 @@
+/* ─── Legal pages — MIA Académie design system ────────────────────────────── */
+
+/* ── Hero — same structure as ev-hero / fd-hero ──────────────────────────── */
+.lg-hero {
+  position: relative;
+  height: 280px;
+  background: var(--mia-near-black);
+  overflow: hidden;
+}
+.lg-hero-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 15% 70%, rgba(107,43,217,0.45) 0%, transparent 55%);
+}
+.lg-hero-fade {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 20%, rgba(23,23,28,0.90) 100%);
+}
+.lg-hero-content {
+  position: relative; z-index: 10;
+  max-width: 1160px; margin: 0 auto;
+  padding: 0 40px 44px;
+  height: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.lg-hero-badge {
+  display: inline-block;
+  width: max-content;
+  background: var(--mia-purple-tint); color: var(--mia-purple);
+  border: 1px solid rgba(107,43,217,0.22);
+  border-radius: 999px; padding: 4px 14px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.lg-hero-title {
+  color: #fff; font-weight: 400;
+  font-size: clamp(22px, 3vw, 36px);
+  line-height: 1.15; letter-spacing: -0.025em;
+  margin: 0;
+}
+
+/* ── Body ─────────────────────────────────────────────────────────────────── */
+.lg-body {
+  max-width: 760px; margin: 0 auto;
+  padding: 52px 40px 80px;
+}
+
+/* ── Content blocks ───────────────────────────────────────────────────────── */
+.lg-intro {
+  font-size: 15px; color: var(--text-muted);
+  line-height: 1.8; margin: 0 0 40px;
+  padding: 20px 24px;
+  background: var(--mia-purple-tint);
+  border-left: 3px solid var(--mia-purple);
+  border-radius: 0 10px 10px 0;
+}
+
+.lg-section { margin-bottom: 36px; }
+
+.lg-section-title {
+  font-size: 15px; font-weight: 700;
+  color: var(--text-strong);
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.lg-section-subtitle {
+  font-size: 13px; font-weight: 700;
+  color: var(--text-strong);
+  margin: 16px 0 6px;
+}
+
+.lg-p {
+  font-size: 14px; color: var(--text-muted);
+  line-height: 1.8; margin: 0 0 12px;
+}
+
+.lg-ul {
+  font-size: 14px; color: var(--text-muted);
+  line-height: 1.8; margin: 0 0 12px;
+  padding-left: 20px;
+}
+.lg-ul li { margin-bottom: 4px; }
+
+.lg-link { color: var(--mia-purple); text-decoration: none; }
+.lg-link:hover { text-decoration: underline; }
+
+/* ── Table (bases légales) ────────────────────────────────────────────────── */
+.lg-table-wrap { overflow-x: auto; margin: 0 0 12px; border-radius: 10px; border: 1px solid var(--border-default); }
+.lg-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.lg-table th {
+  background: var(--surface-muted);
+  padding: 10px 14px; text-align: left;
+  font-weight: 700; color: var(--text-strong);
+  border-bottom: 1px solid var(--border-default);
+}
+.lg-table td {
+  padding: 10px 14px; color: var(--text-muted);
+  border-bottom: 1px solid var(--border-default);
+  vertical-align: top;
+}
+.lg-table tr:last-child td { border-bottom: none; }
+
+.lg-badge {
+  display: inline-block;
+  background: var(--mia-purple-tint); color: var(--mia-purple);
+  font-size: 11px; font-weight: 600;
+  padding: 2px 9px; border-radius: 999px;
+}
+
+.lg-date {
+  font-size: 12px; color: var(--text-muted);
+  margin: 0 0 6px;
+}
+
+@media (max-width: 640px) {
+  .lg-hero-content { padding: 0 20px 36px; }
+  .lg-body { padding: 36px 20px 60px; }
+}
