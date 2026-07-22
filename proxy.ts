@@ -59,6 +59,14 @@ const securityHeaders = {
 }
 
 // ────────────────────────────────────────
+// Coming Soon gate
+// Set COMING_SOON=true in Vercel env vars for the production deployment.
+// When active: unauthenticated visitors are locked to / and /legal/*.
+// Authenticated team members can still reach /login and all app routes.
+// ────────────────────────────────────────
+const COMING_SOON = process.env.COMING_SOON === 'true'
+
+// ────────────────────────────────────────
 // Middleware Handler with Auth & Security
 // ────────────────────────────────────────
 export default auth((req: NextRequest & { auth: any }) => {
@@ -66,6 +74,21 @@ export default auth((req: NextRequest & { auth: any }) => {
   const isLoggedIn = !!req.auth
   const isAuthRoute = authRoutes.some(r => nextUrl.pathname.startsWith(r))
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname) || publicPrefixes.some(p => nextUrl.pathname.startsWith(p))
+
+  // ────────────────────────────────────────
+  // COMING SOON: lock unauthenticated visitors to landing + legal
+  // ────────────────────────────────────────
+  if (COMING_SOON && !isLoggedIn) {
+    const allowed =
+      nextUrl.pathname === '/' ||
+      nextUrl.pathname.startsWith('/legal') ||
+      isAuthRoute
+    if (!allowed) {
+      const response = NextResponse.redirect(new URL('/', nextUrl))
+      applySecurityHeaders(response)
+      return response
+    }
+  }
 
   // ────────────────────────────────────────
   // PROTECTION: Redirect authenticated users away from auth routes
