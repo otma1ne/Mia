@@ -37,6 +37,8 @@ export interface ContactRow {
   need: string
   status: ContactStatus
   notes: string | null
+  reminderDate: Date | null
+  reminderSentAt: Date | null
   statusHistory: ContactStatusChangeData[]
   createdAt: Date
   updatedAt: Date
@@ -116,10 +118,15 @@ export async function getMyContacts({
   return {
     contacts: contacts.map(c => ({
       ...c,
+      email:         c.email ?? null,
+      city:          c.city ?? null,
+      notes:         c.notes ?? null,
+      reminderDate:  c.reminderDate ?? null,
+      reminderSentAt: c.reminderSentAt ?? null,
       statusHistory: c.statusHistory.map(h => ({
-        status: h.status,
+        status:    h.status,
         changedAt: h.changedAt,
-        note: h.note ?? null,
+        note:      h.note ?? null,
       })),
     })),
     total,
@@ -146,7 +153,7 @@ export async function createContact(data: {
       data: {
         ...validated,
         commercialId: commercial.id,
-        statusHistory: [{ status: 'NOUVEAU', changedAt: new Date(), note: null }],
+        statusHistory: [{ status: 'PROSPECT', changedAt: new Date(), note: null }],
       },
     })
     revalidatePath('/commercial/contacts')
@@ -191,7 +198,8 @@ export async function updateContact(
 export async function updateContactStatus(
   id: string,
   status: ContactStatus,
-  note?: string
+  note?: string,
+  reminderDate?: Date | null
 ) {
   const commercial = await getCommercialForSession()
   if (!commercial) return { error: 'Non autorisé' }
@@ -201,10 +209,26 @@ export async function updateContactStatus(
 
   try {
     updateContactStatusSchema.parse({ status, note })
+
+    if (status === 'INDECIS' && reminderDate != null) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      if (reminderDate < today) {
+        return { error: 'La date de rappel doit être aujourd\'hui ou dans le futur.' }
+      }
+    }
+
+    // Clear reminder fields unless transitioning to INDECIS
+    const reminderUpdate =
+      status === 'INDECIS'
+        ? { reminderDate: reminderDate ?? null, reminderSentAt: null }
+        : { reminderDate: null, reminderSentAt: null }
+
     await db.contact.update({
       where: { id },
       data: {
         status,
+        ...reminderUpdate,
         statusHistory: {
           push: { status, changedAt: new Date(), note: note ?? null },
         },
@@ -218,6 +242,89 @@ export async function updateContactStatus(
     console.error('[updateContactStatus]', err)
     return { error: 'Erreur lors du changement de statut' }
   }
+}
+
+export async function convertContactToGagne(
+  contactId: string,
+  formationId: string,
+  note?: string
+): Promise<{ success: boolean; error?: string }> {
+  const commercial = await getCommercialForSession()
+  if (!commercial) return { success: false, error: 'Non autorisé' }
+
+  const contact = await db.contact.findUnique({ where: { id: contactId } })
+  if (!contact || contact.commercialId !== commercial.id) {
+    return { success: false, error: 'Contact introuvable' }
+  }
+
+  if (!contact.email) {
+    return { success: false, error: 'Ce contact n\'a pas d\'email — impossible de créer une inscription.' }
+  }
+
+  const formation = await db.formation.findUnique({
+    where: { id: formationId, status: 'PUBLISHED' },
+    select: { id: true, title: true },
+  })
+  if (!formation) return { success: false, error: 'Formation introuvable ou non publiée.' }
+
+  // Create inscription + update contact atomically (duplicate check inside tx for race safety)
+  let alreadyExists = false
+  await db.$transaction(async (tx) => {
+    const existing = await tx.inscription.findFirst({
+      where: {
+        email: contact.email!,
+        formationId,
+        status: { in: ['PENDING', 'EVALUATED', 'PENDING_SIGNATURE'] },
+      },
+    })
+    if (existing) { alreadyExists = true; return }
+
+    await tx.inscription.create({
+      data: {
+        firstName:  contact.firstName,
+        lastName:   contact.lastName,
+        email:      contact.email!,
+        phone:      contact.phone,
+        formationId,
+        status:     'PENDING',
+        source:     'COMMERCIAL',
+        contactId,
+      },
+    })
+    await tx.contact.update({
+      where: { id: contactId },
+      data: {
+        status:        'GAGNE',
+        reminderDate:  null,
+        reminderSentAt: null,
+        statusHistory: {
+          push: {
+            status:    'GAGNE',
+            changedAt: new Date(),
+            note:      note ?? `Inscrit à la formation : ${formation.title!}`,
+          },
+        },
+      },
+    })
+  })
+
+  if (alreadyExists) {
+    return { success: false, error: 'Une demande est déjà en cours pour cet email et cette formation.' }
+  }
+
+  revalidatePath('/commercial/contacts')
+  revalidatePath(`/commercial/contacts/${contactId}`)
+  revalidatePath('/admin/inscriptions')
+  return { success: true }
+}
+
+export async function getPublishedFormationsBasic(): Promise<{ id: string; title: string }[]> {
+  const formations = await db.formation.findMany({
+    where:   { status: 'PUBLISHED' },
+    select:  { id: true, title: true },
+    orderBy: { title: 'asc' },
+  })
+  return formations
 }
 
 export async function updateContactNotes(id: string, notes: string) {
@@ -255,7 +362,7 @@ export async function deleteContact(id: string) {
 }
 
 export async function getCommercialStats(commercialId?: string): Promise<Record<ContactStatus, number>> {
-  const empty = { NOUVEAU: 0, CONTACTE: 0, RELANCE: 0, CONVERTI: 0 }
+  const empty: Record<ContactStatus, number> = { PROSPECT: 0, INDECIS: 0, GAGNE: 0, PERDU: 0 }
   const session = await auth()
   if (!session) return empty
 
@@ -276,12 +383,7 @@ export async function getCommercialStats(commercialId?: string): Promise<Record<
     _count: { _all: true },
   })
 
-  const result: Record<ContactStatus, number> = {
-    NOUVEAU: 0,
-    CONTACTE: 0,
-    RELANCE: 0,
-    CONVERTI: 0,
-  }
+  const result: Record<ContactStatus, number> = { PROSPECT: 0, INDECIS: 0, GAGNE: 0, PERDU: 0 }
   for (const row of counts) {
     result[row.status] = row._count._all
   }
@@ -343,23 +445,25 @@ export async function getAllContacts({
 
   return {
     contacts: contacts.map(c => ({
-      id: c.id,
-      commercialId: c.commercialId,
-      firstName: c.firstName,
-      lastName: c.lastName,
-      phone: c.phone,
-      email: c.email ?? null,
-      city: c.city ?? null,
-      need: c.need,
-      status: c.status,
-      notes: c.notes ?? null,
-      statusHistory: c.statusHistory.map(h => ({
-        status: h.status,
+      id:             c.id,
+      commercialId:   c.commercialId,
+      firstName:      c.firstName,
+      lastName:       c.lastName,
+      phone:          c.phone,
+      email:          c.email ?? null,
+      city:           c.city ?? null,
+      need:           c.need,
+      status:         c.status,
+      notes:          c.notes ?? null,
+      reminderDate:   c.reminderDate ?? null,
+      reminderSentAt: c.reminderSentAt ?? null,
+      statusHistory:  c.statusHistory.map(h => ({
+        status:    h.status,
         changedAt: h.changedAt,
-        note: h.note ?? null,
+        note:      h.note ?? null,
       })),
-      createdAt: c.createdAt,
-      updatedAt: c.updatedAt,
+      createdAt:      c.createdAt,
+      updatedAt:      c.updatedAt,
       commercialName: c.commercial.user.name,
     })),
     total,
@@ -381,13 +485,13 @@ export async function getCommercials(): Promise<CommercialRow[]> {
     },
   })
   return commercials.map(c => ({
-    id: c.id,
-    userId: c.userId,
-    name: c.user.name,
-    email: c.user.email,
-    phone: c.user.phone ?? null,
+    id:           c.id,
+    userId:       c.userId,
+    name:         c.user.name,
+    email:        c.user.email,
+    phone:        c.user.phone ?? null,
     contactCount: c._count.contacts,
-    createdAt: c.createdAt,
+    createdAt:    c.createdAt,
   }))
 }
 
@@ -410,11 +514,11 @@ export async function createCommercialAccount(data: {
 
     await db.user.create({
       data: {
-        name: validated.name,
-        email: validated.email,
-        phone: validated.phone ?? null,
+        name:     validated.name,
+        email:    validated.email,
+        phone:    validated.phone ?? null,
         password: hashed,
-        role: 'COMMERCIAL',
+        role:     'COMMERCIAL',
         commercial: { create: {} },
       },
     })

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from 'react'
 import { getFormation, updateFormationStatus, updateFormationDetails } from '@/app/actions/formations'
-import { Badge } from '@/components/ui/badge'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 import {
   Sheet,
   SheetContent,
@@ -20,7 +20,20 @@ import {
 import { Calendar, Users, BookOpen, ChevronDown, Check, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import type { FormationStatus } from '@prisma/client'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import type { FormationStatus, TrainingNiveau } from '@prisma/client'
+
+const NIVEAU_LABELS: Record<TrainingNiveau, string> = {
+  START:  'MIA Bronze',
+  PRO:    'MIA Argent',
+  EXPERT: 'MIA Or',
+}
 
 type Formation = NonNullable<Awaited<ReturnType<typeof getFormation>>>
 
@@ -52,6 +65,8 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
   const [detailPrice, setDetailPrice]         = useState('')
   const [detailDuration, setDetailDuration]   = useState('')
   const [detailProgramme, setDetailProgramme] = useState('')
+  const [detailNiveau, setDetailNiveau]       = useState<TrainingNiveau | ''>('')
+  const [detailCodeRS, setDetailCodeRS]       = useState('')
   const [isSavingDetails, startDetailsSave]   = useTransition()
 
   useEffect(() => {
@@ -63,6 +78,8 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
         setDetailPrice(data.price != null ? String(data.price) : '')
         setDetailDuration(data.duration != null ? String(data.duration) : '')
         setDetailProgramme(data.programme ?? '')
+        setDetailNiveau((data.niveau ?? '') as TrainingNiveau | '')
+        setDetailCodeRS(data.codeRS ?? '')
       }
     })
   }, [formationId])
@@ -81,8 +98,10 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
       const price    = detailPrice    ? parseFloat(detailPrice)  : null
       const duration = detailDuration ? parseInt(detailDuration) : null
       const programme = detailProgramme.trim() || null
-      await updateFormationDetails(formation.id, { price, duration, programme })
-      setFormation(prev => prev ? { ...prev, price, duration, programme } : prev)
+      const niveau   = (detailNiveau || null) as TrainingNiveau | null
+      const codeRS   = detailCodeRS.trim() || null
+      await updateFormationDetails(formation.id, { price, duration, programme, niveau, codeRS })
+      setFormation(prev => prev ? { ...prev, price, duration, programme, niveau, codeRS } : prev)
       setEditingDetails(false)
     })
   }
@@ -207,6 +226,34 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                 <div className="flex flex-col gap-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-2">
+                      <label className="text-xs text-muted-foreground">Niveau</label>
+                      <Select
+                        value={detailNiveau}
+                        onValueChange={v => setDetailNiveau(v as TrainingNiveau | '')}
+                        labelItems={{ START: 'MIA Bronze', PRO: 'MIA Argent', EXPERT: 'MIA Or' }}
+                      >
+                        <SelectTrigger className="h-8 text-sm w-full">
+                          <SelectValue placeholder="Aucun" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="START" label="MIA Bronze">MIA Bronze</SelectItem>
+                          <SelectItem value="PRO" label="MIA Argent">MIA Argent</SelectItem>
+                          <SelectItem value="EXPERT" label="MIA Or">MIA Or</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs text-muted-foreground">Code RS</label>
+                      <Input
+                        value={detailCodeRS}
+                        onChange={e => setDetailCodeRS(e.target.value)}
+                        placeholder="RS1234"
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-2">
                       <label className="text-xs text-muted-foreground">Tarif (€)</label>
                       <Input
                         type="number"
@@ -232,12 +279,11 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-muted-foreground">Programme de formation</label>
-                    <textarea
-                      rows={6}
+                    <RichTextEditor
                       value={detailProgramme}
-                      onChange={e => setDetailProgramme(e.target.value)}
+                      onChange={setDetailProgramme}
                       placeholder="Décrivez le contenu détaillé du programme…"
-                      className="h-auto w-full min-w-0 resize-none rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                      minHeight={160}
                     />
                   </div>
                   <Button variant="outline" size="sm" className="w-full" onClick={() => setEditingDetails(false)}>
@@ -246,6 +292,14 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                 </div>
               ) : (
                 <div className="flex flex-col gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Niveau</span>
+                    <span>{formation.niveau ? NIVEAU_LABELS[formation.niveau] : <span className="text-muted-foreground italic">Non renseigné</span>}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Code RS</span>
+                    <span>{formation.codeRS ?? <span className="text-muted-foreground italic">Non renseigné</span>}</span>
+                  </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tarif</span>
                     <span>{formation.price != null ? `${formation.price.toLocaleString('fr-FR')} €` : <span className="text-muted-foreground italic">Non renseigné</span>}</span>
@@ -257,7 +311,10 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                   <div className="flex flex-col gap-1 mt-1">
                     <span className="text-muted-foreground">Programme</span>
                     {formation.programme ? (
-                      <p className="text-xs leading-relaxed bg-muted rounded-lg px-3 py-2 whitespace-pre-wrap line-clamp-5">{formation.programme}</p>
+                      <div
+                        className="prose-editor text-xs leading-relaxed bg-muted rounded-lg px-3 py-2 line-clamp-5"
+                        dangerouslySetInnerHTML={{ __html: formation.programme }}
+                      />
                     ) : (
                       <p className="text-xs text-muted-foreground italic">Non renseigné</p>
                     )}

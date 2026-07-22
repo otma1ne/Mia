@@ -4,7 +4,8 @@ import { db } from '@/lib/db'
 import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import type { TrainingSessionStatus } from '@prisma/client'
+import type { TrainingSessionStatus, TrainingNiveau } from '@prisma/client'
+import { publishNotification } from '@/lib/pusher'
 
 async function requireAdmin() {
   const session = await auth()
@@ -14,6 +15,7 @@ async function requireAdmin() {
 export type TrainingSessionRow = {
   id: string
   title: string
+  niveau: TrainingNiveau | null
   startDate: Date
   endDate: Date
   status: TrainingSessionStatus
@@ -41,6 +43,7 @@ export async function getTrainingSessionsForFormation(formationId: string): Prom
   return rows.map(r => ({
     id:               r.id,
     title:            r.title,
+    niveau:           r.niveau,
     startDate:        r.startDate,
     endDate:          r.endDate,
     status:           r.status,
@@ -56,8 +59,73 @@ export async function getTrainingSessionsForFormation(formationId: string): Prom
   }))
 }
 
+export type TrainingSessionListRow = TrainingSessionRow & {
+  formationId:    string
+  formationTitle: string
+}
+
+export async function getTrainingSessions({
+  status,
+  search = '',
+}: {
+  status?: TrainingSessionStatus
+  search?: string
+} = {}): Promise<TrainingSessionListRow[]> {
+  await requireAdmin()
+  const rows = await db.trainingSession.findMany({
+    where: {
+      ...(status ? { status } : {}),
+      ...(search.trim()
+        ? {
+            OR: [
+              { title:     { contains: search, mode: 'insensitive' } },
+              { formation: { title: { contains: search, mode: 'insensitive' } } },
+            ],
+          }
+        : {}),
+    },
+    orderBy: { startDate: 'asc' },
+    include: {
+      formation: { select: { id: true, title: true } },
+      trainer:   { include: { user: { select: { name: true } } } },
+      _count:    { select: { enrollments: true, inscriptions: true } },
+    },
+  })
+  return rows.map(r => ({
+    id:               r.id,
+    formationId:      r.formationId,
+    formationTitle:   r.formation.title,
+    title:            r.title,
+    niveau:           r.niveau,
+    startDate:        r.startDate,
+    endDate:          r.endDate,
+    status:           r.status,
+    maxStudents:      r.maxStudents,
+    price:            r.price,
+    location:         r.location,
+    onlineUrl:        r.onlineUrl,
+    notes:            r.notes,
+    trainerId:        r.trainerId,
+    trainerName:      r.trainer?.user.name ?? null,
+    enrollmentCount:  r._count.enrollments,
+    inscriptionCount: r._count.inscriptions,
+  }))
+}
+
+export async function getTrainingSessionCounts(): Promise<Record<string, number>> {
+  await requireAdmin()
+  const grouped = await db.trainingSession.groupBy({ by: ['status'], _count: { _all: true } })
+  const map: Record<string, number> = { all: 0 }
+  for (const g of grouped) {
+    map[g.status] = g._count._all
+    map.all += g._count._all
+  }
+  return map
+}
+
 export async function createTrainingSession(formationId: string, data: {
   title: string
+  niveau?: TrainingNiveau | null
   startDate: string
   endDate: string
   maxStudents: number
@@ -74,6 +142,7 @@ export async function createTrainingSession(formationId: string, data: {
       data: {
         formationId,
         title:       data.title,
+        niveau:      data.niveau ?? null,
         startDate:   new Date(data.startDate),
         endDate:     new Date(data.endDate),
         maxStudents: data.maxStudents,
@@ -92,16 +161,36 @@ export async function createTrainingSession(formationId: string, data: {
   }
 }
 
+const SESSION_STATUS_LABELS: Record<TrainingSessionStatus, string> = {
+  DRAFT:     'Brouillon',
+  OPEN:      'Ouverte',
+  STARTED:   'En cours',
+  COMPLETED: 'Terminée',
+  CANCELLED: 'Annulée',
+}
+
 export async function updateTrainingSessionStatus(id: string, status: TrainingSessionStatus): Promise<void> {
   await requireAdmin()
-  const ts = await db.trainingSession.findUnique({ where: { id }, select: { formationId: true } })
+  const ts = await db.trainingSession.findUnique({
+    where: { id },
+    select: { formationId: true, title: true },
+  })
   if (!ts) return
   await db.trainingSession.update({ where: { id }, data: { status } })
   revalidatePath(`/admin/formations/${ts.formationId}`)
+
+  publishNotification({
+    type:  'SESSION_CHANGED',
+    title: 'Statut de session modifié',
+    body:  `est maintenant ${SESSION_STATUS_LABELS[status] ?? status}`,
+    href:  `/admin/formations/${ts.formationId}`,
+    data:  { sessionTitle: ts.title },
+  }).catch(() => {})
 }
 
 export async function updateTrainingSession(id: string, data: {
   title?: string
+  niveau?: TrainingNiveau | null
   startDate?: string
   endDate?: string
   maxStudents?: number
@@ -119,6 +208,7 @@ export async function updateTrainingSession(id: string, data: {
       where: { id },
       data: {
         ...(data.title       !== undefined && { title: data.title }),
+        ...(data.niveau      !== undefined && { niveau: data.niveau }),
         ...(data.startDate   !== undefined && { startDate: new Date(data.startDate) }),
         ...(data.endDate     !== undefined && { endDate: new Date(data.endDate) }),
         ...(data.maxStudents !== undefined && { maxStudents: data.maxStudents }),

@@ -79,8 +79,8 @@ function renderInline(
   marks: InlineStyle,
   baseStyle: Record<string, unknown>,
   keyPrefix: string,
-): React.ReactElement[] {
-  return nodes.flatMap((node, i) => {
+): React.ReactNode[] {
+  return nodes.flatMap((node, i): React.ReactNode[] => {
     const key = `${keyPrefix}-${i}`
     if (node.kind === 'text') {
       if (!node.text) return []
@@ -140,10 +140,10 @@ function renderBlocks(
   nodes: PNode[],
   styles: BlockStyles,
   keyPrefix: string,
-): React.ReactElement[] {
+): React.ReactNode[] {
   const noMarks: InlineStyle = { bold: false, italic: false, strike: false }
 
-  return nodes.flatMap((node, i) => {
+  return nodes.flatMap((node, i): React.ReactNode[] => {
     const key = `${keyPrefix}-${i}`
 
     if (node.kind === 'text') {

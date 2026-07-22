@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
           .upload_stream(
             {
               resource_type: resourceType,
-              folder: 'MIA Digital/materials',
+              folder: 'MIA Academie/materials',
               use_filename: true,
               unique_filename: true,
             },

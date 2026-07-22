@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next'
 import HelpContent from '@/components/help-content'
 
-export const metadata: Metadata = { title: 'Aide — MIA Digital' }
+export const metadata: Metadata = { title: 'Aide — MIA Académie' }
 
 export default function AdminHelpPage() {
   return <HelpContent />

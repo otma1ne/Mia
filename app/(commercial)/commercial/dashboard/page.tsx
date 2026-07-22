@@ -8,17 +8,17 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 const statusLabels = {
-  NOUVEAU:  'Nouveau',
-  CONTACTE: 'Contacté',
-  RELANCE:  'Relancé',
-  CONVERTI: 'Converti',
+  PROSPECT: 'Prospect',
+  INDECIS:  'Indécis',
+  GAGNE:    'Gagné',
+  PERDU:    'Perdu',
 } as const
 
 const statusColors = {
-  NOUVEAU:  'text-blue-600',
-  CONTACTE: 'text-amber-600',
-  RELANCE:  'text-orange-600',
-  CONVERTI: 'text-green-600',
+  PROSPECT: 'text-blue-600',
+  INDECIS:  'text-amber-600',
+  GAGNE:    'text-green-600',
+  PERDU:    'text-red-600',
 } as const
 
 export default async function CommercialDashboardPage() {
@@ -38,7 +38,7 @@ export default async function CommercialDashboardPage() {
       <h1 className="text-2xl font-semibold">Tableau de bord</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {(['NOUVEAU', 'CONTACTE', 'RELANCE', 'CONVERTI'] as const).map(s => (
+        {(['PROSPECT', 'INDECIS', 'GAGNE', 'PERDU'] as const).map(s => (
           <Card key={s}>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">

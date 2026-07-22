@@ -16,7 +16,7 @@ export const createContactSchema = z.object({
 export const updateContactSchema = createContactSchema.partial()
 
 export const updateContactStatusSchema = z.object({
-  status: z.enum(['NOUVEAU', 'CONTACTE', 'RELANCE', 'CONVERTI']),
+  status: z.enum(['PROSPECT', 'INDECIS', 'GAGNE', 'PERDU']),
   note:   z.string().trim().max(500).optional()
             .or(z.literal('').transform(() => undefined)),
 })

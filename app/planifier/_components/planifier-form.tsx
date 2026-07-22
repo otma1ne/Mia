@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useTransition } from 'react'
 import { CalendarDays, Clock, ArrowRight, CheckCircle2 } from 'lucide-react'
@@ -63,7 +63,7 @@ export default function PlanifierForm() {
           Votre demande pour le <strong>{formatFrDate(date)}</strong> à{' '}
           <strong>{time}</strong> a bien été reçue.{' '}
           {eventCreated
-            ? "L'événement a été créé dans l'agenda MIA Digital."
+            ? "L'événement a été créé dans l'agenda MIA Académie."
             : 'Un conseiller vous confirmera le rendez-vous par email.'}
         </p>
         <a

@@ -45,9 +45,11 @@ function getInitials(name?: string | null) {
 }
 
 const rolePrefix: Record<string, string> = {
-  ADMIN:   '/admin',
-  TRAINER: '/trainer',
-  STUDENT: '/student',
+  ADMIN:      '/admin',
+  TRAINER:    '/trainer',
+  STUDENT:    '/student',
+  COMMERCIAL: '/commercial',
+  COMPANY:    '/entreprise',
 }
 
 function secondaryNav(role: string) {
@@ -69,8 +71,8 @@ export default function AppSidebar({ user }: AppSidebarProps) {
       <aside className="hidden lg:flex lg:flex-col w-60 shrink-0 border-r border-sidebar-border bg-sidebar">
         {/* Logo */}
         <div className="flex h-14 items-center gap-2.5 px-4 border-b border-sidebar-border">
-          <Link href="/" aria-label="MIA Digital — Accueil">
-            <Image src={logoLightSrc} alt="MIA Digital" width={50} height={50} className="object-contain" />
+          <Link href="/" aria-label="MIA Académie — Accueil">
+            <Image src={logoLightSrc} alt="MIA Académie" width={50} height={50} className="object-contain" />
           </Link>
         </div>
 

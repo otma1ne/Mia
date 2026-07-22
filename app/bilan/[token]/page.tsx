@@ -50,9 +50,9 @@ export default async function BilanPage({ params }: Props) {
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <div className="w-8 h-8 rounded-lg bg-white border flex items-center justify-center">
-              <Image src={logoSrc} alt="MIA Formation" width={22} height={22} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Académie" width={22} height={22} className="object-contain" />
             </div>
-            <span className="font-bold text-lg">MIA Formation</span>
+            <span className="font-bold text-lg">MIA Académie</span>
           </Link>
           <h1 className="text-2xl font-bold">{bilanTitle}</h1>
           <p className="text-muted-foreground mt-1 text-sm">

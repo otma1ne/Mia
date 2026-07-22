@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { getExamForStudent, getAttemptResult } from '@/app/actions/exams'
 import { cn } from '@/lib/utils'
 
-export const metadata: Metadata = { title: 'Résultat de l\'examen — MIA Formation' }
+export const metadata: Metadata = { title: 'Résultat de l\'examen — MIA Académie' }
 
 interface Props {
   params: Promise<{ id: string; moduleId: string }>

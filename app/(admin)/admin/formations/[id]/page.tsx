@@ -4,7 +4,6 @@ import { getFormation } from '@/app/actions/formations'
 import { getModulesForFormation } from '@/app/actions/modules'
 import { ChevronLeft, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { buttonVariants } from '@/components/ui/button'
 import ModulesList from './_components/modules-list'
 
 export const metadata = { title: 'Gestion des modules' }
@@ -61,7 +60,7 @@ export default async function FormationDetailPage({
           <Badge variant="secondary">{formation.category.name}</Badge>
           <Link
             href={`/admin/formations/${id}/suivi`}
-            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            className="inline-flex items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 h-8 text-xs font-medium shadow-xs hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             <Users className="h-3.5 w-3.5 mr-1.5" />
             Suivi étudiants

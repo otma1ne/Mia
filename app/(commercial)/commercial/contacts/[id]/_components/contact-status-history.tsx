@@ -9,10 +9,10 @@ interface HistoryEntry {
 }
 
 const statusConfig: Record<ContactStatus, { label: string; dotClass: string }> = {
-  NOUVEAU:  { label: 'Nouveau',  dotClass: 'bg-blue-400' },
-  CONTACTE: { label: 'Contacté', dotClass: 'bg-amber-400' },
-  RELANCE:  { label: 'Relancé',  dotClass: 'bg-orange-400' },
-  CONVERTI: { label: 'Converti', dotClass: 'bg-green-400' },
+  PROSPECT: { label: 'Prospect', dotClass: 'bg-blue-400' },
+  INDECIS:  { label: 'Indécis',  dotClass: 'bg-amber-400' },
+  GAGNE:    { label: 'Gagné',    dotClass: 'bg-green-400' },
+  PERDU:    { label: 'Perdu',    dotClass: 'bg-red-400' },
 }
 
 export default function ContactStatusHistory({ history }: { history: HistoryEntry[] }) {

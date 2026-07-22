@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import type { FormationsResult } from '@/app/actions/formations'
-import { deleteFormation } from '@/app/actions/formations'
+import { deleteFormation, duplicateFormation } from '@/app/actions/formations'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -16,12 +16,19 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Dialog, DialogContent, DialogDescription,
   DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
 import {
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
-  MoreVertical, Search, LayoutList,
+  MoreVertical, Search, LayoutList, Copy, AlertTriangle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -39,6 +46,12 @@ const STATUS_TABS = [
 
 type TabKey = typeof STATUS_TABS[number]['key']
 
+const NIVEAU_LABELS: Record<string, string> = {
+  START:  'MIA Bronze',
+  PRO:    'MIA Argent',
+  EXPERT: 'MIA Or',
+}
+
 const statusConfig: Record<FormationStatus, { dot: string; label: string }> = {
   DRAFT:     { dot: 'bg-amber-400',        label: 'Brouillon' },
   PUBLISHED: { dot: 'bg-emerald-500',      label: 'Publiée' },
@@ -53,18 +66,20 @@ interface FormationsClientProps {
   search: string
   activeTab: TabKey
   categories: Category[]
+  activeCategoryId: string | null
 }
 
 export default function FormationsClient({
-  data, search: initialSearch, activeTab, categories,
+  data, search: initialSearch, activeTab, categories, activeCategoryId,
 }: FormationsClientProps) {
   const router   = useRouter()
   const pathname = usePathname()
   const params   = useSearchParams()
 
   const [selectedFormationId, setSelectedFormationId] = useState<string | null>(null)
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string; enrollmentCount: number } | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const updateParams = useCallback(
@@ -88,6 +103,12 @@ export default function FormationsClient({
 
   function handleTabChange(tab: TabKey) {
     updateParams({ status: tab === 'all' ? null : tab, page: null, search: null })
+  }
+
+  async function handleDuplicate(id: string) {
+    setDuplicatingId(id)
+    await duplicateFormation(id)
+    setDuplicatingId(null)
   }
 
   async function handleDelete() {
@@ -140,8 +161,32 @@ export default function FormationsClient({
           })}
         </div>
 
-        {/* Search + actions */}
+        {/* Search + category filter + actions */}
         <div className="flex items-center gap-2">
+          {/* Category (Thématique) filter */}
+          <Select
+            value={activeCategoryId ?? ''}
+            onValueChange={v => { const val = v as string; updateParams({ categoryId: val !== '' ? val : null, page: null }) }}
+            labelItems={Object.fromEntries(categories.map(c => [c.id, c.name])) as Record<string, string>}
+          >
+            <SelectTrigger className="w-44">
+              <SelectValue placeholder="Toutes les thématiques" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map(c => (
+                <SelectItem key={c.id} value={c.id} label={c.name}>{c.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {activeCategoryId && (
+            <button
+              type="button"
+              onClick={() => updateParams({ categoryId: null, page: null })}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ✕
+            </button>
+          )}
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <Input
@@ -162,8 +207,11 @@ export default function FormationsClient({
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-10 px-5 text-xs">#</TableHead>
               <TableHead className="px-5 text-xs">Formation</TableHead>
-              <TableHead className="px-5 text-xs">Secteur</TableHead>
+              <TableHead className="px-5 text-xs">Thématique</TableHead>
               <TableHead className="px-5 text-xs">Type</TableHead>
+              <TableHead className="px-5 text-xs">Niveau</TableHead>
+              <TableHead className="px-5 text-xs">Code RS</TableHead>
+              <TableHead className="px-5 text-xs">Durée</TableHead>
               <TableHead className="px-5 text-xs">Statut</TableHead>
               <TableHead className="px-5 text-right text-xs">Inscrits</TableHead>
               <TableHead className="px-5 text-right text-xs">Modules</TableHead>
@@ -173,7 +221,7 @@ export default function FormationsClient({
           <TableBody>
             {formations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="px-5 py-12 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={11} className="px-5 py-12 text-center text-sm text-muted-foreground">
                   {initialSearch
                     ? `Aucune formation ne correspond à "${initialSearch}".`
                     : activeTab !== 'all'
@@ -193,14 +241,29 @@ export default function FormationsClient({
                     <TableCell className="px-5 py-4 text-muted-foreground tabular-nums">
                       {(page - 1) * pageSize + i + 1}
                     </TableCell>
-                    <TableCell className="px-5 py-4 font-medium max-w-60">
-                      <span className="line-clamp-1">{formation.title}</span>
+                    <TableCell className="px-5 py-4 font-medium max-w-64">
+                      <span className="line-clamp-2 whitespace-normal leading-snug">{formation.title}</span>
                     </TableCell>
                     <TableCell className="px-5 py-4 text-muted-foreground">{formation.categoryName}</TableCell>
                     <TableCell className="px-5 py-4">
                       <Badge variant="secondary" className="text-[11px]">
                         {formation.type === 'PRESENTIAL' ? 'Présentiel' : 'À distance'}
                       </Badge>
+                    </TableCell>
+                    <TableCell className="px-5 py-4">
+                      {formation.niveau ? (
+                        <Badge variant="outline" className="text-[11px]">
+                          {NIVEAU_LABELS[formation.niveau]}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground/50 text-xs">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-sm text-muted-foreground tabular-nums">
+                      {formation.codeRS ?? <span className="text-muted-foreground/50 text-xs">—</span>}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-sm text-muted-foreground tabular-nums">
+                      {formation.duration != null ? `${formation.duration} h` : <span className="text-muted-foreground/50 text-xs">—</span>}
                     </TableCell>
                     <TableCell className="px-5 py-4">
                       <span className="inline-flex items-center gap-1.5">
@@ -238,10 +301,17 @@ export default function FormationsClient({
                             <LayoutList className="h-4 w-4 mr-2" />
                             Gérer les modules
                           </DropdownMenuItem>
+                          <DropdownMenuItem
+                            disabled={duplicatingId === formation.id}
+                            onClick={() => handleDuplicate(formation.id)}
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            {duplicatingId === formation.id ? 'Duplication…' : 'Dupliquer'}
+                          </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             variant="destructive"
-                            onClick={() => setDeleteTarget({ id: formation.id, title: formation.title })}
+                            onClick={() => setDeleteTarget({ id: formation.id, title: formation.title, enrollmentCount: formation.enrollmentCount })}
                           >
                             Supprimer
                           </DropdownMenuItem>
@@ -300,14 +370,25 @@ export default function FormationsClient({
           <DialogHeader>
             <DialogTitle>Supprimer la formation</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir supprimer <strong>{deleteTarget?.title}</strong> ? Toutes les inscriptions
-              et cours associés seront également supprimés. Cette action est irréversible.
+              Êtes-vous sûr de vouloir supprimer <strong>{deleteTarget?.title}</strong> ?
+              Cette action est irréversible.
             </DialogDescription>
           </DialogHeader>
+
+          {deleteTarget && deleteTarget.enrollmentCount > 0 && (
+            <div className="flex gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+              <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-destructive" />
+              <div className="text-sm text-destructive leading-snug">
+                <strong>{deleteTarget.enrollmentCount} étudiant{deleteTarget.enrollmentCount > 1 ? 's' : ''} inscrit{deleteTarget.enrollmentCount > 1 ? 's' : ''}</strong> à cette formation.
+                Toutes leurs inscriptions, progressions, présences et données d&apos;examen seront définitivement supprimées.
+              </div>
+            </div>
+          )}
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Annuler</Button>
             <Button variant="destructive" disabled={isDeleting} onClick={handleDelete}>
-              {isDeleting ? 'Suppression…' : 'Supprimer'}
+              {isDeleting ? 'Suppression…' : 'Supprimer définitivement'}
             </Button>
           </DialogFooter>
         </DialogContent>

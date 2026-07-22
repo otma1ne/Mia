@@ -15,6 +15,7 @@ import { headers } from 'next/headers'
 import { getClientIp } from '@/lib/rate-limit'
 import crypto from 'crypto'
 import React from 'react'
+import { publishNotification } from '@/lib/pusher'
 
 // ─────────────────────────────────────────
 // createInscription
@@ -37,12 +38,12 @@ export async function createInscription(
   const cvUrl         = (formData.get('cvUrl')         as string)?.trim()
 
   // Validate required fields
-  if (!firstName || !lastName || !email || !phone || !nationality || !dateOfBirthRaw || !formationId || !cvUrl) {
+  if (!firstName || !lastName || !email || !phone || !formationId || !cvUrl) {
     return { error: 'Tous les champs obligatoires doivent être renseignés.' }
   }
 
-  const dateOfBirth = new Date(dateOfBirthRaw)
-  if (Number.isNaN(dateOfBirth.getTime())) {
+  const dateOfBirth = dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined
+  if (dateOfBirthRaw && dateOfBirth && Number.isNaN(dateOfBirth.getTime())) {
     return { error: 'Date de naissance invalide.' }
   }
 
@@ -68,9 +69,12 @@ export async function createInscription(
   const inscription = await db.inscription.create({
     data: {
       firstName, lastName, email, phone,
-      nationality, dateOfBirth, postalAddress, poleEmploiId,
+      nationality: nationality || undefined,
+      dateOfBirth: dateOfBirth ?? undefined,
+      postalAddress, poleEmploiId,
       formationId, cvUrl, status: 'PENDING',
     },
+    include: { formation: { select: { title: true, description: true } } },
   })
 
   // Create evaluation token (24h expiry)
@@ -86,8 +90,21 @@ export async function createInscription(
     await sendEvaluationEmail(email, firstName, token)
   } catch (err) {
     console.error('[inscription] Failed to send email:', err)
-    // Don't fail the inscription if email fails — token is still in DB
   }
+
+  publishNotification({
+    type:  'INSCRIPTION_NEW',
+    title: 'Nouvelle inscription',
+    body:  "a soumis une demande d'inscription pour",
+    href:  '/admin/inscriptions',
+    data:  {
+      firstName,
+      lastName,
+      formationTitle:       inscription.formation.title,
+      formationDescription: inscription.formation.description ?? undefined,
+      inscriptionId:        inscription.id,
+    },
+  }).catch(() => {})
 
   return { success: true }
 }
@@ -111,12 +128,12 @@ export async function createInscriptionAsStudent(
   const postalAddress = (formData.get('postalAddress') as string)?.trim() || undefined
   const poleEmploiId  = (formData.get('poleEmploiId')  as string)?.trim() || undefined
 
-  if (!formationId || !cvUrl || !nationality || !dateOfBirthRaw) {
+  if (!formationId || !cvUrl) {
     return { error: 'Tous les champs obligatoires doivent être renseignés.' }
   }
 
-  const dateOfBirth = new Date(dateOfBirthRaw)
-  if (Number.isNaN(dateOfBirth.getTime())) {
+  const dateOfBirth = dateOfBirthRaw ? new Date(dateOfBirthRaw) : undefined
+  if (dateOfBirthRaw && dateOfBirth && Number.isNaN(dateOfBirth.getTime())) {
     return { error: 'Date de naissance invalide.' }
   }
 
@@ -152,9 +169,12 @@ export async function createInscriptionAsStudent(
   const inscription = await db.inscription.create({
     data: {
       firstName, lastName, email, phone,
-      nationality, dateOfBirth, postalAddress, poleEmploiId,
+      nationality: nationality || undefined,
+      dateOfBirth: dateOfBirth ?? undefined,
+      postalAddress, poleEmploiId,
       formationId, cvUrl, status: 'PENDING',
     },
+    include: { formation: { select: { title: true, description: true } } },
   })
 
   const token     = crypto.randomUUID()
@@ -169,6 +189,20 @@ export async function createInscriptionAsStudent(
   } catch (err) {
     console.error('[createInscriptionAsStudent] Failed to send email:', err)
   }
+
+  publishNotification({
+    type:  'INSCRIPTION_NEW',
+    title: 'Nouvelle inscription',
+    body:  "a soumis une demande d'inscription pour",
+    href:  '/admin/inscriptions',
+    data:  {
+      firstName,
+      lastName,
+      formationTitle:       inscription.formation.title,
+      formationDescription: inscription.formation.description ?? undefined,
+      inscriptionId:        inscription.id,
+    },
+  }).catch(() => {})
 
   return { success: true }
 }
@@ -215,7 +249,7 @@ export async function submitEvaluation(
   const evaluationPdfUrl = await new Promise<string>((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder:        'MIA Digital/evaluations',
+        folder:        'MIA Academie/evaluations',
         resource_type: 'raw',
         format:        'pdf',
         public_id:     `evaluation-${inscription.id}`,
@@ -404,6 +438,19 @@ export async function submitSignature(
     where: { id: sigToken.id },
     data:  { usedAt: new Date() },
   })
+
+  publishNotification({
+    type:  'DOCUMENT_SIGNED',
+    title: 'Documents signés',
+    body:  'a signé les documents',
+    href:  '/admin/inscriptions',
+    data:  {
+      firstName:     inscription.firstName,
+      lastName:      inscription.lastName,
+      formationTitle: inscription.formation.title,
+      inscriptionId:  inscription.id,
+    },
+  }).catch(() => {})
 
   redirect('/signature/merci')
 }

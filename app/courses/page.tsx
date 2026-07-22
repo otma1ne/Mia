@@ -7,8 +7,8 @@ import type { FormationType } from '@prisma/client'
 import CoursesCatalog from './_components/courses-catalog'
 
 export const metadata: Metadata = {
-  title: 'Formations — MIA Digital',
-  description: 'Découvrez toutes les formations disponibles à l\'Académie MIA Digital.',
+  title: 'Formations — MIA Académie',
+  description: 'Découvrez toutes les formations disponibles à l\'MIA Académie.',
 }
 
 const VALID_TYPES: FormationType[] = ['PRESENTIAL', 'REMOTE_LIVE', 'REMOTE_ASYNC']
@@ -81,9 +81,9 @@ export default async function CoursesPage({
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-semibold text-sm">
             <div className="w-7 h-7 rounded-md bg-white border flex items-center justify-center shrink-0">
-              <Image src={logoSrc} alt="MIA Digital" width={20} height={20} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Académie" width={20} height={20} className="object-contain" />
             </div>
-            MIA Digital
+            MIA Académie
           </Link>
           <div className="flex items-center gap-2">
             <Link
@@ -130,16 +130,16 @@ export default async function CoursesPage({
         <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 font-semibold text-sm text-zinc-900">
             <div className="w-6 h-6 rounded bg-white border flex items-center justify-center shrink-0">
-              <Image src={logoSrc} alt="MIA Digital" width={16} height={16} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Académie" width={16} height={16} className="object-contain" />
             </div>
-            MIA Digital
+            MIA Académie
           </Link>
           <div className="flex items-center gap-4 text-xs text-zinc-400">
-            <span>contact@miaformation.ma</span>
+            <span>contact@mia-academie.com</span>
             <span>·</span>
-            <span>+212 522 456 789</span>
+            <span>+33 1 23 45 67 89</span>
             <span>·</span>
-            <span>© {new Date().getFullYear()} Académie MIA Digital</span>
+            <span>© {new Date().getFullYear()} MIA Académie</span>
           </div>
         </div>
       </footer>

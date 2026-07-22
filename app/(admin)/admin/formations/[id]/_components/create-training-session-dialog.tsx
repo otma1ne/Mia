@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { createTrainingSession, type TrainingSessionRow } from '@/app/actions/training-sessions'
+import type { TrainingNiveau } from '@prisma/client'
 
 interface Props {
   open: boolean
@@ -21,6 +22,7 @@ export default function CreateTrainingSessionDialog({
   open, onClose, onCreated, formationId, trainers,
 }: Props) {
   const [title, setTitle]           = useState('Promotion ')
+  const [niveau, setNiveau]         = useState<TrainingNiveau | ''>('')
   const [startDate, setStartDate]   = useState('')
   const [endDate, setEndDate]       = useState('')
   const [maxStudents, setMax]       = useState('15')
@@ -33,7 +35,7 @@ export default function CreateTrainingSessionDialog({
   const [isPending, startTransition] = useTransition()
 
   function reset() {
-    setTitle('Promotion '); setStartDate(''); setEndDate('')
+    setTitle('Promotion '); setNiveau(''); setStartDate(''); setEndDate('')
     setMax('15'); setPrice(''); setTrainerId(''); setLocation('')
     setOnlineUrl(''); setNotes(''); setError('')
   }
@@ -53,6 +55,7 @@ export default function CreateTrainingSessionDialog({
     startTransition(async () => {
       const result = await createTrainingSession(formationId, {
         title:       title.trim(),
+        niveau:      niveau || null,
         startDate,
         endDate,
         maxStudents: parseInt(maxStudents) || 15,
@@ -69,6 +72,7 @@ export default function CreateTrainingSessionDialog({
       const row: TrainingSessionRow = {
         id:               crypto.randomUUID(),
         title:            title.trim(),
+        niveau:           niveau || null,
         startDate:        new Date(startDate),
         endDate:          new Date(endDate),
         status:           'DRAFT',
@@ -102,8 +106,24 @@ export default function CreateTrainingSessionDialog({
           )}
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Nom de la session *</label>
-            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Promotion Janvier 2025" className="h-8 text-sm" />
+            <label htmlFor="ts-title" className="text-xs font-medium text-muted-foreground">Nom de la session *</label>
+            <Input id="ts-title" value={title} onChange={e => setTitle(e.target.value)} placeholder="Promotion Janvier 2025" className="h-8 text-sm" />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="ts-niveau" className="text-xs font-medium text-muted-foreground">Niveau</label>
+            <select
+              id="ts-niveau"
+              aria-label="Niveau de la session"
+              value={niveau}
+              onChange={e => setNiveau(e.target.value as TrainingNiveau | '')}
+              className="h-8 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus:border-ring"
+            >
+              <option value="">— Aucun niveau —</option>
+              <option value="START">MIA Bronze – Niveau 1 (7H)</option>
+              <option value="PRO">MIA Argent – Niveau 2 (14H)</option>
+              <option value="EXPERT">MIA Or – Niveau 3 (21H)</option>
+            </select>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -130,8 +150,10 @@ export default function CreateTrainingSessionDialog({
 
           {trainers.length > 0 && (
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-muted-foreground">Formateur assigné</label>
+              <label htmlFor="ts-trainer" className="text-xs font-medium text-muted-foreground">Formateur assigné</label>
               <select
+                id="ts-trainer"
+                aria-label="Formateur assigné"
                 value={trainerId}
                 onChange={e => setTrainerId(e.target.value)}
                 className="h-8 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus:border-ring"
@@ -146,7 +168,7 @@ export default function CreateTrainingSessionDialog({
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-muted-foreground">Lieu (présentiel)</label>
-            <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="Ex: Salle A3 — Casablanca" className="h-8 text-sm" />
+            <Input value={location} onChange={e => setLocation(e.target.value)} placeholder="Ex: Salle A3 — Paris" className="h-8 text-sm" />
           </div>
 
           <div className="flex flex-col gap-1.5">

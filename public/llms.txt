@@ -1,0 +1,50 @@
+# MIA Académie
+
+> Organisme de formation professionnelle basé à Casablanca, Maroc.
+> MIA Académie propose des programmes certifiés en développement web, data science, design, marketing digital et compétences professionnelles.
+
+## À propos
+
+MIA Académie est un centre de formation continue qui accompagne les professionnels et les étudiants dans leur montée en compétences. Les formations sont dispensées en présentiel à Casablanca ainsi qu'en ligne (live et asynchrone), par des formateurs experts issus du monde professionnel.
+
+**Statut** : Organisme de formation professionnelle
+**Langue d'enseignement** : Français (principalement), Arabe
+**Localisation** : Casablanca, Maroc
+**Contact** : contact@mia-academie.com
+**Site** : https://mia-academie.com
+
+## Catalogue de formations
+
+Les formations sont organisées par domaine :
+
+- **Développement Web** — HTML/CSS, JavaScript, React, Next.js, Node.js, bases de données
+- **Data Science & IA** — Python, Pandas, Machine Learning, TensorFlow, visualisation de données
+- **Design UI/UX** — Figma, principes de design, prototypage, design system
+- **Marketing Digital** — SEO, SEA, réseaux sociaux, email marketing, analytics, growth hacking
+- **Compétences Professionnelles** — Communication, gestion de projet, Excel avancé, bureautique
+
+Chaque formation comprend :
+- Des modules structurés avec théorie, pratique et évaluation
+- Un programme détaillé disponible avant inscription
+- Un certificat de réalisation à l'issue de la formation
+- Un suivi de progression individualisé
+
+## Modalités
+
+- **Présentiel** : Sessions en salle à Casablanca
+- **En ligne Live** : Sessions synchrones via Zoom / Google Meet
+- **En ligne Async** : Accès libre aux ressources vidéo et PDF
+
+## Inscription
+
+Les candidats peuvent s'inscrire directement via le site. Le processus comprend :
+1. Soumission du dossier de candidature
+2. Entretien d'évaluation (selon la formation)
+3. Signature du contrat de formation et des documents légaux
+4. Accès à l'espace apprenant
+
+## Pages principales
+
+- Page d'accueil : https://mia-academie.com
+- Catalogue formations : https://mia-academie.com/formations
+- Contact : contact@mia-academie.com

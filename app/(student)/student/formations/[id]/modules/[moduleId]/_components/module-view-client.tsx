@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   CheckCircle2, Loader2, FileText, Video, Image, Link2,
-  Calendar, Clock, ExternalLink, BookOpen, Car, ClipboardCheck,
+  Calendar, Clock, ExternalLink, BookOpen, ClipboardCheck,
   Play, XCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -24,7 +24,6 @@ import type { ModuleType } from '@prisma/client'
 
 const typeConfig: Record<ModuleType, { label: string; icon: typeof BookOpen; classes: string }> = {
   THEORY:     { label: 'Théorie',    icon: BookOpen,        classes: 'bg-blue-50 text-blue-700 border-blue-200' },
-  PRACTICAL:  { label: 'Conduite',   icon: Car,             classes: 'bg-green-50 text-green-700 border-green-200' },
   ASSESSMENT: { label: 'Évaluation', icon: ClipboardCheck,  classes: 'bg-purple-50 text-purple-700 border-purple-200' },
 }
 
@@ -183,8 +182,8 @@ export default function ModuleViewClient({ module, examStatus }: Props) {
         <p className="text-sm text-muted-foreground">{module.description}</p>
       </div>
 
-      {/* Video (THEORY / ASSESSMENT) */}
-      {module.type !== 'PRACTICAL' && module.videoUrl && (
+      {/* Video */}
+      {module.videoUrl && (
         <div className="flex flex-col gap-2">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Vidéo</h2>
           <div className="aspect-video w-full overflow-hidden rounded-xl border bg-black">
@@ -197,8 +196,8 @@ export default function ModuleViewClient({ module, examStatus }: Props) {
         </div>
       )}
 
-      {/* Materials (THEORY / ASSESSMENT) */}
-      {module.type !== 'PRACTICAL' && (
+      {/* Materials */}
+      {(
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
@@ -226,62 +225,6 @@ export default function ModuleViewClient({ module, examStatus }: Props) {
               ))}
             </div>
           )}
-        </div>
-      )}
-
-      {/* Sessions (PRACTICAL) */}
-      {module.type === 'PRACTICAL' && (
-        <div className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Séances de conduite ({module.sessions.length})
-          </h2>
-
-          {module.sessions.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-2">
-              Aucune séance planifiée pour ce module.
-            </p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {module.sessions.map(session => (
-                <div
-                  key={session.id}
-                  className="flex items-center justify-between rounded-lg border bg-card px-4 py-3 text-sm"
-                >
-                  <div className="flex items-center gap-3">
-                    <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <div>
-                      <p className="font-medium">
-                        {format(new Date(session.date), 'EEEE d MMMM yyyy', { locale: fr })}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {session.startTime} – {session.endTime}
-                        {session.roomName && ` · ${session.roomName}`}
-                      </p>
-                    </div>
-                  </div>
-
-                  {session.attendanceStatus && (
-                    <span className={cn(
-                      'rounded-full px-2.5 py-0.5 text-[11px] font-medium shrink-0',
-                      session.attendanceStatus === 'PRESENT'  && 'bg-emerald-100 text-emerald-700',
-                      session.attendanceStatus === 'ABSENT'   && 'bg-red-100 text-red-700',
-                      session.attendanceStatus === 'LATE'     && 'bg-amber-100 text-amber-700',
-                      session.attendanceStatus === 'EXCUSED'  && 'bg-blue-100 text-blue-700',
-                    )}>
-                      {session.attendanceStatus === 'PRESENT'  ? 'Présent'  :
-                       session.attendanceStatus === 'ABSENT'   ? 'Absent'   :
-                       session.attendanceStatus === 'LATE'     ? 'En retard' : 'Excusé'}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Practical: completion is handled by trainer via attendance — inform student */}
-          <p className="text-xs text-muted-foreground italic">
-            La validation de ce module de conduite est effectuée par votre formateur après la séance.
-          </p>
         </div>
       )}
 

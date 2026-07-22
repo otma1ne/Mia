@@ -117,9 +117,9 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
               onClick={() => setOpen(false)}
             >
               <div className="w-7 h-7 rounded-md bg-white/10 flex items-center justify-center">
-                <Image src={logoSrc} alt="MIA Digital" width={20} height={20} className="object-contain" />
+                <Image src={logoSrc} alt="MIA Académie" width={20} height={20} className="object-contain" />
               </div>
-              MIA Digital
+              MIA Académie
             </Link>
           </div>
           {/* Mobile primary nav */}

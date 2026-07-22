@@ -79,7 +79,7 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
           {/* Category + Type */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
-              <Label>Secteur d&apos;activité</Label>
+              <Label>Thématique</Label>
               <Select name="categoryId" required labelItems={Object.fromEntries(categories.map(c => [c.id, c.name]))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Choisir…" />
@@ -107,6 +107,27 @@ export default function CreateFormationDialog({ categories }: CreateFormationDia
                   <SelectItem value="REMOTE_ASYNC" label="À distance — asynchrone">À distance — asynchrone</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+
+          {/* Niveau + Code RS */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-2">
+              <Label>Niveau</Label>
+              <Select name="niveau" labelItems={{ START: 'MIA Bronze', PRO: 'MIA Argent', EXPERT: 'MIA Or' }}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choisir…" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="START" label="MIA Bronze">MIA Bronze</SelectItem>
+                  <SelectItem value="PRO" label="MIA Argent">MIA Argent</SelectItem>
+                  <SelectItem value="EXPERT" label="MIA Or">MIA Or</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="codeRS">Code RS</Label>
+              <Input id="codeRS" name="codeRS" placeholder="RS1234" />
             </div>
           </div>
 

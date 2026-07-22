@@ -14,7 +14,7 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Seeding MIA Digital database...')
+  console.log('🌱 Seeding MIA Académie database...')
 
   // ── 1. Clear everything (dependency order) ──────────────────────────────
   await prisma.answerSubmission.deleteMany()
@@ -48,10 +48,10 @@ async function main() {
   // ── 2. Center ────────────────────────────────────────────────────────────
   const center = await prisma.center.create({
     data: {
-      name: 'MIA Digital',
-      address: '45 Avenue de la Formation, Casablanca 20250, Maroc',
-      phone: '+212 522 456 789',
-      email: 'contact@miaformation.ma',
+      name: 'MIA Académie',
+      address: '45 Avenue de la Formation, Paris 75000, France',
+      phone: '+33 1 23 45 67 89',
+      email: 'contact@mia-academie.com',
       description:
         "Centre de formation professionnelle certifié Qualiopi, spécialisé dans les métiers du numérique, du management et du design. Nos formateurs sont des experts actifs en entreprise.",
       operatingHours: {
@@ -92,22 +92,22 @@ async function main() {
   const pwd = await bcrypt.hash('TestPassword123!', 12)
 
   const admin = await prisma.user.create({
-    data: { email: 'admin@miaformation.ma', password: pwd, name: 'Karim Bennani', role: UserRole.ADMIN, phone: '+212 661 000 001' },
+    data: { email: 'admin@mia-academie.com', password: pwd, name: 'Karim Bennani', role: UserRole.ADMIN, phone: '+33 6 61 00 00 01' },
   })
 
   const [tuWeb, tuData, tuDesign] = await Promise.all([
-    prisma.user.create({ data: { email: 'youssef.trainer@miaformation.ma', password: pwd, name: 'Youssef Alami',   role: UserRole.TRAINER, phone: '+212 661 100 001' } }),
-    prisma.user.create({ data: { email: 'nadia.trainer@miaformation.ma',   password: pwd, name: 'Nadia Chraibi',   role: UserRole.TRAINER, phone: '+212 661 100 002' } }),
-    prisma.user.create({ data: { email: 'mehdi.trainer@miaformation.ma',   password: pwd, name: 'Mehdi Fassi',     role: UserRole.TRAINER, phone: '+212 661 100 003' } }),
+    prisma.user.create({ data: { email: 'youssef.trainer@mia-academie.com', password: pwd, name: 'Youssef Alami',   role: UserRole.TRAINER, phone: '+33 6 61 10 00 01' } }),
+    prisma.user.create({ data: { email: 'nadia.trainer@mia-academie.com',   password: pwd, name: 'Nadia Chraibi',   role: UserRole.TRAINER, phone: '+33 6 61 10 00 02' } }),
+    prisma.user.create({ data: { email: 'mehdi.trainer@mia-academie.com',   password: pwd, name: 'Mehdi Fassi',     role: UserRole.TRAINER, phone: '+33 6 61 10 00 03' } }),
   ])
 
   const students = await Promise.all([
-    prisma.user.create({ data: { email: 'yasmine.b@gmail.com',    password: pwd, name: 'Yasmine Benali',    role: UserRole.STUDENT, phone: '+212 612 200 001' } }),
-    prisma.user.create({ data: { email: 'omar.h@gmail.com',       password: pwd, name: 'Omar Hajji',        role: UserRole.STUDENT, phone: '+212 612 200 002' } }),
-    prisma.user.create({ data: { email: 'salma.k@gmail.com',      password: pwd, name: 'Salma Karray',      role: UserRole.STUDENT, phone: '+212 612 200 003' } }),
-    prisma.user.create({ data: { email: 'amine.z@gmail.com',      password: pwd, name: 'Amine Zouaoui',     role: UserRole.STUDENT, phone: '+212 612 200 004' } }),
-    prisma.user.create({ data: { email: 'fatima.m@gmail.com',     password: pwd, name: 'Fatima Moussaoui',  role: UserRole.STUDENT, phone: '+212 612 200 005' } }),
-    prisma.user.create({ data: { email: 'othmanou01@gmail.com',   password: pwd, name: 'Otmane Dev',        role: UserRole.STUDENT, phone: '+212 612 200 006' } }),
+    prisma.user.create({ data: { email: 'yasmine.b@gmail.com',    password: pwd, name: 'Yasmine Benali',    role: UserRole.STUDENT, phone: '+33 6 12 20 00 01' } }),
+    prisma.user.create({ data: { email: 'omar.h@gmail.com',       password: pwd, name: 'Omar Hajji',        role: UserRole.STUDENT, phone: '+33 6 12 20 00 02' } }),
+    prisma.user.create({ data: { email: 'salma.k@gmail.com',      password: pwd, name: 'Salma Karray',      role: UserRole.STUDENT, phone: '+33 6 12 20 00 03' } }),
+    prisma.user.create({ data: { email: 'amine.z@gmail.com',      password: pwd, name: 'Amine Zouaoui',     role: UserRole.STUDENT, phone: '+33 6 12 20 00 04' } }),
+    prisma.user.create({ data: { email: 'fatima.m@gmail.com',     password: pwd, name: 'Fatima Moussaoui',  role: UserRole.STUDENT, phone: '+33 6 12 20 00 05' } }),
+    prisma.user.create({ data: { email: 'othmanou01@gmail.com',   password: pwd, name: 'Otmane Dev',        role: UserRole.STUDENT, phone: '+33 6 12 20 00 06' } }),
   ])
   console.log(`✅ ${3 + students.length + 1} utilisateurs créés`)
 
@@ -199,16 +199,16 @@ async function main() {
   const [mWeb1, mWeb2, mWeb3, mWeb4] = await Promise.all([
     prisma.module.create({ data: { formationId: fWeb.id, title: 'HTML, CSS & JavaScript Modernes', description: "Les fondations du web : sémantique HTML5, CSS Grid & Flexbox, JavaScript ES2024, DOM et événements.", orderIndex: 0, type: ModuleType.THEORY,     status: ModuleStatus.PUBLISHED, duration: 1200 } }),
     prisma.module.create({ data: { formationId: fWeb.id, title: 'React & TypeScript',              description: "Composants, hooks, state management avec Zustand, TypeScript strict, tests unitaires avec Vitest.",          orderIndex: 1, type: ModuleType.THEORY,     status: ModuleStatus.PUBLISHED, duration: 1800 } }),
-    prisma.module.create({ data: { formationId: fWeb.id, title: 'Node.js, Express & Bases de données', description: "REST APIs, authentification JWT, PostgreSQL avec Prisma, gestion des erreurs et sécurité.",           orderIndex: 2, type: ModuleType.PRACTICAL,  status: ModuleStatus.PUBLISHED, duration: 1800 } }),
+    prisma.module.create({ data: { formationId: fWeb.id, title: 'Node.js, Express & Bases de données', description: "REST APIs, authentification JWT, PostgreSQL avec Prisma, gestion des erreurs et sécurité.",           orderIndex: 2, type: ModuleType.THEORY,  status: ModuleStatus.PUBLISHED, duration: 1800 } }),
     prisma.module.create({ data: { formationId: fWeb.id, title: 'Évaluation finale — Projet Full-Stack', description: "Développez et présentez une application web complète devant un jury de professionnels.",              orderIndex: 3, type: ModuleType.ASSESSMENT, status: ModuleStatus.PUBLISHED, duration: 480 } }),
   ])
 
   // Add materials to Web module 1
   await prisma.moduleMaterial.createMany({
     data: [
-      { moduleId: mWeb1.id, title: 'Guide HTML5 sémantique',        url: 'https://miaformation.ma/resources/html5-guide.pdf',   type: 'pdf'   },
-      { moduleId: mWeb1.id, title: 'CSS Grid & Flexbox — Cheatsheet', url: 'https://miaformation.ma/resources/css-cheatsheet.pdf', type: 'pdf'   },
-      { moduleId: mWeb1.id, title: 'Exercices JavaScript interactifs', url: 'https://miaformation.ma/resources/js-exercises',       type: 'link'  },
+      { moduleId: mWeb1.id, title: 'Guide HTML5 sémantique',        url: 'https://mia-academie.com/resources/html5-guide.pdf',   type: 'pdf'   },
+      { moduleId: mWeb1.id, title: 'CSS Grid & Flexbox — Cheatsheet', url: 'https://mia-academie.com/resources/css-cheatsheet.pdf', type: 'pdf'   },
+      { moduleId: mWeb1.id, title: 'Exercices JavaScript interactifs', url: 'https://mia-academie.com/resources/js-exercises',       type: 'link'  },
     ],
   })
 
@@ -231,8 +231,8 @@ async function main() {
   const [mData1, mData2, mData3, mData4, mData5] = await Promise.all([
     prisma.module.create({ data: { formationId: fData.id, title: 'Python & environnement scientifique', description: "Python 3.12, Jupyter, NumPy, gestion des environnements virtuels.",                   orderIndex: 0, type: ModuleType.THEORY,     status: ModuleStatus.PUBLISHED, duration: 600  } }),
     prisma.module.create({ data: { formationId: fData.id, title: 'Analyse de données avec Pandas',       description: "Nettoyage, transformation, agrégation et jointure de DataFrames.",                    orderIndex: 1, type: ModuleType.THEORY,     status: ModuleStatus.PUBLISHED, duration: 900  } }),
-    prisma.module.create({ data: { formationId: fData.id, title: 'Visualisation — Matplotlib & Seaborn', description: "Graphiques statiques et interactifs, dashboards Plotly.",                             orderIndex: 2, type: ModuleType.PRACTICAL,  status: ModuleStatus.PUBLISHED, duration: 600  } }),
-    prisma.module.create({ data: { formationId: fData.id, title: 'Machine Learning avec Scikit-learn',   description: "Régression, classification, clustering, validation croisée, optimisation.",          orderIndex: 3, type: ModuleType.PRACTICAL,  status: ModuleStatus.PUBLISHED, duration: 1200 } }),
+    prisma.module.create({ data: { formationId: fData.id, title: 'Visualisation — Matplotlib & Seaborn', description: "Graphiques statiques et interactifs, dashboards Plotly.",                             orderIndex: 2, type: ModuleType.THEORY,  status: ModuleStatus.PUBLISHED, duration: 600  } }),
+    prisma.module.create({ data: { formationId: fData.id, title: 'Machine Learning avec Scikit-learn',   description: "Régression, classification, clustering, validation croisée, optimisation.",          orderIndex: 3, type: ModuleType.THEORY,  status: ModuleStatus.PUBLISHED, duration: 1200 } }),
     prisma.module.create({ data: { formationId: fData.id, title: 'Évaluation — Projet Data Science',     description: "Analyse complète d'un dataset réel : exploration, modélisation, présentation des insights.", orderIndex: 4, type: ModuleType.ASSESSMENT, status: ModuleStatus.PUBLISHED, duration: 360  } }),
   ])
 
@@ -254,8 +254,8 @@ async function main() {
 
   const [mDesign1, mDesign2, mDesign3, mDesign4] = await Promise.all([
     prisma.module.create({ data: { formationId: fDesign.id, title: 'Fondamentaux UX & recherche utilisateur', description: "Personas, parcours utilisateur, interviews, analyse concurrentielle.",  orderIndex: 0, type: ModuleType.THEORY,     status: ModuleStatus.PUBLISHED, duration: 720 } }),
-    prisma.module.create({ data: { formationId: fDesign.id, title: 'Wireframing & architecture d\'information', description: "Zoning, wireframes basse fidélité, arborescences, flows.",           orderIndex: 1, type: ModuleType.PRACTICAL,  status: ModuleStatus.PUBLISHED, duration: 720 } }),
-    prisma.module.create({ data: { formationId: fDesign.id, title: 'UI Design & Design System sur Figma',      description: "Grilles, typographie, couleurs, composants, tokens.",                 orderIndex: 2, type: ModuleType.PRACTICAL,  status: ModuleStatus.PUBLISHED, duration: 960 } }),
+    prisma.module.create({ data: { formationId: fDesign.id, title: 'Wireframing & architecture d\'information', description: "Zoning, wireframes basse fidélité, arborescences, flows.",           orderIndex: 1, type: ModuleType.THEORY,  status: ModuleStatus.PUBLISHED, duration: 720 } }),
+    prisma.module.create({ data: { formationId: fDesign.id, title: 'UI Design & Design System sur Figma',      description: "Grilles, typographie, couleurs, composants, tokens.",                 orderIndex: 2, type: ModuleType.THEORY,  status: ModuleStatus.PUBLISHED, duration: 960 } }),
     prisma.module.create({ data: { formationId: fDesign.id, title: 'Évaluation — Audit UX d\'un produit réel', description: "Audit complet d'une application existante avec recommandations.",      orderIndex: 3, type: ModuleType.ASSESSMENT, status: ModuleStatus.PUBLISHED, duration: 360 } }),
   ])
 
@@ -275,8 +275,8 @@ async function main() {
 
   await Promise.all([
     prisma.module.create({ data: { formationId: fMarketing.id, title: 'SEO & Content Marketing',   description: "Audit SEO, stratégie de contenu, optimisation on-page et off-page.",        orderIndex: 0, type: ModuleType.THEORY,    status: ModuleStatus.DRAFT, duration: 600 } }),
-    prisma.module.create({ data: { formationId: fMarketing.id, title: 'Google Ads & Meta Ads',      description: "Création et optimisation de campagnes payantes, retargeting, analytics.",    orderIndex: 1, type: ModuleType.PRACTICAL, status: ModuleStatus.DRAFT, duration: 600 } }),
-    prisma.module.create({ data: { formationId: fMarketing.id, title: 'Growth Hacking & Analytics', description: "A/B testing, funnel d'acquisition, Google Analytics 4, dashboards Looker.", orderIndex: 2, type: ModuleType.PRACTICAL, status: ModuleStatus.DRAFT, duration: 600 } }),
+    prisma.module.create({ data: { formationId: fMarketing.id, title: 'Google Ads & Meta Ads',      description: "Création et optimisation de campagnes payantes, retargeting, analytics.",    orderIndex: 1, type: ModuleType.THEORY, status: ModuleStatus.DRAFT, duration: 600 } }),
+    prisma.module.create({ data: { formationId: fMarketing.id, title: 'Growth Hacking & Analytics', description: "A/B testing, funnel d'acquisition, Google Analytics 4, dashboards Looker.", orderIndex: 2, type: ModuleType.THEORY, status: ModuleStatus.DRAFT, duration: 600 } }),
   ])
 
   // Formation 5 — Cybersécurité (PUBLISHED)
@@ -296,7 +296,7 @@ async function main() {
   await Promise.all([
     prisma.module.create({ data: { formationId: fCyber.id, title: 'Fondamentaux des réseaux & protocoles', description: "TCP/IP, DNS, HTTP/S, VPN, firewalls, modèle OSI.",              orderIndex: 0, type: ModuleType.THEORY,     status: ModuleStatus.PUBLISHED, duration: 600 } }),
     prisma.module.create({ data: { formationId: fCyber.id, title: 'Threats & Attack Surfaces',             description: "OWASP Top 10, phishing, injections SQL, XSS, social engineering.", orderIndex: 1, type: ModuleType.THEORY,     status: ModuleStatus.PUBLISHED, duration: 720 } }),
-    prisma.module.create({ data: { formationId: fCyber.id, title: 'Pentest & audit — Labs pratiques',      description: "Kali Linux, Nmap, Metasploit, rapports d'audit.",                  orderIndex: 2, type: ModuleType.PRACTICAL,  status: ModuleStatus.PUBLISHED, duration: 900 } }),
+    prisma.module.create({ data: { formationId: fCyber.id, title: 'Pentest & audit — Labs pratiques',      description: "Kali Linux, Nmap, Metasploit, rapports d'audit.",                  orderIndex: 2, type: ModuleType.THEORY,  status: ModuleStatus.PUBLISHED, duration: 900 } }),
     prisma.module.create({ data: { formationId: fCyber.id, title: 'Certification — Examen blanc',          description: "Simulation d'examen CEH Foundation avec correction détaillée.",     orderIndex: 3, type: ModuleType.ASSESSMENT, status: ModuleStatus.PUBLISHED, duration: 240 } }),
   ])
 
@@ -369,31 +369,31 @@ async function main() {
   await prisma.inscription.createMany({
     data: [
       {
-        firstName: 'Hamza',   lastName: 'Tazi',       email: 'hamza.tazi@gmail.com',    phone: '+212 612 300 001',
-        formationId: fWeb.id,    status: InscriptionStatus.PENDING,    nationality: 'Marocaine', postalAddress: 'Casablanca',
+        firstName: 'Thomas',  lastName: 'Dupont',     email: 'thomas.dupont@gmail.com', phone: '+33 6 12 30 00 01',
+        formationId: fWeb.id,    status: InscriptionStatus.PENDING,    nationality: 'Française', postalAddress: 'Paris',
       },
       {
-        firstName: 'Imane',   lastName: 'Bouzidi',    email: 'imane.b@outlook.com',     phone: '+212 612 300 002',
-        formationId: fData.id,   status: InscriptionStatus.EVALUATED,  nationality: 'Marocaine', postalAddress: 'Rabat',
+        firstName: 'Camille', lastName: 'Martin',     email: 'camille.m@outlook.com',   phone: '+33 6 12 30 00 02',
+        formationId: fData.id,   status: InscriptionStatus.EVALUATED,  nationality: 'Française', postalAddress: 'Lyon',
       },
       {
-        firstName: 'Rachid',  lastName: 'El Amrani',  email: 'rachid.elamrani@gmail.com', phone: '+212 612 300 003',
-        formationId: fDesign.id, status: InscriptionStatus.PENDING_SIGNATURE, nationality: 'Marocaine', postalAddress: 'Marrakech',
+        firstName: 'Julien',  lastName: 'Bernard',    email: 'julien.bernard@gmail.com', phone: '+33 6 12 30 00 03',
+        formationId: fDesign.id, status: InscriptionStatus.PENDING_SIGNATURE, nationality: 'Française', postalAddress: 'Marseille',
       },
       {
-        firstName: 'Sofia',   lastName: 'Berrada',    email: 'sofia.berrada@gmail.com', phone: '+212 612 300 004',
-        formationId: fCyber.id,  status: InscriptionStatus.ACCEPTED,   nationality: 'Marocaine', postalAddress: 'Casablanca',
+        firstName: 'Sophie',  lastName: 'Leroy',      email: 'sophie.leroy@gmail.com',  phone: '+33 6 12 30 00 04',
+        formationId: fCyber.id,  status: InscriptionStatus.ACCEPTED,   nationality: 'Française', postalAddress: 'Paris',
       },
       {
-        firstName: 'Khalid',  lastName: 'Mansouri',   email: 'khalid.m@gmail.com',      phone: '+212 612 300 005',
-        formationId: fWeb.id,    status: InscriptionStatus.PENDING,    nationality: 'Franco-Marocaine', postalAddress: 'Agadir',
+        firstName: 'Lucas',   lastName: 'Moreau',     email: 'lucas.moreau@gmail.com',  phone: '+33 6 12 30 00 05',
+        formationId: fWeb.id,    status: InscriptionStatus.PENDING,    nationality: 'Franco-Algérienne', postalAddress: 'Bordeaux',
       },
     ],
   })
   console.log('✅ 5 inscriptions créées')
 
   // ── 10. Summary ──────────────────────────────────────────────────────────
-  console.log('\n🎉 Base de données MIA Digital initialisée !\n')
+  console.log('\n🎉 Base de données MIA Académie initialisée !\n')
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   console.log('📋 Comptes de test  |  Mot de passe : TestPassword123!')
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')

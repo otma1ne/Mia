@@ -5,6 +5,7 @@ import { saveCenterLegal } from '@/app/actions/center'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { CheckCircle, AlertCircle } from 'lucide-react'
+import RichTextEditor from '@/components/ui/rich-text-editor'
 
 interface CenterLegalFormProps {
   centerId: string
@@ -56,13 +57,11 @@ export default function CenterLegalForm({ centerId, initialReglement, initialCgv
         <label className="text-sm font-medium" htmlFor="reglement">
           Règlement intérieur
         </label>
-        <textarea
-          id="reglement"
-          rows={10}
+        <RichTextEditor
           value={reglement}
-          onChange={e => setReglement(e.target.value)}
+          onChange={setReglement}
           placeholder="Rédigez le règlement intérieur…"
-          className="h-auto w-full min-w-0 resize-y rounded-lg border border-input bg-transparent px-3 py-2 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          minHeight={240}
         />
       </div>
 
@@ -71,13 +70,11 @@ export default function CenterLegalForm({ centerId, initialReglement, initialCgv
         <label className="text-sm font-medium" htmlFor="cgv">
           Conditions Générales de Vente (CGV)
         </label>
-        <textarea
-          id="cgv"
-          rows={10}
+        <RichTextEditor
           value={cgv}
-          onChange={e => setCgv(e.target.value)}
+          onChange={setCgv}
           placeholder="Rédigez les conditions générales de vente…"
-          className="h-auto w-full min-w-0 resize-y rounded-lg border border-input bg-transparent px-3 py-2 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          minHeight={240}
         />
       </div>
 

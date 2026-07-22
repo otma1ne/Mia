@@ -40,5 +40,53 @@ export default async function HomePage() {
     moduleCount:     f._count.modules,
   }))
 
-  return <LandingPage categories={categories} formations={formations} />
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'EducationalOrganization',
+    name: 'MIA Académie',
+    url: 'https://mia-academie.com',
+    logo: 'https://mia-academie.com/og-image.jpg',
+    email: 'contact@mia-academie.com',
+    description:
+      'Centre de formation professionnelle à Paris proposant des formations certifiées en développement web, data science, design et marketing digital.',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '45 Avenue de la Formation',
+      addressLocality: 'Paris',
+      postalCode: '75000',
+      addressCountry: 'FR',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 48.8566,
+      longitude: 2.3522,
+    },
+    areaServed: {
+      '@type': 'Country',
+      name: 'France',
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Formations professionnelles',
+      itemListElement: [
+        { '@type': 'Offer', itemOffered: { '@type': 'Course', name: 'Développement Web' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Course', name: 'Data Science & IA' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Course', name: 'Design UI/UX' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Course', name: 'Marketing Digital' } },
+      ],
+    },
+    sameAs: [
+      'https://mia-academie.com',
+    ],
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <LandingPage categories={categories} formations={formations} />
+    </>
+  )
 }

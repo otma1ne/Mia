@@ -19,6 +19,8 @@ import {
   BarChart3,
   ClipboardCheck,
   Briefcase,
+  Factory,
+  CalendarRange,
 } from 'lucide-react'
 
 interface NavItem {
@@ -45,9 +47,11 @@ const adminSections: NavSection[] = [
       { label: 'Étudiants',    href: '/admin/students',      icon: Users },
       { label: 'Formateurs',   href: '/admin/trainers',      icon: GraduationCap },
       { label: 'Formations',   href: '/admin/formations',    icon: Layers },
+      { label: 'Sessions',     href: '/admin/sessions',      icon: CalendarRange },
       { label: 'Bilans',       href: '/admin/bilans',        icon: BarChart3 },
       { label: "Secteurs d'activité",   href: '/admin/categories',    icon: Tag },
       { label: 'Commercial',   href: '/admin/commercial',    icon: Briefcase },
+      { label: 'Entreprises',  href: '/admin/entreprises',   icon: Factory },
       { label: 'Planning',     href: '/admin/schedule',      icon: CalendarDays },
       { label: 'Centres',      href: '/admin/center',        icon: Building2 },
     ],
@@ -103,11 +107,20 @@ const commercialSections: NavSection[] = [
   },
 ]
 
+const companySections: NavSection[] = [
+  {
+    items: [
+      { label: 'Tableau de bord', href: '/entreprise/dashboard', icon: LayoutDashboard },
+    ],
+  },
+]
+
 const sectionsByRole: Record<UserRole, NavSection[]> = {
   ADMIN:      adminSections,
   TRAINER:    trainerSections,
   STUDENT:    studentSections,
   COMMERCIAL: commercialSections,
+  COMPANY:    companySections,
 }
 
 interface SidebarNavProps {

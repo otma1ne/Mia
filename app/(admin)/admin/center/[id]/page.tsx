@@ -3,13 +3,15 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
 import { getCenterById } from '@/app/actions/center'
+import { getSkills } from '@/app/actions/skills'
 import CenterInfoForm from '../_components/center-info-form'
 import OperatingHoursForm from '../_components/operating-hours-form'
 import RoomsManager from '../_components/rooms-manager'
 import CenterLegalForm from '../_components/center-legal-form'
 import CenterAccessPlansForm from '../_components/center-access-plans-form'
+import SkillsManager from '@/app/(admin)/admin/center/_components/skills-manager'
 
-export const metadata: Metadata = { title: 'Centre — MIA Formation' }
+export const metadata: Metadata = { title: 'Centre — MIA Académie' }
 
 export default async function CenterDetailPage({
   params,
@@ -17,7 +19,10 @@ export default async function CenterDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const center = await getCenterById(id)
+  const [center, skills] = await Promise.all([
+    getCenterById(id),
+    getSkills(),
+  ])
 
   if (!center) notFound()
 
@@ -75,6 +80,9 @@ export default async function CenterDetailPage({
         centerId={center.id}
         initialPlans={center.accessPlans ?? []}
       />
+
+      {/* Compétences intervenants */}
+      <SkillsManager initialSkills={skills} />
     </div>
   )
 }

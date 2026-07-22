@@ -10,7 +10,7 @@
 // User ──< ModuleEnrollment
 // User ──< MaterialProgress
 // Trainer ──< TrainerAvailability
-// Trainer ──< Session (optional, PRACTICAL type)
+// Trainer ──< Session (optional)
 // Category ──< Formation
 // Formation ──< Module
 // Formation ──< FormationEnrollment
@@ -40,12 +40,19 @@ enum UserRole {
   TRAINER
   STUDENT
   COMMERCIAL
+  COMPANY
 }
 
 enum FormationType {
   PRESENTIAL    // In-person, physical room required
   REMOTE_LIVE   // Live online sessions (Zoom, Meet, Teams...)
   REMOTE_ASYNC  // Self-paced: students watch videos / read PDFs at their own pace, no live sessions
+}
+
+enum TrainingNiveau {
+  START   // MIA Bronze – Niveau 1 – 7H
+  PRO     // MIA Argent – Niveau 2 – 14H
+  EXPERT  // MIA Or     – Niveau 3 – 21H
 }
 
 enum FormationStatus {
@@ -55,9 +62,31 @@ enum FormationStatus {
   COMPLETED
 }
 
+// ─────────────────────────────────────────
+// Notification
+// ─────────────────────────────────────────
+
+enum NotificationType {
+  INSCRIPTION_NEW
+  DOCUMENT_SIGNED
+  PAYMENT_RECEIVED
+  SESSION_CHANGED
+  TRAINER_APPLICATION_NEW
+}
+
+model Notification {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  type      NotificationType
+  title     String
+  body      String           // action text only (e.g. "a soumis une demande pour")
+  href      String?
+  data      Json?            // structured payload: firstName, lastName, formationTitle, etc.
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+}
+
 enum ModuleType {
-  THEORY      // Self-paced: video + materials (code de la route, etc.)
-  PRACTICAL   // In-person driving sessions with trainer
+  THEORY      // Self-paced: video + materials
   ASSESSMENT  // Final exam / evaluation
 }
 
@@ -83,10 +112,16 @@ enum AttendanceStatus {
 }
 
 enum ContactStatus {
-  NOUVEAU
-  CONTACTE
-  RELANCE
-  CONVERTI
+  PROSPECT
+  INDECIS
+  GAGNE
+  PERDU
+}
+
+enum QuestionType {
+  QCM         // Multiple choices, one correct
+  TRUE_FALSE  // Boolean
+  OPEN        // Free text, manually graded by trainer
 }
 
 enum TrainingSessionStatus {
@@ -95,12 +130,6 @@ enum TrainingSessionStatus {
   STARTED
   COMPLETED
   CANCELLED
-}
-
-enum QuestionType {
-  QCM         // Multiple choices, one correct
-  TRUE_FALSE  // Boolean
-  OPEN        // Free text, manually graded by trainer
 }
 
 // ─────────────────────────────────────────
@@ -120,6 +149,8 @@ model User {
 
   trainer              Trainer?
   commercial           Commercial?
+  company              Company?              // when role = COMPANY (manager account)
+  companyEmployee      CompanyEmployee?      // when role = STUDENT and is a company employee
   formationEnrollments FormationEnrollment[]
   moduleEnrollments    ModuleEnrollment[]    // module-level progress & attendance
   materialProgress     MaterialProgress[]    // tracks completed materials
@@ -148,9 +179,9 @@ model Trainer {
 
   user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   sessions         Session[]
+  trainingSessions TrainingSession[]
   availability     TrainerAvailability[]
   categories       Category[]            @relation(fields: [categoryIds], references: [id])
-  trainingSessions TrainingSession[]
 }
 
 enum ExpertiseLevel {
@@ -245,6 +276,8 @@ model Formation {
   status      FormationStatus @default(DRAFT)
   maxStudents Int
   thumbnail   String?
+  niveau      TrainingNiveau? // niveau cible : START / PRO / EXPERT
+  codeRS      String?         // code Répertoire Spécifique (certification)
   price       Float?          // tarif en MAD (used in contrat PDF)
   duration    Int?            // durée totale en heures (used in contrat + programme PDF)
   programme   String?         // contenu du programme (admin-authored, used in programme PDF)
@@ -254,9 +287,42 @@ model Formation {
   category         Category              @relation(fields: [categoryId], references: [id])
   modules          Module[]
   sessions         Session[]
+  trainingSessions TrainingSession[]
   enrollments      FormationEnrollment[]
   inscriptions     Inscription[]
-  trainingSessions TrainingSession[]
+}
+
+// ─────────────────────────────────────────
+// TrainingSession (promotion / cohorte)
+// One session = one group of students running
+// through a Formation at specific dates.
+// ─────────────────────────────────────────
+
+model TrainingSession {
+  id          String                @id @default(auto()) @map("_id") @db.ObjectId
+  formationId String                @db.ObjectId
+  trainerId   String?               @db.ObjectId
+  title       String
+  niveau      TrainingNiveau?       // START / PRO / EXPERT
+  status      TrainingSessionStatus @default(DRAFT)
+  startDate   DateTime
+  endDate     DateTime
+  maxStudents Int
+  price       Float?
+  location    String?
+  onlineUrl   String?
+  notes       String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  formation            Formation              @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  trainer              Trainer?               @relation(fields: [trainerId], references: [id])
+  enrollments          FormationEnrollment[]
+  inscriptions         Inscription[]
+  companyInscriptions  CompanyInscription[]
+
+  @@index([formationId])
+  @@index([status])
 }
 
 // ─────────────────────────────────────────
@@ -282,7 +348,7 @@ model FormationEnrollment {
   bilanFroidSentAt     DateTime?  // when Bilan Froid email was sent
   bilanFroidRemindedAt DateTime?  // when reminder was sent
 
-  trainingSessionId String?          @db.ObjectId
+  trainingSessionId String?            @db.ObjectId
 
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   formation         Formation          @relation(fields: [formationId], references: [id], onDelete: Cascade)
@@ -318,7 +384,7 @@ model Module {
 
   formation   Formation          @relation(fields: [formationId], references: [id], onDelete: Cascade)
   enrollments ModuleEnrollment[]
-  sessions    Session[]          // PRACTICAL: scheduled driving sessions
+  sessions    Session[]
   materials   ModuleMaterial[]   // supplementary resources
   exam        Exam?              // ASSESSMENT: exam definition (1:1)
 }
@@ -389,7 +455,7 @@ model ModuleEnrollment {
 }
 
 // ─────────────────────────────────────────
-// Session (individual class meeting for PRACTICAL modules)
+// Session (individual class meeting)
 // ─────────────────────────────────────────
 
 model Session {
@@ -443,6 +509,11 @@ enum InscriptionStatus {
   DECLINED          // admin declined
 }
 
+enum InscriptionSource {
+  FORM        // public registration form
+  COMMERCIAL  // created by commercial rep after prospect conversion
+}
+
 model Inscription {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
   firstName        String
@@ -456,6 +527,8 @@ model Inscription {
   formationId      String            @db.ObjectId
   cvUrl            String?
   status           InscriptionStatus @default(PENDING)
+  source           InscriptionSource @default(FORM)
+  contactId        String?           @db.ObjectId
   adminNote        String?
   evaluationData   Json?             // raw answers stored as JSON
   evaluationPdfUrl      String?           // Cloudinary URL of generated PDF
@@ -476,41 +549,12 @@ model Inscription {
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
 
-  trainingSessionId String?          @db.ObjectId
+  trainingSessionId String?           @db.ObjectId
 
-  formation         Formation        @relation(fields: [formationId], references: [id])
-  trainingSession   TrainingSession? @relation(fields: [trainingSessionId], references: [id])
-  evalToken         EvaluationToken?
-  signatureToken    SignatureToken?
-}
-
-// ─────────────────────────────────────────
-// TrainingSession (inter-entreprises session)
-// ─────────────────────────────────────────
-
-model TrainingSession {
-  id          String                @id @default(auto()) @map("_id") @db.ObjectId
-  formationId String                @db.ObjectId
-  trainerId   String?               @db.ObjectId
-  title       String
-  status      TrainingSessionStatus @default(DRAFT)
-  startDate   DateTime
-  endDate     DateTime
-  maxStudents Int
-  price       Float?
-  location    String?
-  onlineUrl   String?
-  notes       String?
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
-
-  formation    Formation             @relation(fields: [formationId], references: [id], onDelete: Cascade)
-  trainer      Trainer?              @relation(fields: [trainerId], references: [id])
-  enrollments  FormationEnrollment[]
-  inscriptions Inscription[]
-
-  @@index([formationId])
-  @@index([status])
+  formation      Formation        @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  trainingSession TrainingSession? @relation(fields: [trainingSessionId], references: [id], onDelete: SetNull)
+  evalToken      EvaluationToken?
+  signatureToken SignatureToken?
 }
 
 model EvaluationToken {
@@ -685,6 +729,88 @@ model AnswerSubmission {
 }
 
 // ─────────────────────────────────────────
+// Company (Entreprise)
+// B2B: a company registers multiple employees
+// in a training session. The manager has role=COMPANY.
+// ─────────────────────────────────────────
+
+enum CompanyInscriptionStatus {
+  PENDING           // created, not yet assigned to a session
+  PENDING_SIGNATURE // documents generated, waiting for manager signature
+  ACCEPTED          // signed, employees enrolled
+  DECLINED
+}
+
+model Company {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  raisonSociale  String
+  nomSignataire  String
+  prenomSignataire String
+  fonction       String
+  email          String   @unique
+  phone          String
+  siret          String?
+  adresse        String?
+  ville          String?
+  codePostal     String?
+  userId         String   @unique @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employees    CompanyEmployee[]
+  inscriptions CompanyInscription[]
+}
+
+model CompanyEmployee {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  companyId String   @db.ObjectId
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  userId    String?  @unique @db.ObjectId  // student account, created on add
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id])
+
+  @@index([companyId])
+}
+
+model CompanyInscription {
+  id                String                   @id @default(auto()) @map("_id") @db.ObjectId
+  companyId         String                   @db.ObjectId
+  trainingSessionId String                   @db.ObjectId
+  status            CompanyInscriptionStatus @default(PENDING)
+  adminNote         String?
+
+  // Documents generated by admin
+  contratUrl      String?
+  reglementUrl    String?
+  cgvUrl          String?
+  convocationsUrl String?
+  planAccesUrl    String?  // PDF uploaded by admin
+
+  // Signed contract (manager signs once for all employees)
+  signedContratUrl         String?
+  signatureDataUrl         String?
+  signedAt                 DateTime?
+  signatureToken           String?   @unique
+  signatureTokenExpiresAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  trainingSession TrainingSession @relation(fields: [trainingSessionId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([trainingSessionId])
+  @@index([status])
+}
+
+// ─────────────────────────────────────────
 // Commercial
 // ─────────────────────────────────────────
 
@@ -711,9 +837,11 @@ model Contact {
   email         String?
   city          String?
   need          String
-  status        ContactStatus         @default(NOUVEAU)
-  notes         String?
-  statusHistory ContactStatusChange[]
+  status         ContactStatus  @default(PROSPECT)
+  reminderDate   DateTime?
+  reminderSentAt DateTime?
+  notes          String?
+  statusHistory  ContactStatusChange[]
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
 
@@ -721,6 +849,45 @@ model Contact {
   @@index([status])
 }
 
+// ─────────────────────────────────────────
+// Skill (trainer expertise tag)
+// ─────────────────────────────────────────
+
+model Skill {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────
+// TrainerApplication (self-registration)
+// ─────────────────────────────────────────
+
+enum TrainerApplicationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model TrainerApplication {
+  id          String                   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName   String
+  lastName    String
+  email       String
+  phone       String
+  city        String
+  bio         String
+  cvUrl       String
+  diplomeUrls String[]
+  // skills JSON shape: Array<{ skillId: string; name: string; level: 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' | 'EXPERT' }>
+  skills      Json
+  status      TrainerApplicationStatus @default(PENDING)
+  adminNote   String?
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+
+  @@index([status])
+}
 
 // ─────────────────────────────────────────
 // Waitlist

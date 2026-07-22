@@ -21,7 +21,7 @@ export interface CalendarEventParams {
 
 export async function createCalendarEvent(params: CalendarEventParams) {
   const calendarId = process.env.GOOGLE_CALENDAR_ID ?? 'primary'
-  const tz         = params.timezone ?? 'Africa/Casablanca'
+  const tz         = params.timezone ?? 'Europe/Paris'
 
   const [h, m]        = params.time.split(':').map(Number)
   const pad           = (n: number) => String(n).padStart(2, '0')
