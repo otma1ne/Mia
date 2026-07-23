@@ -57,24 +57,31 @@ export async function processSignatureComplete(
     return
   }
 
+  if (!inscription.trainingSessionId) {
+    console.error('[processSignatureComplete] No trainingSessionId on inscription — cannot create enrollment:', inscriptionId)
+    return
+  }
+
+  const trainingSessionId = inscription.trainingSessionId
+
   const existingUser = await db.user.findUnique({ where: { email: inscription.email } })
 
   if (existingUser) {
-    // Existing student — enroll in the new formation (no account creation needed)
+    // Existing student — enroll in the session (no account creation needed)
     const existingEnrollment = await db.formationEnrollment.findFirst({
-      where: { userId: existingUser.id, formationId: inscription.formationId },
+      where: { userId: existingUser.id, trainingSessionId },
     })
     if (existingEnrollment) {
-      console.warn('[processSignatureComplete] User already enrolled:', {
+      console.warn('[processSignatureComplete] User already enrolled in this session:', {
         userId: existingUser.id,
-        formationId: inscription.formationId,
+        trainingSessionId,
       })
       return
     }
 
     await db.$transaction(async (tx) => {
       const formationEnrollment = await tx.formationEnrollment.create({
-        data: { userId: existingUser.id, formationId: inscription.formationId, status: 'ACTIVE' },
+        data: { userId: existingUser.id, formationId: inscription.formationId, trainingSessionId, status: 'ACTIVE' },
       })
 
       const modules = await tx.module.findMany({
@@ -137,7 +144,7 @@ export async function processSignatureComplete(
     })
 
     const formationEnrollment = await tx.formationEnrollment.create({
-      data: { userId: user.id, formationId: inscription.formationId, status: 'ACTIVE' },
+      data: { userId: user.id, formationId: inscription.formationId, trainingSessionId, status: 'ACTIVE' },
     })
 
     const modules = await tx.module.findMany({

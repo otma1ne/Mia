@@ -22,8 +22,8 @@ export async function getEvaluationState(formationId: string) {
   if (!session?.user?.id) redirect('/login')
   const userId = session.user.id
 
-  const enrollment = await db.formationEnrollment.findUnique({
-    where: { userId_formationId: { userId, formationId } },
+  const enrollment = await db.formationEnrollment.findFirst({
+    where: { userId, formationId },
     select: {
       id: true,
       bilans: {
@@ -60,8 +60,8 @@ export async function submitFormationEvaluation(
     return { error: 'Notes invalides.' }
   }
 
-  const enrollment = await db.formationEnrollment.findUnique({
-    where: { userId_formationId: { userId, formationId } },
+  const enrollment = await db.formationEnrollment.findFirst({
+    where: { userId, formationId },
     select: { id: true },
   })
   if (!enrollment) return { error: 'Inscription introuvable.' }

@@ -550,6 +550,33 @@ export async function sendCompanyWelcomeEmail(
   })
 }
 
+// ── Company signature request ─────────────────────────────────────────────────
+
+export async function sendCompanySignatureRequestEmail(
+  to: string,
+  prenom: string,
+  token: string,
+) {
+  const link = `${APP_URL}/signature/company/${token}`
+
+  await transporter.sendMail({
+    from: FROM, to,
+    subject: 'Convention de formation à signer — MIA Académie',
+    html: shell(`
+      ${badge('Convention à signer')}
+      ${heading(`Bonjour ${prenom},`)}
+      ${para('La convention de formation professionnelle est prête pour signature. En tant que signataire de l\'entreprise, merci de consulter et signer électroniquement les documents contractuels.')}
+      ${infoBox(`
+        <p style="margin:0;font-size:13px;color:#6b7280;line-height:1.6;">
+          Votre signature vaut pour l\'ensemble des salariés inscrits à la session.
+        </p>
+      `)}
+      ${btn(link, 'Consulter et signer la convention')}
+      ${warningNote('Ce lien est valable pendant <strong>30 jours</strong>.')}
+    `),
+  })
+}
+
 // ── Planifier un échange — notification to admin ──────────────────────────────
 
 export async function sendPlanifierNotification(input: PlanifierInput) {

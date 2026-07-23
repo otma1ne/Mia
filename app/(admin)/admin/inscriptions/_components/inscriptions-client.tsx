@@ -180,6 +180,7 @@ export default function InscriptionsClient({ inscriptions, students, formations,
       {selected && (
         <InscriptionDetailSheet
           inscription={selected}
+          sessions={sessions.filter(s => s.formationId === selected.formation.id)}
           open={sheetOpen}
           onOpenChange={setSheetOpen}
         />

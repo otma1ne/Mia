@@ -12,6 +12,7 @@ import GagneFormationDialog from './gagne-formation-dialog'
 interface FormationOption {
   id: string
   title: string
+  sessions: { id: string; title: string; formationId: string }[]
 }
 
 const STATUSES: {

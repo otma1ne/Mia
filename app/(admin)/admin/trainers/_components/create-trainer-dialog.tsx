@@ -174,7 +174,18 @@ export default function CreateTrainerDialog({ categories }: CreateTrainerDialogP
             <Input
               id="specializations"
               name="specializations"
-              placeholder="JavaScript, React, Node.js"
+              placeholder="Marketing digital, Comptabilité"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="competences">
+              Compétences <span className="text-muted-foreground">(séparées par des virgules)</span>
+            </Label>
+            <Input
+              id="competences"
+              name="competences"
+              placeholder="Excel avancé, Gestion de projet, Python"
             />
           </div>
 

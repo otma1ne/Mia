@@ -13,6 +13,10 @@ export default async function DashboardPage() {
       redirect('/admin/dashboard')
     case 'TRAINER':
       redirect('/trainer/dashboard')
+    case 'COMMERCIAL':
+      redirect('/commercial/dashboard')
+    case 'COMPANY':
+      redirect('/entreprise/dashboard')
     default:
       redirect('/student/dashboard')
   }

@@ -76,6 +76,12 @@ const trainerSections: NavSection[] = [
       { label: 'Planning',    href: '/trainer/schedule',  icon: CalendarDays },
     ],
   },
+  {
+    title: 'Outils',
+    items: [
+      { label: "Formulaire d'inscription", href: '/student/inscription', icon: ClipboardList },
+    ],
+  },
 ]
 
 const studentSections: NavSection[] = [
@@ -153,7 +159,7 @@ export default function SidebarNav({ role, onNavigate }: SidebarNavProps) {
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   active
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                    ? 'bg-white/12 text-white font-semibold shadow-[inset_3px_0_0_var(--sidebar-ring)]'
                     : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )}
               >

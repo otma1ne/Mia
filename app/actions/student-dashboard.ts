@@ -393,8 +393,8 @@ export async function getFormationDetail(
 ): Promise<FormationDetailResult | null> {
   const userId = await getStudentId()
 
-  const formationEnrollment = await db.formationEnrollment.findUnique({
-    where: { userId_formationId: { userId, formationId } },
+  const formationEnrollment = await db.formationEnrollment.findFirst({
+    where: { userId, formationId },
     select: { id: true, progress: true, status: true, certificate: true },
   })
   if (!formationEnrollment) return null
@@ -545,8 +545,8 @@ export async function getStudentModuleDetail(
   const userId = await getStudentId()
 
   // Must be enrolled in the formation
-  const formationEnrollment = await db.formationEnrollment.findUnique({
-    where: { userId_formationId: { userId, formationId } },
+  const formationEnrollment = await db.formationEnrollment.findFirst({
+    where: { userId, formationId },
     select: { id: true },
   })
   if (!formationEnrollment) return null
@@ -592,7 +592,7 @@ export async function getStudentModuleDetail(
     })
     if (prevModule) {
       const prevEnrollment = await db.moduleEnrollment.findUnique({
-        where: { userId_moduleId: { userId, moduleId: prevModule.id } },
+        where: { formationEnrollmentId_moduleId: { formationEnrollmentId: formationEnrollment.id, moduleId: prevModule.id } },
         select: { completedAt: true },
       })
       isLocked = !prevEnrollment?.completedAt

@@ -24,7 +24,7 @@ import {
 import { Menu, LogOut, User, Settings, HelpCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import logoSrc from '@/public/logo.png'
+import logoLightSrc from '@/public/logo-light.png'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import SidebarNav from './sidebar-nav'
@@ -113,13 +113,10 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
           <div className="flex h-14 items-center gap-2.5 border-b border-sidebar-border px-4">
             <Link
               href="/"
-              className="flex items-center gap-2.5 font-semibold text-sm text-sidebar-foreground"
+              className="flex items-center gap-2.5"
               onClick={() => setOpen(false)}
             >
-              <div className="w-7 h-7 rounded-md bg-white/10 flex items-center justify-center">
-                <Image src={logoSrc} alt="MIA Académie" width={20} height={20} className="object-contain" />
-              </div>
-              MIA Académie
+              <Image src={logoLightSrc} alt="MIA Académie" width={160} height={40} className="h-8 w-auto object-contain" />
             </Link>
           </div>
           {/* Mobile primary nav */}

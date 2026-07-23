@@ -39,7 +39,7 @@ export async function getAdminInscriptionFormData() {
 export async function adminCreateDirectEnrollment(
   userId: string,
   formationId: string,
-  trainingSessionId?: string,
+  trainingSessionId: string,
 ): Promise<{ success: boolean; error?: string }> {
   const session = await auth()
   if (!session || session.user.role !== 'ADMIN') {
@@ -50,20 +50,15 @@ export async function adminCreateDirectEnrollment(
   if (!user) return { success: false, error: 'Étudiant introuvable.' }
 
   const existing = await db.formationEnrollment.findFirst({
-    where: { userId, formationId },
+    where: { userId, trainingSessionId },
   })
   if (existing) {
-    return { success: false, error: 'Cet étudiant est déjà inscrit à cette formation.' }
+    return { success: false, error: 'Cet étudiant est déjà inscrit à cette session.' }
   }
 
   await db.$transaction(async (tx) => {
     const enrollment = await tx.formationEnrollment.create({
-      data: {
-        userId,
-        formationId,
-        status: 'ACTIVE',
-        ...(trainingSessionId ? { trainingSessionId } : {}),
-      },
+      data: { userId, formationId, trainingSessionId, status: 'ACTIVE' },
     })
 
     const modules = await tx.module.findMany({ where: { formationId } })

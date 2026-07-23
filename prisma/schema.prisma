@@ -166,6 +166,7 @@ model Trainer {
   userId          String   @unique @db.ObjectId
   bio             String
   specializations String[]
+  competences     String[]
   credentials     String[]
   rating          Float?
   expertiseLevels   ExpertiseLevel[]
@@ -317,6 +318,7 @@ model TrainingSession {
 
   formation            Formation              @relation(fields: [formationId], references: [id], onDelete: Cascade)
   trainer              Trainer?               @relation(fields: [trainerId], references: [id])
+  sessions             Session[]
   enrollments          FormationEnrollment[]
   inscriptions         Inscription[]
   companyInscriptions  CompanyInscription[]
@@ -348,15 +350,15 @@ model FormationEnrollment {
   bilanFroidSentAt     DateTime?  // when Bilan Froid email was sent
   bilanFroidRemindedAt DateTime?  // when reminder was sent
 
-  trainingSessionId String?            @db.ObjectId
+  trainingSessionId String             @db.ObjectId
 
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   formation         Formation          @relation(fields: [formationId], references: [id], onDelete: Cascade)
-  trainingSession   TrainingSession?   @relation(fields: [trainingSessionId], references: [id])
+  trainingSession   TrainingSession    @relation(fields: [trainingSessionId], references: [id])
   moduleEnrollments ModuleEnrollment[] // auto-created per module for progress tracking
   bilans            FormationBilan[]
 
-  @@unique([userId, formationId])
+  @@unique([userId, trainingSessionId])
   @@index([userId])
   @@index([formationId])
   @@index([status])
@@ -446,7 +448,7 @@ model ModuleEnrollment {
   attendances         Attendance[]
   examAttempt         ExamAttempt?        // ASSESSMENT modules: exam attempt
 
-  @@unique([userId, moduleId])
+  @@unique([formationEnrollmentId, moduleId])
   @@index([userId])
   @@index([moduleId])
   @@index([formationEnrollmentId])
@@ -459,23 +461,25 @@ model ModuleEnrollment {
 // ─────────────────────────────────────────
 
 model Session {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  moduleId    String   @db.ObjectId
-  formationId String   @db.ObjectId
-  trainerId   String?  @db.ObjectId
-  roomId      String?  @db.ObjectId
-  date        DateTime
-  startTime String   // "09:00"
-  endTime   String   // "11:00"
-  notes               String?
-  convocationSentAt   DateTime?
-  createdAt           DateTime @default(now())
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  moduleId          String   @db.ObjectId
+  formationId       String   @db.ObjectId
+  trainingSessionId String?  @db.ObjectId
+  trainerId         String?  @db.ObjectId
+  roomId            String?  @db.ObjectId
+  date              DateTime
+  startTime         String   // "09:00"
+  endTime           String   // "11:00"
+  notes             String?
+  convocationSentAt DateTime?
+  createdAt         DateTime @default(now())
 
-  module      Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  formation   Formation    @relation(fields: [formationId], references: [id], onDelete: Cascade)
-  trainer     Trainer?     @relation(fields: [trainerId], references: [id])
-  room        Room?        @relation(fields: [roomId], references: [id])
-  attendances Attendance[]
+  module          Module            @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  formation       Formation         @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  trainingSession TrainingSession?  @relation(fields: [trainingSessionId], references: [id], onDelete: SetNull)
+  trainer         Trainer?          @relation(fields: [trainerId], references: [id])
+  room            Room?             @relation(fields: [roomId], references: [id])
+  attendances     Attendance[]
 }
 
 // ─────────────────────────────────────────

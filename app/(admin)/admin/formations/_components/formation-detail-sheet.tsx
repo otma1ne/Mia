@@ -62,6 +62,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
 
   // Details edit state
   const [editingDetails, setEditingDetails]   = useState(false)
+  const [detailTitle, setDetailTitle]         = useState('')
   const [detailPrice, setDetailPrice]         = useState('')
   const [detailDuration, setDetailDuration]   = useState('')
   const [detailProgramme, setDetailProgramme] = useState('')
@@ -75,6 +76,7 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
       const data = await getFormation(formationId)
       setFormation(data ?? null)
       if (data) {
+        setDetailTitle(data.title)
         setDetailPrice(data.price != null ? String(data.price) : '')
         setDetailDuration(data.duration != null ? String(data.duration) : '')
         setDetailProgramme(data.programme ?? '')
@@ -95,13 +97,14 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
   function handleSaveDetails() {
     if (!formation) return
     startDetailsSave(async () => {
+      const title    = detailTitle.trim() || formation.title
       const price    = detailPrice    ? parseFloat(detailPrice)  : null
       const duration = detailDuration ? parseInt(detailDuration) : null
       const programme = detailProgramme.trim() || null
       const niveau   = (detailNiveau || null) as TrainingNiveau | null
       const codeRS   = detailCodeRS.trim() || null
-      await updateFormationDetails(formation.id, { price, duration, programme, niveau, codeRS })
-      setFormation(prev => prev ? { ...prev, price, duration, programme, niveau, codeRS } : prev)
+      await updateFormationDetails(formation.id, { title, price, duration, programme, niveau, codeRS })
+      setFormation(prev => prev ? { ...prev, title, price, duration, programme, niveau, codeRS } : prev)
       setEditingDetails(false)
     })
   }
@@ -224,6 +227,15 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
               </div>
               {editingDetails ? (
                 <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-muted-foreground">Titre</label>
+                    <Input
+                      value={detailTitle}
+                      onChange={e => setDetailTitle(e.target.value)}
+                      placeholder="Intitulé de la formation"
+                      className="h-8 text-sm"
+                    />
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-2">
                       <label className="text-xs text-muted-foreground">Niveau</label>

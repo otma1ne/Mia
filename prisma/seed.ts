@@ -8,6 +8,7 @@
   EnrollmentStatus,
   AttendanceStatus,
   InscriptionStatus,
+  TrainingSessionStatus,
 } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
@@ -322,20 +323,72 @@ async function main() {
   })
   console.log('✅ Sessions créées')
 
+  // ── 7b. TrainingSessions (promotions / cohorts) ───────────────────────────
+  const tsWeb = await prisma.trainingSession.create({
+    data: {
+      formationId: fWeb.id,
+      trainerId:   trainerWeb.id,
+      title:       `Promotion Développement Web — ${today.getFullYear()}`,
+      status:      TrainingSessionStatus.STARTED,
+      startDate:   d(-30),
+      endDate:     d(60),
+      maxStudents: fWeb.maxStudents,
+      price:       fWeb.price,
+    },
+  })
+  const tsData = await prisma.trainingSession.create({
+    data: {
+      formationId: fData.id,
+      trainerId:   trainerData.id,
+      title:       `Promotion Data Science & IA — ${today.getFullYear()}`,
+      status:      TrainingSessionStatus.STARTED,
+      startDate:   d(-20),
+      endDate:     d(80),
+      maxStudents: fData.maxStudents,
+      price:       fData.price,
+    },
+  })
+  const tsDesign = await prisma.trainingSession.create({
+    data: {
+      formationId: fDesign.id,
+      trainerId:   trainerDesign.id,
+      title:       `Promotion UI/UX Design — ${today.getFullYear()}`,
+      status:      TrainingSessionStatus.OPEN,
+      startDate:   d(5),
+      endDate:     d(90),
+      maxStudents: fDesign.maxStudents,
+      price:       fDesign.price,
+    },
+  })
+  const tsCyber = await prisma.trainingSession.create({
+    data: {
+      formationId: fCyber.id,
+      title:       `Promotion Cybersécurité — ${today.getFullYear()}`,
+      status:      TrainingSessionStatus.OPEN,
+      startDate:   d(10),
+      endDate:     d(100),
+      maxStudents: fCyber.maxStudents,
+      price:       fCyber.price,
+    },
+  })
+  console.log('✅ Promotions créées')
+
   // ── 8. Enrollments ───────────────────────────────────────────────────────
   const [sYasmine, sOmar, sSalma, sAmine, sFatima, sOtmane] = students
 
-  // Helper — enroll a student in a formation + create module enrollments
+  // Helper — enroll a student in a session + create module enrollments
   async function enroll(
     userId: string,
     formation: { id: string },
     modules: { id: string }[],
+    trainingSessionId: string,
     opts: { progress?: number; status?: EnrollmentStatus; completedModules?: number } = {},
   ) {
     const fe = await prisma.formationEnrollment.create({
       data: {
         userId,
         formationId: formation.id,
+        trainingSessionId,
         status: opts.status ?? EnrollmentStatus.ACTIVE,
         progress: opts.progress ?? 0,
         completedAt: opts.progress === 100 ? new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) : undefined,
@@ -354,14 +407,14 @@ async function main() {
     return fe
   }
 
-  await enroll(sYasmine.id, fWeb,  [mWeb1, mWeb2, mWeb3, mWeb4],       { progress: 75, completedModules: 3 })
-  await enroll(sYasmine.id, fData, [mData1, mData2, mData3, mData4, mData5], { progress: 20, completedModules: 1 })
-  await enroll(sOmar.id,    fWeb,  [mWeb1, mWeb2, mWeb3, mWeb4],       { progress: 50, completedModules: 2 })
-  await enroll(sSalma.id,   fData, [mData1, mData2, mData3, mData4, mData5], { progress: 100, completedModules: 5, status: EnrollmentStatus.COMPLETED })
-  await enroll(sSalma.id,   fDesign, [mDesign1, mDesign2, mDesign3, mDesign4], { progress: 25, completedModules: 1 })
-  await enroll(sAmine.id,   fDesign, [mDesign1, mDesign2, mDesign3, mDesign4], { progress: 50, completedModules: 2 })
-  await enroll(sFatima.id,  fCyber, [mWeb1, mWeb2, mWeb3, mWeb4],      { progress: 30, completedModules: 1 })
-  await enroll(sOtmane.id,  fWeb,   [mWeb1, mWeb2, mWeb3, mWeb4],      { progress: 100, completedModules: 4, status: EnrollmentStatus.COMPLETED })
+  await enroll(sYasmine.id, fWeb,     [mWeb1, mWeb2, mWeb3, mWeb4],            tsWeb.id,    { progress: 75,  completedModules: 3 })
+  await enroll(sYasmine.id, fData,    [mData1, mData2, mData3, mData4, mData5], tsData.id,   { progress: 20,  completedModules: 1 })
+  await enroll(sOmar.id,    fWeb,     [mWeb1, mWeb2, mWeb3, mWeb4],            tsWeb.id,    { progress: 50,  completedModules: 2 })
+  await enroll(sSalma.id,   fData,    [mData1, mData2, mData3, mData4, mData5], tsData.id,   { progress: 100, completedModules: 5, status: EnrollmentStatus.COMPLETED })
+  await enroll(sSalma.id,   fDesign,  [mDesign1, mDesign2, mDesign3, mDesign4], tsDesign.id, { progress: 25,  completedModules: 1 })
+  await enroll(sAmine.id,   fDesign,  [mDesign1, mDesign2, mDesign3, mDesign4], tsDesign.id, { progress: 50,  completedModules: 2 })
+  await enroll(sFatima.id,  fCyber,   [mWeb1, mWeb2, mWeb3, mWeb4],            tsCyber.id,  { progress: 30,  completedModules: 1 })
+  await enroll(sOtmane.id,  fWeb,     [mWeb1, mWeb2, mWeb3, mWeb4],            tsWeb.id,    { progress: 100, completedModules: 4, status: EnrollmentStatus.COMPLETED })
 
   console.log('✅ Inscriptions étudiants créées')
 

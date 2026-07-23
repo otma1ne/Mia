@@ -261,8 +261,8 @@ export async function markModuleComplete(moduleId: string) {
   const access = await getStudentModuleAccess(userId, moduleId)
   if (!access.allowed) return { error: access.reason }
 
-  const moduleEnrollment = await db.moduleEnrollment.findUnique({
-    where: { userId_moduleId: { userId, moduleId } },
+  const moduleEnrollment = await db.moduleEnrollment.findFirst({
+    where: { userId, moduleId },
     select: { id: true, formationEnrollmentId: true, completedAt: true },
   })
   if (!moduleEnrollment) return { error: 'Inscription au module introuvable.' }

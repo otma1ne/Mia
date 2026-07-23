@@ -57,7 +57,7 @@ async function main() {
     // Link existing FormationEnrollments
     if (f.enrollments.length > 0) {
       await db.formationEnrollment.updateMany({
-        where: { formationId: f.id, trainingSessionId: null },
+        where: { formationId: f.id },
         data:  { trainingSessionId: ts.id },
       })
       console.log(`     → linked ${f.enrollments.length} enrollment(s)`)

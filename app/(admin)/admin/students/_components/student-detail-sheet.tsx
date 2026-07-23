@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState, useTransition } from 'react'
-import { getStudent } from '@/app/actions/students'
+import { getStudent, dropEnrollment } from '@/app/actions/students'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
@@ -12,7 +13,7 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
-import { Mail, Phone, Calendar, BookOpen } from 'lucide-react'
+import { Mail, Phone, Calendar, BookOpen, XCircle } from 'lucide-react'
 
 type Student = NonNullable<Awaited<ReturnType<typeof getStudent>>>
 
@@ -35,6 +36,21 @@ interface StudentDetailSheetProps {
 export default function StudentDetailSheet({ studentId, onClose }: StudentDetailSheetProps) {
   const [student, setStudent] = useState<Student | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [dropError, setDropError] = useState('')
+
+  function handleDrop(enrollmentId: string) {
+    setDropError('')
+    startTransition(async () => {
+      const result = await dropEnrollment(enrollmentId)
+      if (result?.error) {
+        setDropError(result.error)
+      } else {
+        // Refresh student data
+        const data = await getStudent(studentId!)
+        setStudent(data ?? null)
+      }
+    })
+  }
 
   useEffect(() => {
     if (!studentId) {
@@ -115,6 +131,10 @@ export default function StudentDetailSheet({ studentId, onClose }: StudentDetail
                 Formations ({student.formationEnrollments.length})
               </h3>
 
+              {dropError && (
+                <p className="text-xs text-destructive">{dropError}</p>
+              )}
+
               {student.formationEnrollments.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Aucune inscription pour l&apos;instant.</p>
               ) : (
@@ -129,9 +149,23 @@ export default function StudentDetailSheet({ studentId, onClose }: StudentDetail
                             {enrollment.formation.type === 'PRESENTIAL' ? 'Présentiel' : 'À distance'}
                           </p>
                         </div>
-                        <Badge className={cfg.className}>
-                          {cfg.label}
-                        </Badge>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Badge className={cfg.className}>
+                            {cfg.label}
+                          </Badge>
+                          {enrollment.status === 'ACTIVE' && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                              onClick={() => handleDrop(enrollment.id)}
+                              disabled={isPending}
+                              title="Abandonner l'inscription"
+                            >
+                              <XCircle className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
+                        </div>
                       </li>
                     )
                   })}

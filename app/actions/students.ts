@@ -1,6 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
+import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 
 export interface StudentRow {
@@ -114,4 +115,32 @@ export async function getStudent(id: string) {
 export async function deleteStudent(id: string) {
   await db.user.delete({ where: { id, role: 'STUDENT' } })
   revalidatePath('/admin/students')
+}
+
+// ─────────────────────────────────────────
+// Drop an enrollment (admin only)
+// ─────────────────────────────────────────
+
+export async function dropEnrollment(
+  enrollmentId: string,
+): Promise<{ success: boolean; error?: string }> {
+  const session = await auth()
+  if (!session || session.user.role !== 'ADMIN') {
+    return { success: false, error: 'Non autorisé.' }
+  }
+
+  const enrollment = await db.formationEnrollment.findUnique({
+    where: { id: enrollmentId },
+    select: { id: true, userId: true, status: true },
+  })
+  if (!enrollment) return { success: false, error: 'Inscription introuvable.' }
+  if (enrollment.status === 'DROPPED') return { success: false, error: 'Déjà abandonnée.' }
+
+  await db.formationEnrollment.update({
+    where: { id: enrollmentId },
+    data: { status: 'DROPPED' },
+  })
+
+  revalidatePath('/admin/students')
+  return { success: true }
 }

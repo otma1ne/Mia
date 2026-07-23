@@ -72,7 +72,7 @@ export default function AppSidebar({ user }: AppSidebarProps) {
         {/* Logo */}
         <div className="flex h-14 items-center gap-2.5 px-4 border-b border-sidebar-border">
           <Link href="/" aria-label="MIA Académie — Accueil">
-            <Image src={logoLightSrc} alt="MIA Académie" width={50} height={50} className="object-contain" />
+            <Image src={logoLightSrc} alt="MIA Académie" width={160} height={40} className="h-9 w-auto object-contain" />
           </Link>
         </div>
 
@@ -92,7 +92,7 @@ export default function AppSidebar({ user }: AppSidebarProps) {
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   active
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                    ? 'bg-white/12 text-white font-semibold shadow-[inset_3px_0_0_var(--sidebar-ring)]'
                     : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )}
               >

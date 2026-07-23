@@ -1,15 +1,15 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Trash2, Users, CalendarDays, Building2, Mail, Phone } from 'lucide-react'
+import { Trash2, Users, CalendarDays, Building2, Mail, Phone, FileSignature, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { removeCompanyEmployee } from '@/app/actions/companies'
+import { removeCompanyEmployee, generateCompanyDocuments } from '@/app/actions/companies'
 import AddEmployeeDialog from './add-employee-dialog'
 import AssignSessionDialog from './assign-session-dialog'
 import type { CompanyInscriptionStatus, FormationType } from '@prisma/client'
@@ -84,10 +84,21 @@ export default function CompanyDetailClient({
   email, phone, siret, adresse, ville, codePostal, employees, inscriptions, sessions,
 }: CompanyDetailClientProps) {
   const [isPending, startTransition] = useTransition()
+  const [generateErrors, setGenerateErrors] = useState<Record<string, string>>({})
 
   function handleRemoveEmployee(employeeId: string) {
     startTransition(async () => {
       await removeCompanyEmployee(employeeId, companyId)
+    })
+  }
+
+  function handleGenerateDocs(inscriptionId: string) {
+    setGenerateErrors(prev => ({ ...prev, [inscriptionId]: '' }))
+    startTransition(async () => {
+      const result = await generateCompanyDocuments(inscriptionId, companyId)
+      if (result?.error) {
+        setGenerateErrors(prev => ({ ...prev, [inscriptionId]: result.error! }))
+      }
     })
   }
 
@@ -228,12 +239,13 @@ export default function CompanyDetailClient({
                 <TableHead className="px-5 text-xs">Modalité</TableHead>
                 <TableHead className="px-5 text-xs">Durée</TableHead>
                 <TableHead className="px-5 text-xs">Statut</TableHead>
+                <TableHead className="px-5 text-xs">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {inscriptions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="px-5 py-8 text-center text-sm text-muted-foreground">
+                  <TableCell colSpan={6} className="px-5 py-8 text-center text-sm text-muted-foreground">
                     Aucune session assignée.
                   </TableCell>
                 </TableRow>
@@ -241,6 +253,7 @@ export default function CompanyDetailClient({
                 inscriptions.map(ins => {
                   const { label, className } = INSCRIPTION_STATUS[ins.status]
                   const s = ins.trainingSession
+                  const genError = generateErrors[ins.id]
                   return (
                     <TableRow key={ins.id}>
                       <TableCell className="px-5 py-3">
@@ -262,6 +275,29 @@ export default function CompanyDetailClient({
                       </TableCell>
                       <TableCell className="px-5 py-3">
                         <Badge variant="outline" className={className}>{label}</Badge>
+                      </TableCell>
+                      <TableCell className="px-5 py-3">
+                        {ins.status === 'PENDING' && (
+                          <div className="flex flex-col gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 gap-1.5 text-xs"
+                              onClick={() => handleGenerateDocs(ins.id)}
+                              disabled={isPending}
+                            >
+                              {isPending ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <FileSignature className="h-3 w-3" />
+                              )}
+                              Générer &amp; envoyer
+                            </Button>
+                            {genError && (
+                              <p className="text-xs text-destructive">{genError}</p>
+                            )}
+                          </div>
+                        )}
                       </TableCell>
                     </TableRow>
                   )

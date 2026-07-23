@@ -17,8 +17,15 @@ type InscriptionWithFormation = Inscription & {
   formation: Pick<Formation, 'id' | 'title'>
 }
 
+type SessionOption = {
+  id: string
+  title: string
+  formationId: string
+}
+
 interface Props {
   inscription: InscriptionWithFormation
+  sessions: SessionOption[]
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -31,10 +38,11 @@ const STATUS_MAP: Record<InscriptionStatus, { label: string; className: string }
   DECLINED:          { label: 'Refusée',                 className: 'bg-red-100 text-red-700 border-red-200' },
 }
 
-export default function InscriptionDetailSheet({ inscription, open, onOpenChange }: Props) {
+export default function InscriptionDetailSheet({ inscription, sessions, open, onOpenChange }: Props) {
   const [showDeclineNote, setShowDeclineNote] = useState(false)
   const [note, setNote]                       = useState('')
   const [error, setError]                     = useState('')
+  const [selectedSessionId, setSelectedSessionId] = useState(inscription.trainingSessionId ?? '')
   const [isAccepting, startAcceptTransition]    = useTransition()
   const [isDeclining, startDeclineTransition]   = useTransition()
 
@@ -43,7 +51,7 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
   function handleAccept() {
     setError('')
     startAcceptTransition(async () => {
-      const result = await acceptInscription(inscription.id)
+      const result = await acceptInscription(inscription.id, selectedSessionId || undefined)
       if (result?.error) setError(result.error)
       else onOpenChange(false)
     })
@@ -242,6 +250,26 @@ export default function InscriptionDetailSheet({ inscription, open, onOpenChange
               <Separator />
               <section className="space-y-3">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Décision</h3>
+
+                {/* Session picker — required before accepting */}
+                {sessions.length > 0 && (
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium" htmlFor="sessionSelect">
+                      Session de formation
+                    </label>
+                    <select
+                      id="sessionSelect"
+                      value={selectedSessionId}
+                      onChange={e => setSelectedSessionId(e.target.value)}
+                      className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      <option value="">— Sélectionner une session —</option>
+                      {sessions.map(s => (
+                        <option key={s.id} value={s.id}>{s.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 {showDeclineNote && (
                   <div className="space-y-2">

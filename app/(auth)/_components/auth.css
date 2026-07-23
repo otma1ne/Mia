@@ -22,7 +22,7 @@
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(107,43,217,0.35) 0%, rgba(107,43,217,0.08) 55%, transparent 75%);
+  background: radial-gradient(ellipse at center, rgba(64,11,119,0.45) 0%, rgba(64,11,119,0.10) 55%, transparent 75%);
 }
 .auth-panel-glow-bottom {
   position: absolute;
@@ -32,5 +32,5 @@
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(124,58,237,0.2) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(64,11,119,0.25) 0%, transparent 70%);
 }

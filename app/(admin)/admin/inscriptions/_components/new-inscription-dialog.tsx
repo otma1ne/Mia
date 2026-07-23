@@ -86,12 +86,13 @@ export default function NewInscriptionDialog({ students, formations, sessions }:
   function handleDirect() {
     if (!directStudentId) { setError('Veuillez sélectionner un étudiant.'); return }
     if (!directFormationId) { setError('Veuillez sélectionner une formation.'); return }
+    if (!directSessionId) { setError('Veuillez sélectionner une session.'); return }
     setError(''); setSuccess('')
     startTransition(async () => {
       const res = await adminCreateDirectEnrollment(
         directStudentId,
         directFormationId,
-        directSessionId || undefined,
+        directSessionId,
       )
       if (res.success) {
         setSuccess('Étudiant inscrit avec succès.')

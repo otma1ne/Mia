@@ -13,7 +13,7 @@ export default async function HomePage() {
       <main className="min-h-dvh flex flex-col items-center justify-center px-4 py-16 gap-10"
             style={{ background: 'var(--mia-near-black)' }}>
         {/* Logo */}
-        <Image src={logoLightSrc} alt="MIA Académie" width={64} height={64} className="object-contain" />
+        <Image src={logoLightSrc} alt="MIA Académie" width={200} height={50} className="h-12 w-auto object-contain" />
 
         {/* Heading */}
         <div className="text-center max-w-md">

@@ -34,10 +34,10 @@ export default function SiteNav() {
 
           {/* Logo */}
           <Link href="/" className="shrink-0">
-            <div className="sn-logo-wrap">
-              <Image src={logoLightSrc} alt="MIA Académie" fill sizes="40px"
+            <div className="sn-logo-wrap" style={{ width: 140, height: 36, position: 'relative' }}>
+              <Image src={logoLightSrc} alt="MIA Académie" fill sizes="140px"
                      className="object-contain sn-logo-light" priority />
-              <Image src={logoSrc} alt="" fill sizes="40px"
+              <Image src={logoLightSrc} alt="" fill sizes="140px"
                      className="object-contain sn-logo-dark" aria-hidden />
             </div>
           </Link>
@@ -85,7 +85,7 @@ export default function SiteNav() {
         aria-label="Menu de navigation"
       >
         <div className="sn-side-header">
-          <Image src={logoSrc} alt="MIA Académie" width={36} height={36} className="object-contain" />
+          <Image src={logoLightSrc} alt="MIA Académie" width={140} height={36} className="h-8 w-auto object-contain invert" />
           <button type="button" className="sn-side-close"
                   onClick={() => setMenuOpen(false)} aria-label="Fermer">
             <X className="w-5 h-5" />

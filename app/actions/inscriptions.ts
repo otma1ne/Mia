@@ -159,8 +159,8 @@ export async function createInscriptionAsStudent(
   }
 
   // Check not already enrolled
-  const enrolled = await db.formationEnrollment.findUnique({
-    where: { userId_formationId: { userId: user.id, formationId } },
+  const enrolled = await db.formationEnrollment.findFirst({
+    where: { userId: user.id, formationId },
   })
   if (enrolled) {
     return { error: 'Vous êtes déjà inscrit à cette formation.' }
@@ -281,11 +281,14 @@ export async function submitEvaluation(
 // acceptInscription — admin only
 // ─────────────────────────────────────────
 
-export async function acceptInscription(id: string): Promise<{ error?: string }> {
+export async function acceptInscription(
+  id: string,
+  trainingSessionId?: string,
+): Promise<{ error?: string }> {
   const session = await auth()
   if (!session || session.user.role !== 'ADMIN') return { error: 'Non autorisé.' }
 
-  const inscription = await db.inscription.findUnique({
+  let inscription = await db.inscription.findUnique({
     where: { id },
     include: { formation: true },
   })
@@ -293,6 +296,20 @@ export async function acceptInscription(id: string): Promise<{ error?: string }>
 
   // Only EVALUATED inscriptions can be accepted
   if (inscription.status !== 'EVALUATED') return { error: 'Statut invalide pour cette action.' }
+
+  // Assign session if provided
+  if (trainingSessionId && inscription.trainingSessionId !== trainingSessionId) {
+    inscription = await db.inscription.update({
+      where: { id },
+      data: { trainingSessionId },
+      include: { formation: true },
+    })
+  }
+
+  // A trainingSessionId is required to enroll the student after signing
+  if (!inscription.trainingSessionId) {
+    return { error: 'Veuillez assigner une session de formation à cette candidature avant de l\'accepter.' }
+  }
 
   // Fetch center info — required for PDF generation
   const center = await db.center.findFirst()

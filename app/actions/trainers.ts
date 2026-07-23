@@ -143,6 +143,8 @@ export async function createTrainer(_prevState: unknown, formData: FormData) {
   const bio             = (formData.get('bio')             as string)?.trim() || ''
   const specializations = (formData.get('specializations') as string)
     ?.split(',').map(s => s.trim()).filter(Boolean) ?? []
+  const competences     = (formData.get('competences')     as string)
+    ?.split(',').map(s => s.trim()).filter(Boolean) ?? []
   const credentials     = (formData.get('credentials')     as string)
     ?.split(',').map(s => s.trim()).filter(Boolean) ?? []
   const categoryIds     = formData.getAll('categoryIds') as string[]
@@ -185,7 +187,7 @@ export async function createTrainer(_prevState: unknown, formData: FormData) {
       role: 'TRAINER',
       trainer: {
         create: {
-          bio, specializations, credentials,
+          bio, specializations, competences, credentials,
           categoryIds, expertiseLevels,
           cvUrl, diplomeUrl, certifQualiopiUrl, ndaUrl,
         },

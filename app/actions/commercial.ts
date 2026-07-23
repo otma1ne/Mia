@@ -247,7 +247,8 @@ export async function updateContactStatus(
 export async function convertContactToGagne(
   contactId: string,
   formationId: string,
-  note?: string
+  note?: string,
+  trainingSessionId?: string,
 ): Promise<{ success: boolean; error?: string }> {
   const commercial = await getCommercialForSession()
   if (!commercial) return { success: false, error: 'Non autorisé' }
@@ -286,6 +287,7 @@ export async function convertContactToGagne(
         email:      contact.email!,
         phone:      contact.phone,
         formationId,
+        ...(trainingSessionId ? { trainingSessionId } : {}),
         status:     'PENDING',
         source:     'COMMERCIAL',
         contactId,
@@ -318,13 +320,28 @@ export async function convertContactToGagne(
   return { success: true }
 }
 
-export async function getPublishedFormationsBasic(): Promise<{ id: string; title: string }[]> {
+export async function getPublishedFormationsBasic(): Promise<{
+  id: string
+  title: string
+  sessions: { id: string; title: string; formationId: string }[]
+}[]> {
   const formations = await db.formation.findMany({
     where:   { status: 'PUBLISHED' },
     select:  { id: true, title: true },
     orderBy: { title: 'asc' },
   })
-  return formations
+
+  const sessions = await db.trainingSession.findMany({
+    where:  { status: { in: ['OPEN', 'STARTED'] } },
+    select: { id: true, title: true, formationId: true },
+    orderBy: { startDate: 'asc' },
+  })
+
+  return formations.map(f => ({
+    id:       f.id,
+    title:    f.title,
+    sessions: sessions.filter(s => s.formationId === f.id),
+  }))
 }
 
 export async function updateContactNotes(id: string, notes: string) {

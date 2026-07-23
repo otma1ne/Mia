@@ -187,6 +187,7 @@ export async function createFormation(_prevState: unknown, formData: FormData) {
 export async function updateFormationDetails(
   id: string,
   data: {
+    title?: string | null
     price?: number | null
     duration?: number | null
     programme?: string | null
@@ -197,6 +198,7 @@ export async function updateFormationDetails(
   await db.formation.update({
     where: { id },
     data: {
+      ...(data.title != null && data.title.trim() ? { title: data.title.trim() } : {}),
       price:     data.price     ?? null,
       duration:  data.duration  ?? null,
       programme: data.programme ?? null,

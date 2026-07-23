@@ -281,10 +281,10 @@ export default function LandingPage({
 
           {/* Logo — light version shown over dark hero, dark on scroll */}
           <Link href="/" className="shrink-0 justify-self-start">
-            <div className="logo-wrap">
-              <Image src={logoLightSrc} alt="MIA Académie" fill sizes="40px"
+            <div className="logo-wrap" style={{ width: 140, height: 36, position: 'relative' }}>
+              <Image src={logoLightSrc} alt="MIA Académie" fill sizes="140px"
                      className="object-contain logo-light" priority />
-              <Image src={logoSrc} alt="" fill sizes="40px"
+              <Image src={logoLightSrc} alt="" fill sizes="140px"
                      className="object-contain logo-dark" aria-hidden />
             </div>
           </Link>
@@ -339,7 +339,7 @@ export default function LandingPage({
         aria-label="Menu de navigation"
       >
         <div className="nav-side-header">
-          <Image src={logoSrc} alt="MIA Académie" width={36} height={36} className="object-contain" />
+          <Image src={logoSrc} alt="MIA Académie" width={140} height={36} className="h-8 w-auto object-contain" />
           <button type="button" className="nav-side-close" onClick={() => setMenuOpen(false)} aria-label="Fermer">
             <X className="w-5 h-5" />
           </button>

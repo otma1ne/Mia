@@ -56,8 +56,8 @@
 .sn-hamburger { color: var(--sn-link-color); transition: color 0.25s ease; }
 
 /* Logo crossfade */
-.sn-logo-wrap { width: 40px; height: 40px; position: relative; }
-.sn-glass .sn-logo-dark  { opacity: 0; transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+.sn-logo-wrap { width: 140px; height: 36px; position: relative; }
+.sn-glass .sn-logo-dark  { opacity: 0; filter: invert(1); transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
 .sn-glass .sn-logo-light { opacity: 1; transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
 .sn-glass.sn--visible .sn-logo-dark  { opacity: 1; }
 .sn-glass.sn--visible .sn-logo-light { opacity: 0; }

@@ -1,20 +1,14 @@
 ﻿import type { Metadata } from 'next'
-import { Space_Grotesk, Inter } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import './globals.css'
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--inter-font',
-})
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--grotesk-font',
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--poppins-font',
 })
 
 const BASE_URL = 'https://mia-academie.com'
@@ -98,7 +92,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`h-full antialiased ${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="fr" className={`h-full antialiased ${poppins.variable}`}>
       <head>
         {/* Géolocalisation — référencement local France / Paris */}
         <meta name="geo.region"   content="FR-75" />

@@ -22,8 +22,8 @@ export async function markMaterialCompleted(materialId: string, formationId: str
     if (!material) return { error: 'Matériel introuvable.' }
 
     // Verify student is enrolled in the formation
-    const enrollment = await db.formationEnrollment.findUnique({
-      where: { userId_formationId: { userId: session.user.id, formationId } },
+    const enrollment = await db.formationEnrollment.findFirst({
+      where: { userId: session.user.id, formationId },
       select: { id: true },
     })
 
@@ -130,8 +130,8 @@ export async function getModuleMaterialProgress(
 
   try {
     // Verify enrollment
-    const enrollment = await db.formationEnrollment.findUnique({
-      where: { userId_formationId: { userId: session.user.id, formationId } },
+    const enrollment = await db.formationEnrollment.findFirst({
+      where: { userId: session.user.id, formationId },
       select: { id: true },
     })
 

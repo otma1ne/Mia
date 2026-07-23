@@ -313,8 +313,8 @@ export async function getExamForStudent(moduleId: string) {
   const session = await requireAuth()
   const userId = session.user.id
 
-  const moduleEnrollment = await db.moduleEnrollment.findUnique({
-    where: { userId_moduleId: { userId, moduleId } },
+  const moduleEnrollment = await db.moduleEnrollment.findFirst({
+    where: { userId, moduleId },
   })
   if (!moduleEnrollment) return null
 
