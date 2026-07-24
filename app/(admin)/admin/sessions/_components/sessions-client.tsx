@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import type { TrainingSessionListRow } from '@/app/actions/training-sessions'
 import type { TrainingSessionStatus } from '@prisma/client'
+import CreateSessionFromListDialog from './create-session-from-list-dialog'
 
 const STATUS_TABS = [
   { key: 'all',       label: 'Toutes' },
@@ -43,14 +44,19 @@ function formatDate(d: Date) {
   return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(d))
 }
 
+interface Formation { id: string; title: string }
+interface Trainer   { id: string; name: string }
+
 interface SessionsClientProps {
-  sessions: TrainingSessionListRow[]
-  counts: Record<string, number>
-  search: string
-  activeTab: TabKey | TrainingSessionStatus
+  sessions:   TrainingSessionListRow[]
+  counts:     Record<string, number>
+  search:     string
+  activeTab:  TabKey | TrainingSessionStatus
+  formations: Formation[]
+  trainers:   Trainer[]
 }
 
-export default function SessionsClient({ sessions, counts, search: initialSearch, activeTab }: SessionsClientProps) {
+export default function SessionsClient({ sessions, counts, search: initialSearch, activeTab, formations, trainers }: SessionsClientProps) {
   const router   = useRouter()
   const pathname = usePathname()
   const params   = useSearchParams()
@@ -84,7 +90,7 @@ export default function SessionsClient({ sessions, counts, search: initialSearch
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         {/* Status tabs */}
-        <div className="flex gap-0.5 flex-wrap">
+        <div className="flex gap-0.5 flex-wrap items-center">
           {STATUS_TABS.map(({ key, label }) => {
             const count    = counts[key] ?? 0
             const isActive = activeTab === key
@@ -111,15 +117,18 @@ export default function SessionsClient({ sessions, counts, search: initialSearch
           })}
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <Input
-            defaultValue={initialSearch}
-            onChange={e => handleSearch(e.target.value)}
-            placeholder="Rechercher une session…"
-            className="pl-8 w-52"
-          />
+        {/* Search + Create */}
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <Input
+              defaultValue={initialSearch}
+              onChange={e => handleSearch(e.target.value)}
+              placeholder="Rechercher une session…"
+              className="pl-8 w-52"
+            />
+          </div>
+          <CreateSessionFromListDialog formations={formations} trainers={trainers} />
         </div>
       </div>
 

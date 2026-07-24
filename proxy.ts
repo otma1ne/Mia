@@ -8,7 +8,7 @@ const { auth } = NextAuth(authConfig)
 
 const publicRoutes = ['/', '/courses']
 const authRoutes = ['/login', '/register']
-const publicPrefixes = ['/evaluation', '/signature', '/formations', '/planifier', '/rejoindre-notre-equipe', '/legal']
+const publicPrefixes = ['/evaluation', '/signature', '/formations', '/planifier', '/rejoindre-notre-equipe', '/legal', '/bilan']
 
 // ────────────────────────────────────────
 // Security Headers Configuration
@@ -101,6 +101,7 @@ export default auth((req: NextRequest & { auth: any }) => {
       TRAINER:    '/trainer/dashboard',
       STUDENT:    '/student/dashboard',
       COMMERCIAL: '/commercial/dashboard',
+      COMPANY:    '/entreprise/dashboard',
     }
 
     const dashboardUrl = dashboardUrls[userRole] || '/dashboard'
@@ -141,7 +142,7 @@ export default auth((req: NextRequest & { auth: any }) => {
 
   if (
     nextUrl.pathname.startsWith('/commercial') &&
-    req.auth?.user?.role !== 'COMMERCIAL'
+    !['ADMIN', 'COMMERCIAL'].includes(req.auth?.user?.role || '')
   ) {
     return NextResponse.redirect(new URL('/unauthorized', nextUrl))
   }

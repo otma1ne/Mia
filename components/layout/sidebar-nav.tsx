@@ -22,6 +22,7 @@ import {
   Factory,
   CalendarRange,
   ListOrdered,
+  CheckSquare,
 } from 'lucide-react'
 
 interface NavItem {
@@ -49,6 +50,7 @@ const adminSections: NavSection[] = [
       { label: 'Formateurs',   href: '/admin/trainers',      icon: GraduationCap },
       { label: 'Formations',   href: '/admin/formations',    icon: Layers },
       { label: 'Sessions',     href: '/admin/sessions',      icon: CalendarRange },
+      { label: 'Présences',    href: '/admin/attendance',    icon: CheckSquare },
       { label: 'Bilans',       href: '/admin/bilans',        icon: BarChart3 },
       { label: "Secteurs d'activité",   href: '/admin/categories',    icon: Tag },
       { label: 'Commercial',     href: '/admin/commercial',    icon: Briefcase },

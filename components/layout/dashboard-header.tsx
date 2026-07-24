@@ -52,20 +52,31 @@ const pageTitles: Record<string, string> = {
   '/admin/trainers':    'Formateurs',
   '/admin/formations':  'Formations',
   '/admin/courses':     'Cours',
+  '/admin/sessions':    'Sessions',
   '/admin/schedule':    'Planning',
   '/admin/center':        'Centres',
   '/admin/categories':    "Secteurs d'activité",
   '/admin/inscriptions':  'Inscriptions',
   '/admin/settings':      'Paramètres',
+  '/admin/commercial':    'Commercial',
+  '/admin/entreprises':   'Entreprises',
+  '/admin/bilans':        'Bilans des formations',
+  '/admin/waitlist':      "Liste d'attente",
+  '/admin/attendance':    'Présences',
   '/trainer/dashboard': 'Tableau de bord',
   '/trainer/modules':   'Mes modules',
   '/trainer/students':  'Étudiants',
   '/trainer/attendance':'Présence',
+  '/trainer/grading':   'Corrections',
   '/trainer/schedule':  'Planning',
   '/student/dashboard': 'Tableau de bord',
   '/student/courses':   'Parcourir les formations',
   '/student/enrollments':'Mes inscriptions',
+  '/student/documents': 'Mes documents',
   '/student/schedule':  'Planning',
+  '/commercial/dashboard': 'Tableau de bord',
+  '/commercial/contacts':  'Mes contacts',
+  '/entreprise/dashboard': 'Tableau de bord',
   '/settings':          'Paramètres',
   '/help':              'Aide',
   '/profile':           'Profil',
@@ -133,7 +144,7 @@ export default function DashboardHeader({ user, notifications }: DashboardHeader
                 className={cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   pathname === href
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+                    ? 'bg-white/12 text-white font-semibold shadow-[inset_3px_0_0_var(--sidebar-ring)]'
                     : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )}
               >
