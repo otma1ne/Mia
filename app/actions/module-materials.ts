@@ -119,21 +119,3 @@ export async function deleteModuleMaterial(materialId: string) {
   await db.moduleMaterial.delete({ where: { id: materialId } })
   revalidatePath('/trainer/modules')
 }
-
-// ─────────────────────────────────────────
-// Mark material complete (student)
-// ─────────────────────────────────────────
-
-export async function markMaterialComplete(materialId: string) {
-  const session = await auth()
-  if (!session?.user?.id) redirect('/login')
-  const userId = session.user.id
-
-  await db.materialProgress.upsert({
-    where: { userId_materialId: { userId, materialId } },
-    create: { userId, materialId },
-    update: { completedAt: new Date() },
-  })
-
-  revalidatePath('/student/formations')
-}

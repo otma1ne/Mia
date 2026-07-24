@@ -40,7 +40,7 @@ export default async function HomePage() {
   const [rawCategories, rawFormations] = await Promise.all([
     db.category.findMany({
       orderBy: { name: 'asc' },
-      include: { _count: { select: { formations: true } } },
+      include: { _count: { select: { formations: { where: { status: 'PUBLISHED' } } } } },
     }),
     db.formation.findMany({
       where: { status: 'PUBLISHED' },
