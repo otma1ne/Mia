@@ -15,26 +15,36 @@ import {
 import { DatePicker } from '@/components/ui/date-picker'
 import { CirclePlus } from 'lucide-react'
 
-interface Module  { id: string; title: string }
-interface Room    { id: string; name: string; capacity: number }
-interface Trainer { id: string; user: { name: string } }
+interface Module          { id: string; title: string; formationId: string }
+interface Room            { id: string; name: string; capacity: number }
+interface Trainer         { id: string; user: { name: string } }
+interface TrainingSession { id: string; title: string; formationId: string }
+
 interface CreateSessionDialogProps {
   modules: Module[]
   rooms: Room[]
   trainers: Trainer[]
+  trainingSessions: TrainingSession[]
   defaultDate?: Date
   onCreated?: () => void
 }
 
-export default function CreateSessionDialog({ modules, rooms, trainers, defaultDate, onCreated }: CreateSessionDialogProps) {
+export default function CreateSessionDialog({ modules, rooms, trainers, trainingSessions, defaultDate, onCreated }: CreateSessionDialogProps) {
   const [open, setOpen] = useState(false)
   const [state, action, pending] = useActionState(createSession, null)
   const formRef = useRef<HTMLFormElement>(null)
+  const [selectedModuleId, setSelectedModuleId] = useState('')
+
+  const selectedModule = modules.find(m => m.id === selectedModuleId)
+  const filteredSessions = selectedModule
+    ? trainingSessions.filter(ts => ts.formationId === selectedModule.formationId)
+    : []
 
   useEffect(() => {
     if (state?.success) {
       setOpen(false)
       formRef.current?.reset()
+      setSelectedModuleId('')
       onCreated?.()
     }
   }, [state])
@@ -56,7 +66,12 @@ export default function CreateSessionDialog({ modules, rooms, trainers, defaultD
           {/* Module */}
           <div className="flex flex-col gap-2">
             <Label>Module</Label>
-            <Select name="moduleId" required labelItems={Object.fromEntries(modules.map(m => [m.id, m.title]))}>
+            <Select
+              name="moduleId"
+              required
+              labelItems={Object.fromEntries(modules.map(m => [m.id, m.title]))}
+              onValueChange={v => { setSelectedModuleId(v as string) }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Sélectionner un module…" />
               </SelectTrigger>
@@ -68,6 +83,25 @@ export default function CreateSessionDialog({ modules, rooms, trainers, defaultD
               </SelectContent>
             </Select>
           </div>
+
+          {/* Training session (optional, filtered by formation) */}
+          {filteredSessions.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <Label>
+                Session de formation <span className="text-muted-foreground">(facultatif)</span>
+              </Label>
+              <Select name="trainingSessionId" labelItems={Object.fromEntries(filteredSessions.map(ts => [ts.id, ts.title]))}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Lier à une session…" />
+                </SelectTrigger>
+                <SelectContent className="min-w-80">
+                  {filteredSessions.map(ts => (
+                    <SelectItem key={ts.id} value={ts.id} label={ts.title}>{ts.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Trainer (optional) */}
           <div className="flex flex-col gap-2">

@@ -32,6 +32,7 @@ export default async function SchedulePage({ searchParams }: PageProps) {
         modules={formData.modules}
         rooms={formData.rooms}
         trainers={formData.trainers}
+        trainingSessions={formData.trainingSessions}
       />
     </div>
   )

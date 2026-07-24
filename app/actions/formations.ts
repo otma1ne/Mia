@@ -116,6 +116,10 @@ export async function getFormation(id: string) {
           _count: { select: { enrollments: true } },
         },
       },
+      trainingSessions: {
+        select: { startDate: true, endDate: true },
+        orderBy: { startDate: 'asc' },
+      },
       _count: { select: { enrollments: true, modules: true } },
     },
   })
@@ -214,10 +218,18 @@ export async function updateFormationDetails(
 // ─────────────────────────────────────────
 
 export async function duplicateFormation(id: string): Promise<{ error?: string }> {
-  const source = await db.formation.findUnique({ where: { id } })
+  const source = await db.formation.findUnique({
+    where: { id },
+    include: {
+      modules: {
+        include: { materials: true },
+        orderBy: { orderIndex: 'asc' },
+      },
+    },
+  })
   if (!source) return { error: 'Formation introuvable.' }
 
-  await db.formation.create({
+  const newFormation = await db.formation.create({
     data: {
       title:       `Copie de ${source.title}`,
       description: source.description,
@@ -233,6 +245,31 @@ export async function duplicateFormation(id: string): Promise<{ error?: string }
       programme:   source.programme,
     },
   })
+
+  for (const mod of source.modules) {
+    const newModule = await db.module.create({
+      data: {
+        formationId: newFormation.id,
+        title:       mod.title,
+        description: mod.description,
+        orderIndex:  mod.orderIndex,
+        type:        mod.type,
+        status:      'DRAFT',
+        videoUrl:    mod.videoUrl,
+        duration:    mod.duration,
+      },
+    })
+    if (mod.materials.length > 0) {
+      await db.moduleMaterial.createMany({
+        data: mod.materials.map(m => ({
+          moduleId: newModule.id,
+          title:    m.title,
+          url:      m.url,
+          type:     m.type,
+        })),
+      })
+    }
+  }
 
   revalidatePath('/admin/formations')
   return {}

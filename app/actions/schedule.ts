@@ -71,7 +71,7 @@ export async function getSessions({
 // ─────────────────────────────────────────
 
 export async function getScheduleFormData() {
-  const [modules, rooms, trainers] = await Promise.all([
+  const [modules, rooms, trainers, trainingSessions] = await Promise.all([
     db.module.findMany({
       where: { status: { in: ['PUBLISHED', 'DRAFT'] } },
       orderBy: { title: 'asc' },
@@ -85,8 +85,13 @@ export async function getScheduleFormData() {
       orderBy: { createdAt: 'desc' },
       include: { user: { select: { name: true } } },
     }),
+    db.trainingSession.findMany({
+      where: { status: { not: 'CANCELLED' } },
+      orderBy: { startDate: 'asc' },
+      select: { id: true, title: true, formationId: true },
+    }),
   ])
-  return { modules, rooms, trainers }
+  return { modules, rooms, trainers, trainingSessions }
 }
 
 // ─────────────────────────────────────────
@@ -94,13 +99,19 @@ export async function getScheduleFormData() {
 // ─────────────────────────────────────────
 
 export async function createSession(_prevState: unknown, formData: FormData) {
-  const moduleId  = (formData.get('moduleId')  as string)?.trim()
-  const roomId    = (formData.get('roomId')    as string)?.trim() || null
-  const trainerId = (formData.get('trainerId') as string)?.trim() || null
-  const date      = (formData.get('date')      as string)?.trim()
-  const startTime = (formData.get('startTime') as string)?.trim()
-  const endTime   = (formData.get('endTime')   as string)?.trim()
-  const notes     = (formData.get('notes')     as string)?.trim() || null
+  const session = await auth()
+  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    return { error: 'Non autorisé.' }
+  }
+
+  const moduleId          = (formData.get('moduleId')          as string)?.trim()
+  const roomId            = (formData.get('roomId')            as string)?.trim() || null
+  const trainerId         = (formData.get('trainerId')         as string)?.trim() || null
+  const trainingSessionId = (formData.get('trainingSessionId') as string)?.trim() || null
+  const date              = (formData.get('date')              as string)?.trim()
+  const startTime         = (formData.get('startTime')         as string)?.trim()
+  const endTime           = (formData.get('endTime')           as string)?.trim()
+  const notes             = (formData.get('notes')             as string)?.trim() || null
 
   if (!moduleId || !date || !startTime || !endTime) {
     return { error: 'Module, date, heure de début et heure de fin sont requis.' }
@@ -152,10 +163,11 @@ export async function createSession(_prevState: unknown, formData: FormData) {
   await db.session.create({
     data: {
       moduleId,
-      formationId: mod.formationId,
-      roomId:      roomId || null,
-      trainerId:   trainerId || null,
-      date:        sessionDate,
+      formationId:       mod.formationId,
+      trainingSessionId: trainingSessionId || null,
+      roomId:            roomId || null,
+      trainerId:         trainerId || null,
+      date:              sessionDate,
       startTime,
       endTime,
       notes,
@@ -211,6 +223,10 @@ export async function saveAttendanceAdmin(
 // ─────────────────────────────────────────
 
 export async function deleteSession(id: string) {
+  const session = await auth()
+  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    return { error: 'Non autorisé.' }
+  }
   await db.session.delete({ where: { id } })
   revalidatePath('/admin/schedule')
 }

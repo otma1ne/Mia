@@ -20,7 +20,7 @@ export default function AuthPanel() {
       <div className="relative z-10 flex flex-col justify-center h-full px-12 py-16 gap-10">
 
         {/* Logo */}
-        <Image src={logoLightSrc} alt="MIA Académie" width={44} height={44} className="object-contain" />
+        <Image src={logoLightSrc} alt="MIA Académie" width={140} height={36} className="h-9 w-auto object-contain" />
 
         {/* Headline */}
         <div className="flex flex-col gap-4">

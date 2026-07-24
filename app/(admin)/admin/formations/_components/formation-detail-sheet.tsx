@@ -27,7 +27,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import type { FormationStatus, TrainingNiveau } from '@prisma/client'
+import type { FormationStatus, ModuleStatus, TrainingNiveau } from '@prisma/client'
+import { cn } from '@/lib/utils'
 
 const NIVEAU_LABELS: Record<TrainingNiveau, string> = {
   START:  'MIA Bronze',
@@ -45,6 +46,13 @@ const statusConfig: Record<FormationStatus, { label: string; className: string }
 }
 
 const statusOrder: FormationStatus[] = ['DRAFT', 'PUBLISHED', 'ARCHIVED', 'COMPLETED']
+
+const moduleStatusConfig: Record<ModuleStatus, { label: string; classes: string }> = {
+  DRAFT:     { label: 'Brouillon', classes: 'text-amber-600' },
+  PUBLISHED: { label: 'Publié',    classes: 'text-emerald-600' },
+  ARCHIVED:  { label: 'Archivé',   classes: 'text-muted-foreground' },
+  COMPLETED: { label: 'Terminé',   classes: 'text-blue-600' },
+}
 
 function formatDate(d: Date) {
   return new Intl.DateTimeFormat('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(d))
@@ -195,15 +203,35 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-2">
                 <Calendar className="h-3.5 w-3.5" />
                 Calendrier
+                {formation.trainingSessions.length > 0 && (
+                  <span className="ml-auto text-[10px] font-normal normal-case text-muted-foreground/70">
+                    {formation.trainingSessions.length} session{formation.trainingSessions.length > 1 ? 's' : ''}
+                  </span>
+                )}
               </h3>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Début</span>
-                <span className="text-muted-foreground italic">Dates à définir</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Fin</span>
-                <span className="text-muted-foreground italic">Dates à définir</span>
-              </div>
+              {formation.trainingSessions.length === 0 ? (
+                <p className="text-xs text-muted-foreground italic">Aucune session créée — dates à définir</p>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Début</span>
+                    <span className="font-medium">
+                      {formatDate(formation.trainingSessions[0].startDate)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Fin</span>
+                    <span className="font-medium">
+                      {formatDate(
+                        formation.trainingSessions.reduce(
+                          (max, s) => new Date(s.endDate) > new Date(max) ? s.endDate : max,
+                          formation.trainingSessions[0].endDate
+                        )
+                      )}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Informations complémentaires */}
@@ -351,8 +379,8 @@ export default function FormationDetailSheet({ formationId, onClose }: Formation
                           <span className="text-xs tabular-nums text-muted-foreground w-4 shrink-0">{i + 1}.</span>
                           <span className="text-sm truncate">{module.title}</span>
                         </div>
-                        <span className="text-xs text-muted-foreground shrink-0">
-                          {'—'}
+                        <span className={cn('text-xs font-medium shrink-0', moduleStatusConfig[module.status].classes)}>
+                          {moduleStatusConfig[module.status].label}
                         </span>
                       </li>
                     ))}

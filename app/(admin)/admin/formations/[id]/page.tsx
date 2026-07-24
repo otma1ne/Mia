@@ -1,10 +1,13 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { db } from '@/lib/db'
 import { getFormation } from '@/app/actions/formations'
 import { getModulesForFormation } from '@/app/actions/modules'
+import { getTrainingSessionsForFormation } from '@/app/actions/training-sessions'
 import { ChevronLeft, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import ModulesList from './_components/modules-list'
+import TrainingSessionsSection from './_components/training-sessions-section'
 
 export const metadata = { title: 'Gestion des modules' }
 
@@ -28,12 +31,19 @@ export default async function FormationDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const [formation, modules] = await Promise.all([
+  const [formation, modules, sessions, rawTrainers] = await Promise.all([
     getFormation(id),
     getModulesForFormation(id),
+    getTrainingSessionsForFormation(id),
+    db.trainer.findMany({
+      select: { id: true, user: { select: { name: true } } },
+      orderBy: { user: { name: 'asc' } },
+    }),
   ])
 
   if (!formation) notFound()
+
+  const trainers = rawTrainers.map(t => ({ id: t.id, name: t.user.name ?? '' }))
 
   return (
     <div className="flex flex-col gap-6 p-4 lg:p-6">
@@ -67,6 +77,13 @@ export default async function FormationDetailPage({
           </Link>
         </div>
       </div>
+
+      {/* Sessions / Promotions */}
+      <TrainingSessionsSection
+        formationId={id}
+        initialSessions={sessions}
+        trainers={trainers}
+      />
 
       {/* Modules section */}
       <ModulesList

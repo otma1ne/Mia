@@ -78,12 +78,6 @@ const trainerSections: NavSection[] = [
       { label: 'Planning',    href: '/trainer/schedule',  icon: CalendarDays },
     ],
   },
-  {
-    title: 'Outils',
-    items: [
-      { label: "Formulaire d'inscription", href: '/student/inscription', icon: ClipboardList },
-    ],
-  },
 ]
 
 const studentSections: NavSection[] = [

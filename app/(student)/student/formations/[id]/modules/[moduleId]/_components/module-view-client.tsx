@@ -11,8 +11,9 @@ import { Badge } from '@/components/ui/badge'
 import {
   CheckCircle2, Loader2, FileText, Video, Image, Link2,
   Calendar, Clock, ExternalLink, BookOpen, ClipboardCheck,
-  Play, XCircle,
+  Play, XCircle, MapPin, UserCheck, UserX, AlertCircle,
 } from 'lucide-react'
+import type { AttendanceStatus } from '@prisma/client'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -109,6 +110,17 @@ function MaterialRow({
 }
 
 // ─────────────────────────────────────────
+// Attendance badge
+// ─────────────────────────────────────────
+
+const ATTENDANCE_CONFIG: Record<AttendanceStatus, { label: string; classes: string; icon: typeof UserCheck }> = {
+  PRESENT: { label: 'Présent',  classes: 'text-emerald-600 bg-emerald-50 border-emerald-200', icon: UserCheck },
+  ABSENT:  { label: 'Absent',   classes: 'text-red-600 bg-red-50 border-red-200',             icon: UserX },
+  LATE:    { label: 'Retard',   classes: 'text-amber-600 bg-amber-50 border-amber-200',       icon: Clock },
+  EXCUSED: { label: 'Excusé',   classes: 'text-blue-600 bg-blue-50 border-blue-200',          icon: AlertCircle },
+}
+
+// ─────────────────────────────────────────
 // Main component
 // ─────────────────────────────────────────
 
@@ -181,6 +193,61 @@ export default function ModuleViewClient({ module, examStatus }: Props) {
         </div>
         <p className="text-sm text-muted-foreground">{module.description}</p>
       </div>
+
+      {/* Sessions planifiées */}
+      {module.sessions.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
+            <Calendar className="h-3.5 w-3.5" />
+            Séances planifiées
+          </h2>
+          <div className="flex flex-col gap-2">
+            {module.sessions.map(s => {
+              const isPast = new Date(s.date) < new Date()
+              const attendance = s.attendanceStatus ? ATTENDANCE_CONFIG[s.attendanceStatus] : null
+              const AttIcon = attendance?.icon
+              return (
+                <div
+                  key={s.id}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg border px-4 py-2.5 text-sm',
+                    isPast ? 'bg-muted/40' : 'bg-card'
+                  )}
+                >
+                  <div className="flex-1 min-w-0 flex flex-wrap gap-x-4 gap-y-1">
+                    <span className="font-medium capitalize">
+                      {format(new Date(s.date), 'EEEE d MMM yyyy', { locale: fr })}
+                    </span>
+                    <span className="text-muted-foreground flex items-center gap-1">
+                      <Clock className="h-3 w-3 shrink-0" />
+                      {s.startTime} → {s.endTime}
+                    </span>
+                    {s.roomName && (
+                      <span className="text-muted-foreground flex items-center gap-1">
+                        <MapPin className="h-3 w-3 shrink-0" />
+                        {s.roomName}
+                      </span>
+                    )}
+                  </div>
+                  {attendance && AttIcon ? (
+                    <span className={cn(
+                      'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium shrink-0',
+                      attendance.classes
+                    )}>
+                      <AttIcon className="h-3 w-3" />
+                      {attendance.label}
+                    </span>
+                  ) : isPast ? (
+                    <span className="text-xs text-muted-foreground/60 shrink-0 italic">Non renseigné</span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground/60 shrink-0">À venir</span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Video */}
       {module.videoUrl && (

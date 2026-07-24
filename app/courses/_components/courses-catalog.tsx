@@ -6,10 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { fr } from 'date-fns/locale'
 import {
-  Search, Users, BookOpen, Clock, MapPin, Monitor, Video,
+  Search, Users, BookOpen, MapPin, Monitor, Video,
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowRight,
 } from 'lucide-react'
 import Link from 'next/link'
@@ -37,8 +35,6 @@ interface Formation {
   enrollmentCount: number
   maxStudents: number
   moduleCount: number
-  startDate: Date | null
-  endDate: Date | null
 }
 
 interface Category {
@@ -178,9 +174,11 @@ export default function CoursesCatalog({ data, search: initialSearch, activeType
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-sm text-zinc-900 leading-snug line-clamp-2">
-                    {formation.title}
-                  </h3>
+                  <Link href={`/courses/${formation.id}`} className="group">
+                    <h3 className="font-semibold text-sm text-zinc-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                      {formation.title}
+                    </h3>
+                  </Link>
                   <Badge variant="outline" className={cn('text-[10px] shrink-0 gap-1', typeCfg.className)}>
                     <TypeIcon className="h-2.5 w-2.5" />
                     {typeCfg.label}
@@ -207,26 +205,26 @@ export default function CoursesCatalog({ data, search: initialSearch, activeType
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-zinc-500">
-                    <Clock className="h-3 w-3 shrink-0 text-zinc-400" />
-                    {formation.startDate && formation.endDate
-                      ? `${format(new Date(formation.startDate), 'd MMM', { locale: fr })} – ${format(new Date(formation.endDate), 'd MMM yyyy', { locale: fr })}`
-                      : 'Dates à définir'}
-                  </div>
                 </div>
 
                 {/* CTA */}
-                <div className="mt-auto pt-3 border-t">
+                <div className="mt-auto pt-3 border-t flex items-center gap-2">
                   <Link
-                    href={`/login?callbackUrl=/student/courses`}
+                    href={`/courses/${formation.id}`}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-800 transition-colors shrink-0"
+                  >
+                    Détails
+                  </Link>
+                  <Link
+                    href={isFull ? '#' : `/register?formation=${formation.id}`}
                     className={cn(
-                      'inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition-colors',
+                      'inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition-colors',
                       isFull
                         ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed pointer-events-none'
                         : 'bg-primary text-primary-foreground hover:opacity-90'
                     )}
                   >
-                    {isFull ? 'Formation complète' : "S'inscrire"}
+                    {isFull ? 'Formation complète' : 'Faire une demande'}
                     {!isFull && <ArrowRight className="h-3.5 w-3.5" />}
                   </Link>
                 </div>

@@ -119,7 +119,7 @@ export async function createModule(_prevState: unknown, formData: FormData) {
   })
   const orderIndex = (last?.orderIndex ?? -1) + 1
 
-  await db.module.create({
+  const newModule = await db.module.create({
     data: {
       formationId,
       title,
@@ -131,6 +131,31 @@ export async function createModule(_prevState: unknown, formData: FormData) {
       orderIndex,
     },
   })
+
+  // Backfill ModuleEnrollment for students already enrolled in this formation
+  const activeEnrollments = await db.formationEnrollment.findMany({
+    where: { formationId, status: { in: ['ACTIVE', 'COMPLETED'] } },
+    select: { id: true, userId: true },
+  })
+  if (activeEnrollments.length > 0) {
+    // Filter out enrollments that already have a ModuleEnrollment (safety guard)
+    const existing = await db.moduleEnrollment.findMany({
+      where: { moduleId: newModule.id, formationEnrollmentId: { in: activeEnrollments.map(e => e.id) } },
+      select: { formationEnrollmentId: true },
+    })
+    const existingIds = new Set(existing.map(e => e.formationEnrollmentId))
+    const toCreate = activeEnrollments.filter(e => !existingIds.has(e.id))
+    if (toCreate.length > 0) {
+      await db.moduleEnrollment.createMany({
+        data: toCreate.map(e => ({
+          userId:                e.userId,
+          moduleId:              newModule.id,
+          formationEnrollmentId: e.id,
+          status:                'ACTIVE',
+        })),
+      })
+    }
+  }
 
   revalidatePath(`/admin/formations/${formationId}`)
   revalidatePath('/admin/formations')
@@ -229,15 +254,13 @@ export async function getStudentModuleAccess(
   if (!mod) return { allowed: false, reason: 'Module introuvable.' }
   if (mod.status !== 'PUBLISHED') return { allowed: false, reason: 'Module non publié.' }
 
-  // First module is always accessible
-  if (mod.orderIndex === 0) return { allowed: true }
-
-  // Find the previous module (orderIndex - 1)
+  // Find the nearest preceding PUBLISHED module (handles non-contiguous orderIndex after deletions)
   const prev = await db.module.findFirst({
-    where: { formationId: mod.formationId, orderIndex: mod.orderIndex - 1 },
+    where: { formationId: mod.formationId, orderIndex: { lt: mod.orderIndex }, status: 'PUBLISHED' },
+    orderBy: { orderIndex: 'desc' },
     select: { id: true, title: true },
   })
-  if (!prev) return { allowed: true } // no previous → accessible
+  if (!prev) return { allowed: true } // no prior published module → accessible
 
   const prevDone = await db.moduleEnrollment.findFirst({
     where: { userId, moduleId: prev.id, completedAt: { not: null } },

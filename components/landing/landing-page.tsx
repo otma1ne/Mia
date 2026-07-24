@@ -526,20 +526,14 @@ export default function LandingPage({
                       {f.description}
                     </p>
                     <div className="flex items-center justify-between gap-3 flex-wrap">
-                      <div className="flex gap-2 flex-wrap">
-                        <span className="text-[12px] font-medium px-3 py-1 rounded-[8px]"
-                              style={{ background: 'var(--mia-purple-soft)', color: 'var(--mia-purple-700)' }}>
-                          {f.type === 'PRESENTIAL' ? 'Présentiel' : 'En ligne'}
+                      {f.duration && (
+                        <span className="text-[12px] font-medium px-3 py-1 rounded-[8px] border"
+                              style={{ color: 'var(--text-muted)', borderColor: 'var(--border-default)' }}>
+                          {f.duration}h de formation
                         </span>
-                        {f.duration && (
-                          <span className="text-[12px] font-medium px-3 py-1 rounded-[8px] border"
-                                style={{ color: 'var(--text-muted)', borderColor: 'var(--border-default)' }}>
-                            {f.duration}h
-                          </span>
-                        )}
-                      </div>
-                      <Link href={`/formations/${f.id}`}
-                            className="text-[13px] font-semibold flex items-center gap-1 transition-all hover:-translate-y-px"
+                      )}
+                      <Link href={`/courses/${f.id}`}
+                            className="text-[13px] font-semibold flex items-center gap-1 transition-all hover:-translate-y-px ml-auto"
                             style={{ color: 'var(--text-accent)' }}>
                         Plus d&apos;infos <ArrowRight className="w-3.5 h-3.5" />
                       </Link>

@@ -486,6 +486,68 @@ export async function getInscriptions() {
   })
 }
 
+// ─────────────────────────────────────────
+// resendEvaluationLink — admin only
+// Creates a new 48h evaluation token and resends the email
+// ─────────────────────────────────────────
+
+export async function resendEvaluationLink(inscriptionId: string): Promise<{ error?: string }> {
+  const session = await auth()
+  if (!session || session.user.role !== 'ADMIN') return { error: 'Non autorisé.' }
+
+  const inscription = await db.inscription.findUnique({
+    where: { id: inscriptionId },
+    select: { id: true, email: true, firstName: true, status: true },
+  })
+  if (!inscription) return { error: 'Inscription introuvable.' }
+  if (inscription.status !== 'PENDING') return { error: 'Cette inscription n\'est pas en attente d\'évaluation.' }
+
+  const token     = crypto.randomUUID()
+  const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000)
+
+  await db.evaluationToken.create({ data: { inscriptionId, token, expiresAt } })
+
+  try {
+    await sendEvaluationEmail(inscription.email, inscription.firstName, token)
+  } catch (err) {
+    console.error('[resendEvaluationLink] Failed to send email:', err)
+    return { error: 'Inscription mise à jour mais l\'email n\'a pas pu être envoyé.' }
+  }
+
+  return {}
+}
+
+// ─────────────────────────────────────────
+// resendSignatureLink — admin only
+// Creates a new 7-day signature token and resends the email
+// ─────────────────────────────────────────
+
+export async function resendSignatureLink(inscriptionId: string): Promise<{ error?: string }> {
+  const session = await auth()
+  if (!session || session.user.role !== 'ADMIN') return { error: 'Non autorisé.' }
+
+  const inscription = await db.inscription.findUnique({
+    where: { id: inscriptionId },
+    select: { id: true, email: true, firstName: true, status: true },
+  })
+  if (!inscription) return { error: 'Inscription introuvable.' }
+  if (inscription.status !== 'PENDING_SIGNATURE') return { error: 'Cette inscription n\'est pas en attente de signature.' }
+
+  const token     = crypto.randomUUID()
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+
+  await db.signatureToken.create({ data: { inscriptionId, token, expiresAt } })
+
+  try {
+    await sendSignatureRequestEmail(inscription.email, inscription.firstName, token)
+  } catch (err) {
+    console.error('[resendSignatureLink] Failed to send email:', err)
+    return { error: 'Lien généré mais l\'email n\'a pas pu être envoyé.' }
+  }
+
+  return {}
+}
+
 export async function getPendingEvaluatedCount() {
   const session = await auth()
   if (!session || session.user.role !== 'ADMIN') return 0

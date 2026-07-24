@@ -7,9 +7,9 @@ import type { Session } from 'next-auth'
 // Use Edge-compatible config (no Prisma) for route protection
 const { auth } = NextAuth(authConfig)
 
-const publicRoutes = ['/', '/courses']
+const publicRoutes = ['/']
 const authRoutes = ['/login', '/register']
-const publicPrefixes = ['/evaluation', '/signature', '/formations', '/planifier', '/rejoindre-notre-equipe', '/legal', '/bilan']
+const publicPrefixes = ['/courses', '/evaluation', '/signature', '/formations', '/planifier', '/rejoindre-notre-equipe', '/legal', '/bilan']
 
 // ────────────────────────────────────────
 // Security Headers Configuration

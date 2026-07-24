@@ -57,17 +57,19 @@ function minutesToPx(minutes: number, pxPerHour = 64) {
   return (minutes / 60) * pxPerHour
 }
 
-interface Module  { id: string; title: string }
-interface Room    { id: string; name: string; capacity: number }
-interface Trainer { id: string; user: { name: string } }
+interface Module          { id: string; title: string; formationId: string }
+interface Room            { id: string; name: string; capacity: number }
+interface Trainer         { id: string; user: { name: string } }
+interface TrainingSession { id: string; title: string; formationId: string }
 
 interface ScheduleClientProps {
   initialSessions: SessionEvent[]
-  refDateStr: string       // ISO string — the "anchor" week
+  refDateStr: string
   view: 'week' | 'list'
   modules: Module[]
   rooms: Room[]
   trainers: Trainer[]
+  trainingSessions: TrainingSession[]
 }
 
 export default function ScheduleClient({
@@ -77,6 +79,7 @@ export default function ScheduleClient({
   modules,
   rooms,
   trainers,
+  trainingSessions,
 }: ScheduleClientProps) {
   const router   = useRouter()
   const pathname = usePathname()
@@ -181,7 +184,7 @@ export default function ScheduleClient({
             </button>
           </div>
 
-          <CreateSessionDialog modules={modules} rooms={rooms} trainers={trainers} onCreated={handleCreated} />
+          <CreateSessionDialog modules={modules} rooms={rooms} trainers={trainers} trainingSessions={trainingSessions} onCreated={handleCreated} />
         </div>
       </div>
 
