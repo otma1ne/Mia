@@ -152,11 +152,11 @@ export interface ModuleUpdateData {
 export async function updateModule(id: string, data: ModuleUpdateData) {
   await requireAdmin()
 
-  const module = await db.module.findUnique({
+  const mod = await db.module.findUnique({
     where: { id },
     select: { formationId: true },
   })
-  if (!module) return { error: 'Module introuvable.' }
+  if (!mod) return { error: 'Module introuvable.' }
 
   await db.module.update({
     where: { id },
@@ -169,16 +169,16 @@ export async function updateModule(id: string, data: ModuleUpdateData) {
     },
   })
 
-  revalidatePath(`/admin/formations/${module.formationId}`)
+  revalidatePath(`/admin/formations/${mod.formationId}`)
   return { success: true }
 }
 
 export async function updateModuleStatus(id: string, status: ModuleStatus) {
   await requireAdmin()
-  const module = await db.module.findUnique({ where: { id }, select: { formationId: true } })
-  if (!module) return
+  const mod = await db.module.findUnique({ where: { id }, select: { formationId: true } })
+  if (!mod) return
   await db.module.update({ where: { id }, data: { status } })
-  revalidatePath(`/admin/formations/${module.formationId}`)
+  revalidatePath(`/admin/formations/${mod.formationId}`)
 }
 
 // ─────────────────────────────────────────
@@ -207,10 +207,10 @@ export async function reorderModules(formationId: string, orderedIds: string[]) 
 
 export async function deleteModule(id: string) {
   await requireAdmin()
-  const module = await db.module.findUnique({ where: { id }, select: { formationId: true } })
-  if (!module) return
+  const mod = await db.module.findUnique({ where: { id }, select: { formationId: true } })
+  if (!mod) return
   await db.module.delete({ where: { id } })
-  revalidatePath(`/admin/formations/${module.formationId}`)
+  revalidatePath(`/admin/formations/${mod.formationId}`)
   revalidatePath('/admin/formations')
 }
 
@@ -222,19 +222,19 @@ export async function getStudentModuleAccess(
   userId: string,
   moduleId: string
 ): Promise<{ allowed: boolean; reason?: string }> {
-  const module = await db.module.findUnique({
+  const mod = await db.module.findUnique({
     where: { id: moduleId },
     select: { id: true, formationId: true, orderIndex: true, title: true, status: true },
   })
-  if (!module) return { allowed: false, reason: 'Module introuvable.' }
-  if (module.status !== 'PUBLISHED') return { allowed: false, reason: 'Module non publié.' }
+  if (!mod) return { allowed: false, reason: 'Module introuvable.' }
+  if (mod.status !== 'PUBLISHED') return { allowed: false, reason: 'Module non publié.' }
 
   // First module is always accessible
-  if (module.orderIndex === 0) return { allowed: true }
+  if (mod.orderIndex === 0) return { allowed: true }
 
   // Find the previous module (orderIndex - 1)
   const prev = await db.module.findFirst({
-    where: { formationId: module.formationId, orderIndex: module.orderIndex - 1 },
+    where: { formationId: mod.formationId, orderIndex: mod.orderIndex - 1 },
     select: { id: true, title: true },
   })
   if (!prev) return { allowed: true } // no previous → accessible
