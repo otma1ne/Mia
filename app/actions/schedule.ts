@@ -110,11 +110,11 @@ export async function createSession(_prevState: unknown, formData: FormData) {
     return { error: "L'heure de fin doit être après l'heure de début." }
   }
 
-  const module = await db.module.findUnique({
+  const mod = await db.module.findUnique({
     where: { id: moduleId },
     select: { formationId: true },
   })
-  if (!module) return { error: 'Module introuvable.' }
+  if (!mod) return { error: 'Module introuvable.' }
 
   const sessionDate = new Date(date)
 
@@ -152,7 +152,7 @@ export async function createSession(_prevState: unknown, formData: FormData) {
   await db.session.create({
     data: {
       moduleId,
-      formationId: module.formationId,
+      formationId: mod.formationId,
       roomId:      roomId || null,
       trainerId:   trainerId || null,
       date:        sessionDate,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * One-time migration: NOUVEAU→PROSPECT, CONTACTE→INDECIS, RELANCE→INDECIS, CONVERTI→GAGNE
  * Updates both `status` field and every entry in `statusHistory`.

@@ -27,8 +27,10 @@ async function main() {
 
   for (const col of collections) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (prisma as any).$runCommandRaw({ drop: col })
       console.log(`✓ Dropped collection: ${col}`)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e?.code === 26 || e?.message?.includes('ns not found')) {
         console.log(`  (skipped — ${col} does not exist)`)

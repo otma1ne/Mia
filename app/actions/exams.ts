@@ -59,12 +59,12 @@ export interface ExamFormData {
 export async function createOrUpdateExam(moduleId: string, data: ExamFormData) {
   await requireAdmin()
 
-  const module = await db.module.findUnique({
+  const mod = await db.module.findUnique({
     where: { id: moduleId },
     select: { id: true, type: true, formationId: true },
   })
-  if (!module) return { error: 'Module introuvable.' }
-  if (module.type !== 'ASSESSMENT') {
+  if (!mod) return { error: 'Module introuvable.' }
+  if (mod.type !== 'ASSESSMENT') {
     return { error: 'Seuls les modules de type évaluation peuvent avoir un examen.' }
   }
 
@@ -94,8 +94,8 @@ export async function createOrUpdateExam(moduleId: string, data: ExamFormData) {
     })
   }
 
-  revalidatePath(`/admin/formations/${module.formationId}`)
-  revalidatePath(`/admin/formations/${module.formationId}/modules/${moduleId}/exam`)
+  revalidatePath(`/admin/formations/${mod.formationId}`)
+  revalidatePath(`/admin/formations/${mod.formationId}/modules/${moduleId}/exam`)
   return { success: true }
 }
 

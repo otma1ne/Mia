@@ -2,6 +2,7 @@ import NextAuth from 'next-auth'
 import { authConfig } from '@/auth.config'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import type { Session } from 'next-auth'
 
 // Use Edge-compatible config (no Prisma) for route protection
 const { auth } = NextAuth(authConfig)
@@ -69,7 +70,7 @@ const COMING_SOON = process.env.COMING_SOON === 'true'
 // ────────────────────────────────────────
 // Middleware Handler with Auth & Security
 // ────────────────────────────────────────
-export default auth((req: NextRequest & { auth: any }) => {
+export default auth((req: NextRequest & { auth: Session | null }) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
   const isAuthRoute = authRoutes.some(r => nextUrl.pathname.startsWith(r))

@@ -13,21 +13,21 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, moduleId } = await params
-  const module = await getStudentModuleDetail(id, moduleId)
-  return { title: module ? `${module.title} — MIA Académie` : 'Module — MIA Académie' }
+  const mod = await getStudentModuleDetail(id, moduleId)
+  return { title: mod ? `${mod.title} — MIA Académie` : 'Module — MIA Académie' }
 }
 
 export default async function StudentModulePage({ params }: Props) {
   const { id: formationId, moduleId } = await params
-  const [module, examStatus] = await Promise.all([
+  const [mod, examStatus] = await Promise.all([
     getStudentModuleDetail(formationId, moduleId),
     getExamStatusForStudent(moduleId),
   ])
 
-  if (!module) notFound()
+  if (!mod) notFound()
 
   // Redirect locked modules back to the formation page
-  if (module.isLocked) {
+  if (mod.isLocked) {
     redirect(`/student/formations/${formationId}`)
   }
 
@@ -40,15 +40,15 @@ export default async function StudentModulePage({ params }: Props) {
           className="inline-flex items-center gap-1 rounded-lg px-2.5 h-7 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground self-start -ml-2 text-muted-foreground"
         >
           <ChevronLeft className="h-4 w-4 mr-1" />
-          {module.formationTitle}
+          {mod.formationTitle}
         </Link>
-        <h1 className="text-xl font-semibold leading-snug">{module.title}</h1>
+        <h1 className="text-xl font-semibold leading-snug">{mod.title}</h1>
       </div>
 
       {/* Content card */}
       <Card>
         <CardContent className="py-5">
-          <ModuleViewClient module={module} examStatus={examStatus} />
+          <ModuleViewClient module={mod} examStatus={examStatus} />
         </CardContent>
       </Card>
     </div>

@@ -101,7 +101,7 @@ export default function ModulesList({ formationId, initialModules }: ModulesList
       {/* Empty state */}
       {modules.length === 0 && (
         <Card className="py-12 text-center text-sm text-muted-foreground">
-          Aucun module. Cliquez sur "Ajouter un module" pour commencer.
+          {'Aucun module. Cliquez sur "Ajouter un module" pour commencer.'}
         </Card>
       )}
 

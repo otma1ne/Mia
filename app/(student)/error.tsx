@@ -22,7 +22,7 @@ export default function StudentError({
           <AlertTriangle className="h-12 w-12 text-destructive" />
           <h1 className="text-2xl font-bold text-center">Erreur</h1>
           <p className="text-sm text-muted-foreground text-center">
-            Une erreur s'est produite. Veuillez réessayer ou contacter le support.
+            {"Une erreur s'est produite. Veuillez réessayer ou contacter le support."}
           </p>
           <div className="w-full space-y-2">
             <Button onClick={reset} className="w-full">

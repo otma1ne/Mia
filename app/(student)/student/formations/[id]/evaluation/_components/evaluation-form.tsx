@@ -171,7 +171,7 @@ export default function EvaluationForm({ formationId }: { formationId: string })
 
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium">
-            Suggestions d'amélioration
+            {"Suggestions d'amélioration"}
           </label>
           <textarea
             value={answers.suggestions}

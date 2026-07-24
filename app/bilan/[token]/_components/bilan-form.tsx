@@ -21,6 +21,7 @@ export default function BilanForm({ token, type }: BilanFormProps) {
   const [error, setError] = useState<string | null>(null)
 
   // Form state
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [answers, setAnswers] = useState<Record<string, any>>(
     type === 'CHAUD'
       ? {
@@ -65,6 +66,7 @@ export default function BilanForm({ token, type }: BilanFormProps) {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateAnswer = (field: string, value: any) => {
     setAnswers((prev) => ({ ...prev, [field]: value }))
   }
@@ -116,7 +118,9 @@ function BilanChaudForm({
   error,
   loading,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   answers: Record<string, any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateAnswer: (field: string, value: any) => void
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   error: string | null
@@ -254,7 +258,9 @@ function BilanFroidForm({
   error,
   loading,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   answers: Record<string, any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateAnswer: (field: string, value: any) => void
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   error: string | null

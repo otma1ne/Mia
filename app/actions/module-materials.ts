@@ -90,7 +90,7 @@ export async function addModuleMaterial(_prevState: unknown, formData: FormData)
 
   await assertModuleOwnership(moduleId)
 
-  const module = await db.module.findUnique({
+  const mod = await db.module.findUnique({
     where: { id: moduleId },
     select: { formationId: true },
   })
@@ -100,7 +100,7 @@ export async function addModuleMaterial(_prevState: unknown, formData: FormData)
   })
 
   revalidatePath('/trainer/modules')
-  if (module) revalidatePath(`/student/formations/${module.formationId}`)
+  if (mod) revalidatePath(`/student/formations/${mod.formationId}`)
   return { success: true }
 }
 

@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { updateModule } from '@/app/actions/modules'
 import type { ModuleRow } from '@/app/actions/modules'
+import type { ModuleType } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,7 +34,7 @@ export default function EditModuleSheet({ module, onClose, onUpdated }: EditModu
     const data = {
       title:       (fd.get('title')       as string).trim(),
       description: (fd.get('description') as string).trim(),
-      type:        fd.get('type')         as any,
+      type:        fd.get('type')         as ModuleType,
       duration:    Number(fd.get('duration')) || 0,
     }
 
