@@ -87,6 +87,7 @@ model Notification {
 
 enum ModuleType {
   THEORY      // Self-paced: video + materials
+  PRACTICAL   // Hands-on / in-person practical
   ASSESSMENT  // Final exam / evaluation
 }
 

@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import logoSrc from '@/public/logo.png'
@@ -35,7 +36,9 @@ export default async function RegisterPage() {
             </div>
           </div>
 
-          <RegisterForm formations={formations} />
+          <Suspense>
+            <RegisterForm formations={formations} />
+          </Suspense>
         </div>
       </div>
 
