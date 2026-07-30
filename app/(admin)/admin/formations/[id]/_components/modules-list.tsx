@@ -31,7 +31,8 @@ import ModuleMaterialsDialog from './module-materials-dialog'
 
 const typeConfig: Record<ModuleType, { label: string; icon: React.ReactNode; classes: string }> = {
   THEORY:     { label: 'Théorie',    icon: <BookOpen className="h-3.5 w-3.5" />,        classes: 'bg-blue-50 text-blue-700 border-blue-200' },
-  ASSESSMENT: { label: 'Évaluation', icon: <ClipboardCheck className="h-3.5 w-3.5" />, classes: 'bg-purple-50 text-purple-700 border-purple-200' },
+  PRACTICAL:  { label: 'Pratique',   icon: <ClipboardCheck className="h-3.5 w-3.5" />,  classes: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  ASSESSMENT: { label: 'Évaluation', icon: <ClipboardCheck className="h-3.5 w-3.5" />,  classes: 'bg-purple-50 text-purple-700 border-purple-200' },
 }
 
 const statusConfig: Record<ModuleStatus, { dot: string; label: string }> = {

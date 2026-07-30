@@ -78,12 +78,13 @@ export default function EditModuleSheet({ module, onClose, onUpdated }: EditModu
 
               <div className="space-y-1.5">
                 <Label>Type</Label>
-                <Select name="type" defaultValue={module.type} onValueChange={(v) => setType(String(v) as 'THEORY' | 'ASSESSMENT')} labelItems={{ THEORY: 'Théorie', ASSESSMENT: 'Évaluation' }}>
+                <Select name="type" defaultValue={module.type} onValueChange={(v) => setType(String(v) as 'THEORY' | 'PRACTICAL' | 'ASSESSMENT')} labelItems={{ THEORY: 'Théorie', PRACTICAL: 'Pratique', ASSESSMENT: 'Évaluation' }}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="min-w-56">
                     <SelectItem value="THEORY" label="Théorie">Théorie</SelectItem>
+                    <SelectItem value="PRACTICAL" label="Pratique">Pratique</SelectItem>
                     <SelectItem value="ASSESSMENT" label="Évaluation">Évaluation</SelectItem>
                   </SelectContent>
                 </Select>
