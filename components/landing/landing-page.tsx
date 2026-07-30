@@ -532,7 +532,7 @@ export default function LandingPage({
                           {f.duration}h de formation
                         </span>
                       )}
-                      <Link href={`/courses/${f.id}`}
+                      <Link href={`/formations/${f.id}`}
                             className="text-[13px] font-semibold flex items-center gap-1 transition-all hover:-translate-y-px ml-auto"
                             style={{ color: 'var(--text-accent)' }}>
                         Plus d&apos;infos <ArrowRight className="w-3.5 h-3.5" />

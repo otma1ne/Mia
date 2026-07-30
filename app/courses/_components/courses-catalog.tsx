@@ -174,7 +174,7 @@ export default function CoursesCatalog({ data, search: initialSearch, activeType
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-2">
-                  <Link href={`/courses/${formation.id}`} className="group">
+                  <Link href={`/formations/${formation.id}`} className="group">
                     <h3 className="font-semibold text-sm text-zinc-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
                       {formation.title}
                     </h3>
@@ -210,7 +210,7 @@ export default function CoursesCatalog({ data, search: initialSearch, activeType
                 {/* CTA */}
                 <div className="mt-auto pt-3 border-t flex items-center gap-2">
                   <Link
-                    href={`/courses/${formation.id}`}
+                    href={`/formations/${formation.id}`}
                     className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-800 transition-colors shrink-0"
                   >
                     Détails
