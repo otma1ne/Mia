@@ -14,6 +14,7 @@ import {
 
 const typeConfig = {
   THEORY:     { label: 'Théorie',    icon: BookOpen,        classes: 'bg-blue-50 text-blue-700 border-blue-200' },
+  PRACTICAL:  { label: 'Pratique',   icon: ClipboardCheck,  classes: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   ASSESSMENT: { label: 'Évaluation', icon: ClipboardCheck,  classes: 'bg-purple-50 text-purple-700 border-purple-200' },
 }
 
