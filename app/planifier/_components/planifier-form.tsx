@@ -99,7 +99,7 @@ export default function PlanifierForm() {
             <input
               required
               className="pl-input"
-              placeholder="Othmane"
+              placeholder="Jean"
               value={firstName}
               onChange={e => setFirstName(e.target.value)}
             />
@@ -109,7 +109,7 @@ export default function PlanifierForm() {
             <input
               required
               className="pl-input"
-              placeholder="Benali"
+              placeholder="Dupont"
               value={lastName}
               onChange={e => setLastName(e.target.value)}
             />
