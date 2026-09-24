@@ -9,7 +9,7 @@ const { auth } = NextAuth(authConfig)
 
 const publicRoutes = ['/']
 const authRoutes = ['/login', '/register']
-const publicPrefixes = ['/courses', '/evaluation', '/signature', '/formations', '/planifier', '/rejoindre-notre-equipe', '/legal', '/bilan']
+const publicPrefixes = ['/courses', '/evaluation', '/signature', '/formations', '/planifier', '/demande-formation', '/rejoindre-notre-equipe', '/legal', '/bilan']
 
 // ────────────────────────────────────────
 // Security Headers Configuration
