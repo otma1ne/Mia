@@ -19,7 +19,7 @@ export default function LoginPage() {
           {/* Logo + title grouped */}
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2 w-fit">
-              <Image src={logoSrc} alt="MIA Académie" width={60} height={60} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Académie" width={140} height={36} className="h-9 w-auto object-contain" />
             </Link>
             <div>
               <h1 className="auth-heading font-heading mt-1">Bon retour</h1>

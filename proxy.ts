@@ -2,13 +2,14 @@ import NextAuth from 'next-auth'
 import { authConfig } from '@/auth.config'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import type { Session } from 'next-auth'
 
 // Use Edge-compatible config (no Prisma) for route protection
 const { auth } = NextAuth(authConfig)
 
-const publicRoutes = ['/', '/courses']
+const publicRoutes = ['/']
 const authRoutes = ['/login', '/register']
-const publicPrefixes = ['/evaluation', '/signature', '/formations', '/planifier', '/demande-formation', '/rejoindre-notre-equipe', '/legal']
+const publicPrefixes = ['/courses', '/evaluation', '/signature', '/formations', '/planifier', '/demande-formation', '/rejoindre-notre-equipe', '/legal', '/bilan']
 
 // ────────────────────────────────────────
 // Security Headers Configuration
@@ -69,7 +70,7 @@ const COMING_SOON = process.env.COMING_SOON === 'true'
 // ────────────────────────────────────────
 // Middleware Handler with Auth & Security
 // ────────────────────────────────────────
-export default auth((req: NextRequest & { auth: any }) => {
+export default auth((req: NextRequest & { auth: Session | null }) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
   const isAuthRoute = authRoutes.some(r => nextUrl.pathname.startsWith(r))
@@ -101,6 +102,7 @@ export default auth((req: NextRequest & { auth: any }) => {
       TRAINER:    '/trainer/dashboard',
       STUDENT:    '/student/dashboard',
       COMMERCIAL: '/commercial/dashboard',
+      COMPANY:    '/entreprise/dashboard',
     }
 
     const dashboardUrl = dashboardUrls[userRole] || '/dashboard'
@@ -141,7 +143,7 @@ export default auth((req: NextRequest & { auth: any }) => {
 
   if (
     nextUrl.pathname.startsWith('/commercial') &&
-    req.auth?.user?.role !== 'COMMERCIAL'
+    !['ADMIN', 'COMMERCIAL'].includes(req.auth?.user?.role || '')
   ) {
     return NextResponse.redirect(new URL('/unauthorized', nextUrl))
   }

@@ -60,7 +60,7 @@ export default async function CommercialDashboardPage() {
           </Link>
         </div>
         {recent.contacts.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aucun contact pour l'instant.</p>
+          <p className="text-sm text-muted-foreground">{"Aucun contact pour l'instant."}</p>
         ) : (
           <div className="border rounded-lg divide-y">
             {recent.contacts.map(c => (

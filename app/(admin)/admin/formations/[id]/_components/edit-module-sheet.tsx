@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { updateModule } from '@/app/actions/modules'
 import type { ModuleRow } from '@/app/actions/modules'
+import type { ModuleType } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,7 +34,7 @@ export default function EditModuleSheet({ module, onClose, onUpdated }: EditModu
     const data = {
       title:       (fd.get('title')       as string).trim(),
       description: (fd.get('description') as string).trim(),
-      type:        fd.get('type')         as any,
+      type:        fd.get('type')         as ModuleType,
       duration:    Number(fd.get('duration')) || 0,
     }
 
@@ -77,12 +78,13 @@ export default function EditModuleSheet({ module, onClose, onUpdated }: EditModu
 
               <div className="space-y-1.5">
                 <Label>Type</Label>
-                <Select name="type" defaultValue={module.type} onValueChange={(v) => setType(String(v) as 'THEORY' | 'ASSESSMENT')} labelItems={{ THEORY: 'Théorie', ASSESSMENT: 'Évaluation' }}>
+                <Select name="type" defaultValue={module.type} onValueChange={(v) => setType(String(v) as 'THEORY' | 'PRACTICAL' | 'ASSESSMENT')} labelItems={{ THEORY: 'Théorie', PRACTICAL: 'Pratique', ASSESSMENT: 'Évaluation' }}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="min-w-56">
                     <SelectItem value="THEORY" label="Théorie">Théorie</SelectItem>
+                    <SelectItem value="PRACTICAL" label="Pratique">Pratique</SelectItem>
                     <SelectItem value="ASSESSMENT" label="Évaluation">Évaluation</SelectItem>
                   </SelectContent>
                 </Select>

@@ -246,7 +246,7 @@ export default function AttestationPDF({
 
         {/* Legal mention */}
         <Text style={styles.legalText}>
-          Ce document constitue le certificat de réalisation prévu à l'article L6353-1 du Code du travail.
+          {"Ce document constitue le certificat de réalisation prévu à l'article L6353-1 du Code du travail."}
         </Text>
 
         {/* Signature */}

@@ -64,8 +64,6 @@ export default async function CoursesPage({
       enrollmentCount: f._count.enrollments,
       maxStudents: f.maxStudents,
       moduleCount: f._count.modules,
-      startDate: null as Date | null,
-      endDate: null as Date | null,
     })),
     total,
     page: currentPage,

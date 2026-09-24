@@ -8,7 +8,7 @@ import type { AttendanceStatus, ModuleStatus, ModuleType } from '@prisma/client'
 import { addDays, subDays } from 'date-fns'
 
 // ─────────────────────────────────────────
-// Private helper — get current trainer id
+// Private helpers
 // ─────────────────────────────────────────
 
 async function getTrainerId(): Promise<string> {
@@ -21,6 +21,15 @@ async function getTrainerId(): Promise<string> {
   })
   if (!trainer) redirect('/unauthorized')
   return trainer.id
+}
+
+// Returns formationIds where this trainer is the assigned TrainingSession trainer
+async function getTrainerFormationIds(trainerId: string): Promise<string[]> {
+  const ts = await db.trainingSession.findMany({
+    where: { trainerId },
+    select: { formationId: true },
+  })
+  return [...new Set(ts.map(s => s.formationId))]
 }
 
 // ─────────────────────────────────────────
@@ -55,9 +64,19 @@ export async function getTrainerDashboardStats(): Promise<TrainerDashboardStats>
   const now = new Date()
   const in7Days = addDays(now, 7)
 
+  const trainerFormationIds = await getTrainerFormationIds(trainerId)
+
+  const moduleWhere = trainerFormationIds.length > 0
+    ? { OR: [{ sessions: { some: { trainerId } } }, { formationId: { in: trainerFormationIds } }] }
+    : { sessions: { some: { trainerId } } }
+
+  const sessionWhere = trainerFormationIds.length > 0
+    ? { OR: [{ trainerId }, { formationId: { in: trainerFormationIds } }], date: { gte: now, lte: in7Days } }
+    : { trainerId, date: { gte: now, lte: in7Days } }
+
   const [modules, upcomingSessions, enrollmentStats] = await Promise.all([
     db.module.findMany({
-      where: { sessions: { some: { trainerId } } },
+      where: moduleWhere,
       select: {
         id: true,
         title: true,
@@ -67,10 +86,7 @@ export async function getTrainerDashboardStats(): Promise<TrainerDashboardStats>
       },
     }),
     db.session.findMany({
-      where: {
-        trainerId,
-        date: { gte: now, lte: in7Days },
-      },
+      where: sessionWhere,
       orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
       take: 10,
       include: {
@@ -79,7 +95,7 @@ export async function getTrainerDashboardStats(): Promise<TrainerDashboardStats>
       },
     }),
     db.moduleEnrollment.findMany({
-      where: { module: { sessions: { some: { trainerId } } } },
+      where: { module: moduleWhere },
       select: { status: true },
     }),
   ])
@@ -151,8 +167,12 @@ export async function getTrainerModules({
   status?: ModuleStatus
 } = {}): Promise<TrainerModulesResult> {
   const trainerId = await getTrainerId()
+  const trainerFormationIds = await getTrainerFormationIds(trainerId)
 
-  const baseWhere = { sessions: { some: { trainerId } } }
+  const baseWhere = trainerFormationIds.length > 0
+    ? { OR: [{ sessions: { some: { trainerId } } }, { formationId: { in: trainerFormationIds } }] }
+    : { sessions: { some: { trainerId } } }
+
   const where = {
     ...baseWhere,
     ...(status ? { status } : {}),
@@ -246,17 +266,22 @@ export async function getTrainerStudents({
   search?: string
 } = {}): Promise<TrainerStudentsResult> {
   const trainerId = await getTrainerId()
+  const trainerFormationIds = await getTrainerFormationIds(trainerId)
+
+  const moduleCondition = trainerFormationIds.length > 0
+    ? { OR: [{ sessions: { some: { trainerId } } }, { formationId: { in: trainerFormationIds } }] }
+    : { sessions: { some: { trainerId } } }
 
   const whereQuery = search.trim()
     ? {
-        module: { sessions: { some: { trainerId } } },
+        module: moduleCondition,
         OR: [
           { user: { name: { contains: search, mode: 'insensitive' as const } } },
           { user: { email: { contains: search, mode: 'insensitive' as const } } },
           { module: { title: { contains: search, mode: 'insensitive' as const } } },
         ],
       }
-    : { module: { sessions: { some: { trainerId } } } }
+    : { module: moduleCondition }
 
   const [total, enrollments] = await Promise.all([
     db.moduleEnrollment.count({ where: whereQuery }),
@@ -314,12 +339,12 @@ export async function getTrainerSessions({
   to: Date
 }): Promise<TrainerSessionEvent[]> {
   const trainerId = await getTrainerId()
+  const trainerFormationIds = await getTrainerFormationIds(trainerId)
 
   const sessions = await db.session.findMany({
-    where: {
-      trainerId,
-      date: { gte: from, lte: to },
-    },
+    where: trainerFormationIds.length > 0
+      ? { OR: [{ trainerId }, { formationId: { in: trainerFormationIds } }], date: { gte: from, lte: to } }
+      : { trainerId, date: { gte: from, lte: to } },
     orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
     include: {
       room: { select: { name: true } },
@@ -362,11 +387,12 @@ export async function getTrainerSessionOptions(): Promise<TrainerSessionOption[]
   const from = subDays(now, 30)
   const to = addDays(now, 30)
 
+  const trainerFormationIds = await getTrainerFormationIds(trainerId)
+
   const sessions = await db.session.findMany({
-    where: {
-      trainerId,
-      date: { gte: from, lte: to },
-    },
+    where: trainerFormationIds.length > 0
+      ? { OR: [{ trainerId }, { formationId: { in: trainerFormationIds } }], date: { gte: from, lte: to } }
+      : { trainerId, date: { gte: from, lte: to } },
     orderBy: [{ date: 'desc' }, { startTime: 'asc' }],
     include: {
       module: { select: { title: true } },
@@ -409,6 +435,19 @@ export async function getTrainerSessionsForAttendance(
 ): Promise<SessionAttendanceData | null> {
   const trainerId = await getTrainerId()
 
+  // Pre-fetch to check authorization and get trainingSessionId for cohort scoping
+  const [sessionMeta, trainerFormationIds] = await Promise.all([
+    db.session.findUnique({
+      where: { id: sessionId },
+      select: { trainerId: true, trainingSessionId: true, formationId: true },
+    }),
+    getTrainerFormationIds(trainerId),
+  ])
+  if (
+    !sessionMeta ||
+    (sessionMeta.trainerId !== trainerId && !trainerFormationIds.includes(sessionMeta.formationId))
+  ) return null
+
   const session = await db.session.findUnique({
     where: { id: sessionId },
     include: {
@@ -416,7 +455,12 @@ export async function getTrainerSessionsForAttendance(
         select: {
           title: true,
           enrollments: {
-            where: { status: { in: ['ACTIVE', 'COMPLETED'] } },
+            where: {
+              status: { in: ['ACTIVE', 'COMPLETED'] },
+              ...(sessionMeta.trainingSessionId
+                ? { formationEnrollment: { trainingSessionId: sessionMeta.trainingSessionId } }
+                : {}),
+            },
             include: {
               user: { select: { name: true, email: true } },
               attendances: {
@@ -430,7 +474,7 @@ export async function getTrainerSessionsForAttendance(
     },
   })
 
-  if (!session || session.trainerId !== trainerId) return null
+  if (!session) return null
 
   return {
     sessionId: session.id,

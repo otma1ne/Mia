@@ -26,9 +26,13 @@ function Select({
 }) {
   const labelCacheRef = React.useRef(new Map<string, string>())
 
-  // Sync labelItems into the cache on every render (values may change)
+  // Sync labelItems into the cache on every render (values may change).
+  // Writing ref.current during render is intentional here — this is a
+  // synchronous label registry shared between Select root and SelectItem
+  // children with no re-render side effects.
   if (labelItems) {
     for (const [v, l] of Object.entries(labelItems) as [string, string][]) {
+      // eslint-disable-next-line react-hooks/refs
       labelCacheRef.current.set(v, l)
     }
   }

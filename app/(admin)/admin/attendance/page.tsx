@@ -1,7 +1,8 @@
 ﻿import type { Metadata } from 'next'
 import { db } from '@/lib/db'
 import AdminAttendanceClient from './_components/admin-attendance-client'
-import { addDays } from 'date-fns'
+import { addDays, subDays, format } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 export const metadata: Metadata = {
   title: 'Présences — MIA Académie',
@@ -15,17 +16,18 @@ export default async function AdminAttendancePage({
   const { sessionId } = await searchParams
 
   // Get all sessions for admin (next 30 days)
-  const now = new Date()
+  const now            = new Date()
+  const thirtyDaysAgo   = subDays(now, 30)
   const thirtyDaysLater = addDays(now, 30)
 
   const allSessions = await db.session.findMany({
     where: {
       date: {
-        gte: now,
+        gte: thirtyDaysAgo,
         lte: thirtyDaysLater,
       },
     },
-    orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
+    orderBy: [{ date: 'desc' }, { startTime: 'asc' }],
     select: {
       id: true,
       date: true,
@@ -42,15 +44,26 @@ export default async function AdminAttendancePage({
     },
   })
 
-  const sessionOptions = allSessions.map((s) => ({
-    id: s.id,
-    label: `${s.module.formation.title} • ${s.module.title} • ${s.startTime}`,
-    date: s.date,
-  }))
+  const sessionOptions = allSessions.map((s) => {
+    const sessionDate = new Date(s.date)
+    const isPast      = sessionDate < now
+    const dateLabel   = format(sessionDate, 'dd MMM yyyy', { locale: fr })
+    return {
+      id:    s.id,
+      label: `${isPast ? '↩ ' : ''}${dateLabel} • ${s.startTime} • ${s.module.formation.title} — ${s.module.title}`,
+      date:  s.date,
+    }
+  })
 
   let selectedSessionData = null
 
   if (sessionId) {
+    // Pre-fetch trainingSessionId so we can scope enrollments to this promotion
+    const sessionMeta = await db.session.findUnique({
+      where: { id: sessionId },
+      select: { trainingSessionId: true },
+    })
+
     selectedSessionData = await db.session.findUnique({
       where: { id: sessionId },
       include: {
@@ -59,7 +72,12 @@ export default async function AdminAttendancePage({
             title: true,
             formation: { select: { title: true } },
             enrollments: {
-              where: { status: { not: 'DROPPED' } },
+              where: {
+                status: { not: 'DROPPED' },
+                ...(sessionMeta?.trainingSessionId
+                  ? { formationEnrollment: { trainingSessionId: sessionMeta.trainingSessionId } }
+                  : {}),
+              },
               select: {
                 id: true,
                 userId: true,

@@ -76,6 +76,7 @@ export default function CreateModuleDialog({ formationId, onCreated }: CreateMod
                 </SelectTrigger>
                 <SelectContent className="min-w-96">
                   <SelectItem value="THEORY" label="Théorie (vidéo + ressources)">Théorie (vidéo + ressources)</SelectItem>
+                  <SelectItem value="PRACTICAL" label="Pratique (présentiel / atelier)">Pratique (présentiel / atelier)</SelectItem>
                   <SelectItem value="ASSESSMENT" label="Évaluation finale">Évaluation finale</SelectItem>
                 </SelectContent>
               </Select>

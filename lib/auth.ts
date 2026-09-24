@@ -45,15 +45,15 @@ export async function requireTrainer() {
 }
 
 export async function requireStudent() {
-  return requireAuth()
+  return requireRole('STUDENT')
 }
 
 export async function requireCommercial() {
-  return requireRole('COMMERCIAL')
+  return requireRole(['ADMIN', 'COMMERCIAL'])
 }
 
 export async function requireCompany() {
-  return requireRole('COMPANY')
+  return requireRole(['ADMIN', 'COMPANY'])
 }
 
 // ─────────────────────────────────────────

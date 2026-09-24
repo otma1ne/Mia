@@ -178,6 +178,7 @@ export async function updateTrainingSessionStatus(id: string, status: TrainingSe
   if (!ts) return
   await db.trainingSession.update({ where: { id }, data: { status } })
   revalidatePath(`/admin/formations/${ts.formationId}`)
+  revalidatePath('/admin/sessions')
 
   publishNotification({
     type:  'SESSION_CHANGED',
@@ -220,6 +221,7 @@ export async function updateTrainingSession(id: string, data: {
       },
     })
     revalidatePath(`/admin/formations/${ts.formationId}`)
+    revalidatePath('/admin/sessions')
     return {}
   } catch {
     return { error: 'Erreur lors de la mise à jour.' }

@@ -90,7 +90,7 @@ export async function addModuleMaterial(_prevState: unknown, formData: FormData)
 
   await assertModuleOwnership(moduleId)
 
-  const module = await db.module.findUnique({
+  const mod = await db.module.findUnique({
     where: { id: moduleId },
     select: { formationId: true },
   })
@@ -100,7 +100,7 @@ export async function addModuleMaterial(_prevState: unknown, formData: FormData)
   })
 
   revalidatePath('/trainer/modules')
-  if (module) revalidatePath(`/student/formations/${module.formationId}`)
+  if (mod) revalidatePath(`/student/formations/${mod.formationId}`)
   return { success: true }
 }
 
@@ -118,22 +118,4 @@ export async function deleteModuleMaterial(materialId: string) {
   await assertModuleOwnership(material.moduleId)
   await db.moduleMaterial.delete({ where: { id: materialId } })
   revalidatePath('/trainer/modules')
-}
-
-// ─────────────────────────────────────────
-// Mark material complete (student)
-// ─────────────────────────────────────────
-
-export async function markMaterialComplete(materialId: string) {
-  const session = await auth()
-  if (!session?.user?.id) redirect('/login')
-  const userId = session.user.id
-
-  await db.materialProgress.upsert({
-    where: { userId_materialId: { userId, materialId } },
-    create: { userId, materialId },
-    update: { completedAt: new Date() },
-  })
-
-  revalidatePath('/student/formations')
 }

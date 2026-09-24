@@ -229,7 +229,7 @@ export default async function PublicFormationPage({
               </div>
 
               <div className="fd-card-ctas">
-                <Link href="/register" className="fd-btn-primary">
+                <Link href={`/register?formation=${formation.id}`} className="fd-btn-primary">
                   S&apos;inscrire à cette formation
                   <ArrowRight size={16} />
                 </Link>

@@ -8,6 +8,7 @@ import React from 'react'
 import { renderToBuffer } from '@react-pdf/renderer'
 import BilanPDF from '@/lib/pdf/bilan-template'
 import { uploadToCloudinary } from '@/lib/inscription-service'
+import type { Prisma } from '@prisma/client'
 
 // ─────────────────────────────────────────
 // Submit Bilan (Chaud or Froid)
@@ -53,6 +54,7 @@ export async function submitBilan(
           formationTitle: bilan.enrollment.formation.title,
           completedAt: new Date(),
           answers,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         }) as any
       )
     } catch (err) {
@@ -76,7 +78,7 @@ export async function submitBilan(
     await db.formationBilan.update({
       where: { id: bilan.id },
       data: {
-        answers: answers as any,
+        answers: answers as Prisma.InputJsonValue,
         pdfUrl,
         usedAt: new Date(),
       },
@@ -139,7 +141,7 @@ export async function getBilanStats(formationId: string): Promise<BilanStats> {
   const getAvg = (bilans: typeof chaudBilans, field: string): number => {
     const values = bilans
       .filter((b) => b.usedAt)
-      .map((b) => (b.answers as any)?.[field])
+      .map((b) => (b.answers as Record<string, unknown>)?.[field])
       .filter((v) => typeof v === 'number')
     return values.length > 0
       ? Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10
@@ -149,7 +151,7 @@ export async function getBilanStats(formationId: string): Promise<BilanStats> {
   const getRate = (bilans: typeof chaudBilans, field: string): number => {
     const completed = bilans.filter((b) => b.usedAt)
     if (completed.length === 0) return 0
-    const yes = completed.filter((b) => (b.answers as any)?.[field] === true).length
+    const yes = completed.filter((b) => (b.answers as Record<string, unknown>)?.[field] === true).length
     return Math.round((yes / completed.length) * 100)
   }
 

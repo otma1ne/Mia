@@ -253,9 +253,9 @@ export default function LandingPage({
       })
 
       gsap.fromTo('#cta-inner',
-        { opacity: 0, y: 56, scale: 0.97 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: '#cta', start: 'top 78%', once: true } },
+        { y: 40, scale: 0.97 },
+        { y: 0, scale: 1, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: '#cta', start: 'top 85%', once: true } },
       )
     })
 
@@ -451,22 +451,31 @@ export default function LandingPage({
       </section>
 
       {/* ══ FORMATIONS — 3-col card grid ══════════════════════════════════════ */}
-      {formations.length > 0 && (
-        <section id="formations" className="py-24" style={{ background: 'var(--surface)' }}>
-          <div className="mx-auto max-w-[1200px] px-8">
-            <div className="flex items-end justify-between mb-12 flex-wrap gap-6">
-              <div>
-                <SectionLabel>Catalogue</SectionLabel>
-                <h2 className="font-heading leading-[1.1] tracking-[-0.025em]"
-                    style={{ fontSize: 'clamp(28px, 3.5vw, 48px)', color: 'var(--text-strong)', fontWeight: 400 }}>
-                  Nos formations
-                </h2>
-              </div>
+      <section id="formations" className="py-24" style={{ background: 'var(--surface)' }}>
+        <div className="mx-auto max-w-[1200px] px-8">
+          <div className="flex items-end justify-between mb-12 flex-wrap gap-6">
+            <div>
+              <SectionLabel>Catalogue</SectionLabel>
+              <h2 className="font-heading leading-[1.1] tracking-[-0.025em]"
+                  style={{ fontSize: 'clamp(28px, 3.5vw, 48px)', color: 'var(--text-strong)', fontWeight: 400 }}>
+                Nos formations
+              </h2>
+            </div>
+            {formations.length > 0 && (
               <span className="text-[13px]" style={{ color: 'var(--text-muted)' }}>
                 {formations.length} formation{formations.length !== 1 ? 's' : ''} disponible{formations.length !== 1 ? 's' : ''}
               </span>
-            </div>
+            )}
+          </div>
 
+          {formations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-4 text-center"
+                 style={{ color: 'var(--text-muted)' }}>
+              <BookOpen className="w-12 h-12 opacity-30" />
+              <p className="text-[15px]">Notre catalogue de formations arrive bientôt.</p>
+              <p className="text-[13px] opacity-70">Rejoins la liste d&apos;attente pour être notifié en premier.</p>
+            </div>
+          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {formations.map((f) => (
                 <div key={f.id}
@@ -517,20 +526,14 @@ export default function LandingPage({
                       {f.description}
                     </p>
                     <div className="flex items-center justify-between gap-3 flex-wrap">
-                      <div className="flex gap-2 flex-wrap">
-                        <span className="text-[12px] font-medium px-3 py-1 rounded-[8px]"
-                              style={{ background: 'var(--mia-purple-soft)', color: 'var(--mia-purple-700)' }}>
-                          {f.type === 'PRESENTIAL' ? 'Présentiel' : 'En ligne'}
+                      {f.duration && (
+                        <span className="text-[12px] font-medium px-3 py-1 rounded-[8px] border"
+                              style={{ color: 'var(--text-muted)', borderColor: 'var(--border-default)' }}>
+                          {f.duration}h de formation
                         </span>
-                        {f.duration && (
-                          <span className="text-[12px] font-medium px-3 py-1 rounded-[8px] border"
-                                style={{ color: 'var(--text-muted)', borderColor: 'var(--border-default)' }}>
-                            {f.duration}h
-                          </span>
-                        )}
-                      </div>
+                      )}
                       <Link href={`/formations/${f.id}`}
-                            className="text-[13px] font-semibold flex items-center gap-1 transition-all hover:-translate-y-px"
+                            className="text-[13px] font-semibold flex items-center gap-1 transition-all hover:-translate-y-px ml-auto"
                             style={{ color: 'var(--text-accent)' }}>
                         Plus d&apos;infos <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
@@ -539,9 +542,9 @@ export default function LandingPage({
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* ══ À PROPOS ══════════════════════════════════════════════════════════ */}
       <section id="about" className="relative py-28">

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import Link from 'next/link'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import {
@@ -183,6 +184,16 @@ export default function TrainingSessionsSection({ formationId, initialSessions, 
                 {s.notes && (
                   <p className="text-xs text-muted-foreground italic border-t pt-2">{s.notes}</p>
                 )}
+
+                <div className="flex justify-end border-t pt-2">
+                  <Link
+                    href={`/admin/schedule?trainingSessionId=${s.id}`}
+                    className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+                  >
+                    <CalendarRange className="h-3.5 w-3.5" />
+                    Voir les séances
+                  </Link>
+                </div>
               </div>
             )
           })}

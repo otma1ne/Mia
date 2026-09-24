@@ -211,6 +211,7 @@ export default function BilanPDF({
 // ─────────────────────────────────────────
 
 function BilanChaudContent({ answers }: { answers: Record<string, unknown> }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ans = answers as Record<string, any>
 
   return (
@@ -265,7 +266,7 @@ function BilanChaudContent({ answers }: { answers: Record<string, unknown> }) {
       </View>
 
       <View style={styles.fieldBlock}>
-        <Text style={styles.fieldLabel}>Suggestions d'amélioration</Text>
+        <Text style={styles.fieldLabel}>{"Suggestions d'amélioration"}</Text>
         <Text style={styles.fieldAnswer}>{ans.suggestions || '—'}</Text>
       </View>
     </>
@@ -277,6 +278,7 @@ function BilanChaudContent({ answers }: { answers: Record<string, unknown> }) {
 // ─────────────────────────────────────────
 
 function BilanFroidContent({ answers }: { answers: Record<string, unknown> }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ans = answers as Record<string, any>
 
   const examStatusText = ans.examTaken === true
@@ -328,7 +330,7 @@ function BilanFroidContent({ answers }: { answers: Record<string, unknown> }) {
       </View>
 
       <View style={styles.fieldBlock}>
-        <Text style={styles.fieldLabel}>Avez-vous besoin d'une formation complémentaire ?</Text>
+        <Text style={styles.fieldLabel}>{"Avez-vous besoin d'une formation complémentaire ?"}</Text>
         <Text style={styles.fieldAnswer}>
           {ans.needsSupport === true ? 'Oui' : 'Non'}
         </Text>

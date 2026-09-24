@@ -85,7 +85,7 @@ export async function processSignatureComplete(
       })
 
       const modules = await tx.module.findMany({
-        where: { formationId: inscription.formationId },
+        where: { formationId: inscription.formationId, status: 'PUBLISHED' },
       })
 
       if (modules.length > 0) {
@@ -148,7 +148,7 @@ export async function processSignatureComplete(
     })
 
     const modules = await tx.module.findMany({
-      where: { formationId: inscription.formationId },
+      where: { formationId: inscription.formationId, status: 'PUBLISHED' },
     })
 
     if (modules.length > 0) {

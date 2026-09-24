@@ -65,7 +65,7 @@ export async function getTrainers({
       orderBy: { createdAt: 'desc' },
       include: {
         user: { select: { name: true, email: true, phone: true, avatar: true } },
-        _count: { select: { sessions: true } },
+        _count: { select: { trainingSessions: true } },
       },
     }),
   ])
@@ -82,7 +82,7 @@ export async function getTrainers({
       specializations: t.specializations,
       credentials: t.credentials,
       rating: t.rating,
-      courseCount: t._count.sessions,
+      courseCount: t._count.trainingSessions,
       createdAt: t.createdAt,
     })),
     total,

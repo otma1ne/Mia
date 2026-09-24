@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import logoSrc from '@/public/logo.png'
@@ -25,7 +26,7 @@ export default async function RegisterPage() {
         <div className="w-full max-w-sm mx-auto space-y-8">
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2 w-fit">
-              <Image src={logoSrc} alt="MIA Académie" width={60} height={60} className="object-contain" />
+              <Image src={logoSrc} alt="MIA Académie" width={140} height={36} className="h-9 w-auto object-contain" />
             </Link>
             <div>
               <h1 className="auth-heading font-heading mt-1">Demande d&apos;inscription</h1>
@@ -35,7 +36,9 @@ export default async function RegisterPage() {
             </div>
           </div>
 
-          <RegisterForm formations={formations} />
+          <Suspense>
+            <RegisterForm formations={formations} />
+          </Suspense>
         </div>
       </div>
 

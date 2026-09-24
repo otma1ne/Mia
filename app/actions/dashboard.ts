@@ -126,9 +126,9 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     db.user.count({ where: { role: 'STUDENT' } }),
     db.user.count({ where: { role: 'STUDENT', createdAt: { lt: thisMonth } } }),
 
-    // Formation enrollments created this month vs last month
-    db.formationEnrollment.count({ where: { enrolledAt: { gte: thisMonth } } }),
-    db.formationEnrollment.count({ where: { enrolledAt: { gte: lastMonth, lt: thisMonth } } }),
+    // Inscription applications received this month vs last month
+    db.inscription.count({ where: { createdAt: { gte: thisMonth } } }),
+    db.inscription.count({ where: { createdAt: { gte: lastMonth, lt: thisMonth } } }),
 
     // Published modules now vs at start of this month
     db.module.count({ where: { status: 'PUBLISHED' } }),

@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from 'next'
+import Link from 'next/link'
 import { BookOpen, CheckCircle, CalendarDays } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -111,7 +112,7 @@ export default async function StudentDashboardPage() {
                 {stats.recentEnrollments.map(e => {
                   const statusCfg = enrollmentStatusConfig[e.status]
                   return (
-                    <div key={e.id} className="flex items-center gap-3 rounded-lg border px-3 py-2.5">
+                    <Link key={e.id} href={`/student/formations/${e.formationId}`} className="flex items-center gap-3 rounded-lg border px-3 py-2.5 hover:bg-muted/50 transition-colors">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{e.formationTitle}</p>
                       </div>
@@ -129,7 +130,7 @@ export default async function StudentDashboardPage() {
                           <span className="text-[10px] text-muted-foreground tabular-nums">{e.progress}%</span>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   )
                 })}
               </div>

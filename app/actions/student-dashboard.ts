@@ -405,6 +405,7 @@ export async function getFormationDetail(
       category: { select: { name: true } },
       _count: { select: { enrollments: true } },
       modules: {
+        where: { status: 'PUBLISHED' },
         orderBy: { orderIndex: 'asc' },
         include: {
           materials: { select: { id: true, title: true, url: true, type: true } },
@@ -552,7 +553,7 @@ export async function getStudentModuleDetail(
   if (!formationEnrollment) return null
 
   // Load the target module and the previous one (for lock logic)
-  const module = await db.module.findUnique({
+  const mod = await db.module.findUnique({
     where: { id: moduleId },
     include: {
       formation: { select: { id: true, title: true } },
@@ -581,32 +582,34 @@ export async function getStudentModuleDetail(
     },
   })
 
-  if (!module || module.formationId !== formationId) return null
+  if (!mod || mod.formationId !== formationId) return null
 
-  // Sequential lock: check if previous module is completed
+  // Block access to non-published modules
+  if (mod.status !== 'PUBLISHED') return null
+
+  // Sequential lock: find nearest preceding PUBLISHED module
   let isLocked = false
-  if (module.orderIndex > 0) {
-    const prevModule = await db.module.findFirst({
-      where: { formationId, orderIndex: module.orderIndex - 1 },
-      select: { id: true },
+  const prevModule = await db.module.findFirst({
+    where: { formationId, orderIndex: { lt: mod.orderIndex }, status: 'PUBLISHED' },
+    orderBy: { orderIndex: 'desc' },
+    select: { id: true },
+  })
+  if (prevModule) {
+    const prevEnrollment = await db.moduleEnrollment.findFirst({
+      where: { userId, moduleId: prevModule.id, formationEnrollmentId: formationEnrollment.id },
+      select: { completedAt: true },
     })
-    if (prevModule) {
-      const prevEnrollment = await db.moduleEnrollment.findUnique({
-        where: { formationEnrollmentId_moduleId: { formationEnrollmentId: formationEnrollment.id, moduleId: prevModule.id } },
-        select: { completedAt: true },
-      })
-      isLocked = !prevEnrollment?.completedAt
-    }
+    isLocked = !prevEnrollment?.completedAt
   }
 
   // Fetch completed material IDs for this student
   const completedMaterials = await db.materialProgress.findMany({
-    where: { userId, materialId: { in: module.materials.map(m => m.id) } },
+    where: { userId, materialId: { in: mod.materials.map(m => m.id) } },
     select: { materialId: true },
   })
   const completedMaterialSet = new Set(completedMaterials.map(m => m.materialId))
 
-  const mats: FormationDetailMaterial[] = module.materials.map(m => ({
+  const mats: FormationDetailMaterial[] = mod.materials.map(m => ({
     id: m.id,
     title: m.title,
     url: m.url,
@@ -614,24 +617,24 @@ export async function getStudentModuleDetail(
     completed: completedMaterialSet.has(m.id),
   }))
 
-  const enrollment = module.enrollments[0]
+  const enrollment = mod.enrollments[0]
   const isCompleted = enrollment?.completedAt != null
 
   return {
-    id: module.id,
-    title: module.title,
-    description: module.description,
-    orderIndex: module.orderIndex,
-    type: module.type,
-    status: module.status,
-    videoUrl: module.videoUrl,
-    duration: module.duration,
-    formationId: module.formation.id,
-    formationTitle: module.formation.title,
+    id: mod.id,
+    title: mod.title,
+    description: mod.description,
+    orderIndex: mod.orderIndex,
+    type: mod.type,
+    status: mod.status,
+    videoUrl: mod.videoUrl,
+    duration: mod.duration,
+    formationId: mod.formation.id,
+    formationTitle: mod.formation.title,
     isLocked,
     isCompleted,
     progress: enrollment?.progress ?? 0,
-    sessions: module.sessions.map(s => ({
+    sessions: mod.sessions.map(s => ({
       id: s.id,
       date: s.date,
       startTime: s.startTime,

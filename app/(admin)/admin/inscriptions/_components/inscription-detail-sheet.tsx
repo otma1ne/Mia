@@ -6,12 +6,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
-import { acceptInscription, declineInscription } from '@/app/actions/inscriptions'
+import { acceptInscription, declineInscription, resendEvaluationLink, resendSignatureLink } from '@/app/actions/inscriptions'
 import type { Inscription, Formation } from '@prisma/client'
 import type { InscriptionStatus } from '@prisma/client'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { ExternalLink, CheckCircle, XCircle, AlertCircle, Loader2, PenLine } from 'lucide-react'
+import { ExternalLink, CheckCircle, XCircle, AlertCircle, Loader2, PenLine, RefreshCw, Send } from 'lucide-react'
 
 type InscriptionWithFormation = Inscription & {
   formation: Pick<Formation, 'id' | 'title'>
@@ -42,9 +42,29 @@ export default function InscriptionDetailSheet({ inscription, sessions, open, on
   const [showDeclineNote, setShowDeclineNote] = useState(false)
   const [note, setNote]                       = useState('')
   const [error, setError]                     = useState('')
+  const [resendMsg, setResendMsg]             = useState('')
   const [selectedSessionId, setSelectedSessionId] = useState(inscription.trainingSessionId ?? '')
   const [isAccepting, startAcceptTransition]    = useTransition()
   const [isDeclining, startDeclineTransition]   = useTransition()
+  const [isResending, startResendTransition]    = useTransition()
+
+  function handleResendEval() {
+    setResendMsg(''); setError('')
+    startResendTransition(async () => {
+      const result = await resendEvaluationLink(inscription.id)
+      if (result?.error) setError(result.error)
+      else setResendMsg('Lien d\'évaluation renvoyé avec succès.')
+    })
+  }
+
+  function handleResendSignature() {
+    setResendMsg(''); setError('')
+    startResendTransition(async () => {
+      const result = await resendSignatureLink(inscription.id)
+      if (result?.error) setError(result.error)
+      else setResendMsg('Lien de signature renvoyé avec succès.')
+    })
+  }
 
   const { label, className } = STATUS_MAP[inscription.status]
 
@@ -90,6 +110,12 @@ export default function InscriptionDetailSheet({ inscription, sessions, open, on
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {resendMsg && (
+            <Alert className="border-emerald-200 bg-emerald-50 text-emerald-800">
+              <CheckCircle className="h-4 w-4 text-emerald-600" />
+              <AlertDescription>{resendMsg}</AlertDescription>
             </Alert>
           )}
 
@@ -227,6 +253,30 @@ export default function InscriptionDetailSheet({ inscription, sessions, open, on
             </>
           )}
 
+          {/* Pending evaluation: resend link */}
+          {inscription.status === 'PENDING' && (
+            <>
+              <Separator />
+              <section className="space-y-3">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Évaluation de besoins</h3>
+                <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-800">
+                  <Send className="mt-0.5 h-4 w-4 shrink-0" />
+                  <p>Le lien d&apos;évaluation a été envoyé au candidat. Le token expire après 48h.</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={handleResendEval}
+                  disabled={isResending}
+                >
+                  {isResending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+                  Renvoyer le lien d&apos;évaluation
+                </Button>
+              </section>
+            </>
+          )}
+
           {/* Pending signature info block */}
           {inscription.status === 'PENDING_SIGNATURE' && (
             <>
@@ -237,9 +287,19 @@ export default function InscriptionDetailSheet({ inscription, sessions, open, on
                   <PenLine className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
                     Le lien de signature a été envoyé au candidat par email.
-                    En attente de signature des documents contractuels (contrat, règlement intérieur, programme, CGV).
+                    En attente de signature des documents contractuels (contrat, règlement intérieur, programme, CGV). Le token expire après 7 jours.
                   </p>
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={handleResendSignature}
+                  disabled={isResending}
+                >
+                  {isResending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+                  Renvoyer le lien de signature
+                </Button>
               </section>
             </>
           )}

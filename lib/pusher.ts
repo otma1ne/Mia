@@ -1,6 +1,7 @@
 import 'server-only'
 import Pusher from 'pusher'
 import { db } from '@/lib/db'
+import type { NotificationType } from '@prisma/client'
 
 export const pusherServer = new Pusher({
   appId:   process.env.PUSHER_APP_ID!,
@@ -12,12 +13,7 @@ export const pusherServer = new Pusher({
 
 export const ADMIN_CHANNEL = 'private-admin-notifications'
 
-export type NotificationType =
-  | 'INSCRIPTION_NEW'
-  | 'DOCUMENT_SIGNED'
-  | 'PAYMENT_RECEIVED'
-  | 'SESSION_CHANGED'
-  | 'TRAINER_APPLICATION_NEW'
+export type { NotificationType }
 
 export type NotifData = {
   firstName?:           string
@@ -49,7 +45,7 @@ interface PublishOptions {
 export async function publishNotification({ type, title, body, href, data }: PublishOptions): Promise<void> {
   // 1. Persist
   const notif = await db.notification.create({
-    data: { type: type as any, title, body, href: href ?? null, data: data ?? undefined },
+    data: { type, title, body, href: href ?? null, data: data ?? undefined },
   })
 
   // 2. Real-time: push to open admin tabs via Pusher Channels

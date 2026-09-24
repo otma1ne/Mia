@@ -2,6 +2,7 @@
 
 import { useActionState, useRef, useState } from 'react'
 import { useFormStatus } from 'react-dom'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createInscription } from '@/app/actions/inscriptions'
 import { Button } from '@/components/ui/button'
@@ -31,6 +32,8 @@ function SubmitButton() {
 
 export default function RegisterForm({ formations }: RegisterFormProps) {
   const [state, action] = useActionState(createInscription, undefined)
+  const searchParams = useSearchParams()
+  const defaultFormationId = searchParams.get('formation') ?? ''
   const [cvUrl, setCvUrl]         = useState('')
   const [cvName, setCvName]       = useState('')
   const [uploading, setUploading] = useState(false)
@@ -142,7 +145,7 @@ export default function RegisterForm({ formations }: RegisterFormProps) {
       {/* Formation */}
       <div className="space-y-1.5">
         <Label htmlFor="formationId">Formation souhaitée</Label>
-        <Select name="formationId" required labelItems={Object.fromEntries(formations.map(f => [f.id, f.title]))}>
+        <Select name="formationId" required defaultValue={defaultFormationId || undefined} labelItems={Object.fromEntries(formations.map(f => [f.id, f.title]))}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Sélectionner une formation" />
           </SelectTrigger>
