@@ -904,3 +904,21 @@ model Waitlist {
   phone     String?
   createdAt DateTime @default(now())
 }
+
+// ─────────────────────────────────────────
+// Lead (demande d'information publique)
+// ─────────────────────────────────────────
+
+model Lead {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String
+  phone       String
+  company     String?
+  formationId String?  @db.ObjectId // null = "Autre / je ne sais pas encore"
+  formationTitle String?            // copie du titre au moment de la demande
+  message     String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+}
