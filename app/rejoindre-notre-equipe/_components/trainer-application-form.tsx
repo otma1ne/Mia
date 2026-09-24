@@ -1,4 +1,4 @@
-components/**'use client'
+'use client'
 
 import { useActionState, useRef, useState } from 'react'
 import { createTrainerApplication } from '@/app/actions/trainer-applications'

@@ -1,13 +1,13 @@
 import { db } from '@/lib/db'
 import LandingPage from '@/components/landing/landing-page'
 import WaitlistForm from '@/components/landing/waitlist-form'
+import Image from 'next/image'
+import logoLightSrc from '@/public/logo-light.png'
 import type { FormationType } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-
-  // MODE COMING SOON
   if (process.env.COMING_SOON === 'true') {
     return (
       <main
@@ -82,7 +82,6 @@ export default async function HomePage() {
     moduleCount: 0, // temporaire
   }))
 
-  // SEO
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'EducationalOrganization',
