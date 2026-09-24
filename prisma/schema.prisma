@@ -923,3 +923,15 @@ model Lead {
 
   @@index([createdAt])
 }
+
+// ─────────────────────────────────────────
+// TelegramSubscriber (personnes qui reçoivent les leads via le bot)
+// ─────────────────────────────────────────
+
+model TelegramSubscriber {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  chatId    String   @unique
+  name      String?
+  username  String?
+  createdAt DateTime @default(now())
+}
