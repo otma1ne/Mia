@@ -1,3 +1,5 @@
+import { db } from '@/lib/db'
+
 /**
  * Envoie une alerte "nouveau lead" sur Slack, Telegram et/ou WhatsApp.
  * Chaque canal n'est utilisé que si ses variables d'environnement sont définies.
@@ -44,7 +46,13 @@ async function sendSlack(text: string) {
 async function sendTelegram(text: string) {
   const token   = process.env.TELEGRAM_BOT_TOKEN
   // Plusieurs destinataires possibles : TELEGRAM_CHAT_ID="111111,222222"
-  const chatIds = (process.env.TELEGRAM_CHAT_ID ?? '').split(',').map(id => id.trim()).filter(Boolean)
+  const envIds = (process.env.TELEGRAM_CHAT_ID ?? '').split(',').map(id => id.trim()).filter(Boolean)
+  // + les commerciaux abonnés via le lien d'invitation du bot
+  const subscribers = await db.telegramSubscriber.findMany({ select: { chatId: true } }).catch(err => {
+    console.error('[leads] Lecture des abonnés Telegram impossible :', err)
+    return [] as { chatId: string }[]
+  })
+  const chatIds = [...new Set([...envIds, ...subscribers.map(s => s.chatId)])]
   if (!token || chatIds.length === 0) return
   const errors: string[] = []
   await Promise.all(chatIds.map(async chatId => {
